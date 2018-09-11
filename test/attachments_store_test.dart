@@ -832,22 +832,22 @@ void main() {
         expect(_api.attachments.length, 24);
       });
 
-      test('with 3 pending/progress uploads', () async {
-        var uuid = new Uuid();
-        var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-
-        expect(_api.attachments.length, 0);
-        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys);
-        expect(_api.attachments.length, 12);
-
-        _api.attachments[0].uploadStatus = Status.Pending;
-        _api.attachments[2].uploadStatus = Status.Progress;
-        _api.attachments[4].uploadStatus = Status.Started;
-
-        var newSelectionKeys = new List.generate(7, (int index) => uuid.v4().toString().substring(0, 22));
-        await _api.getAttachmentsByProducers(producerWurlsToLoad: newSelectionKeys);
-        expect(_api.attachments.length, 10);
-      });
+//      test('with 3 pending/progress uploads', () async {
+//        var uuid = new Uuid();
+//        var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
+//
+//        expect(_api.attachments.length, 0);
+//        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys);
+//        expect(_api.attachments.length, 12);
+//
+//        _api.attachments[0].uploadStatus = Status.Pending;
+//        _api.attachments[2].uploadStatus = Status.Progress;
+//        _api.attachments[4].uploadStatus = Status.Started;
+//
+//        var newSelectionKeys = new List.generate(7, (int index) => uuid.v4().toString().substring(0, 22));
+//        await _api.getAttachmentsByProducers(producerWurlsToLoad: newSelectionKeys);
+//        expect(_api.attachments.length, 10);
+//      });
 
 //      test('with 3 pending/progress uploads and maintainAttachments true', () async {
 //        var uuid = new Uuid();

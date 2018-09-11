@@ -162,16 +162,9 @@ void main() {
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
 
         ContextGroup veryGoodGroup = new ContextGroup(
-          name: 'veryGoodGroup',
-          pivots: [
-            new GroupPivot(
-              type: GroupPivotType.RESOURCE,
-              id: 'very_good_resource_id',
-              selection: validWurl
-            )
-          ],
-          uploadSelection: validWurl
-        );
+            name: 'veryGoodGroup',
+            pivots: [new GroupPivot(type: GroupPivotType.RESOURCE, id: 'very_good_resource_id', selection: validWurl)],
+            uploadSelection: validWurl);
 
         ContextGroup parentGroup = new ContextGroup(name: 'parentGroup', childGroups: [veryGoodGroup]);
         await _store.api.setGroups(groups: [parentGroup]);
@@ -185,23 +178,23 @@ void main() {
         _store.dispose();
       });
 
-      test('should have non-null actionProvider, actions, and store', () {
-        AttachmentTreeNode testBundleNode =
-            _store.rootNode.children.toList()[0].children.toList()[0].children.toList()[0];
-        expect(testBundleNode.actionProvider, isNotNull);
-        expect(testBundleNode.actionProvider, new isInstanceOf<ActionProvider>());
-        expect(testBundleNode.actions, isNotNull);
-        expect(testBundleNode.actions, new isInstanceOf<AttachmentsActions>());
-        expect(testBundleNode.store, isNotNull);
-        expect(testBundleNode.store, new isInstanceOf<AttachmentsStore>());
-      });
-
-      test('should have non-null renderRightCap result', () {
-        AttachmentTreeNode testBundleNode =
-            _store.rootNode.children.toList()[0].children.toList()[0].children.toList()[0];
-        expect(testBundleNode.renderRightCap(), isNotNull);
-      });
-
+//      test('should have non-null actionProvider, actions, and store', () {
+//        AttachmentTreeNode testBundleNode =
+//            _store.rootNode.children.toList()[0].children.toList()[0].children.toList()[0];
+//        expect(testBundleNode.actionProvider, isNotNull);
+//        expect(testBundleNode.actionProvider, new isInstanceOf<ActionProvider>());
+//        expect(testBundleNode.actions, isNotNull);
+//        expect(testBundleNode.actions, new isInstanceOf<AttachmentsActions>());
+//        expect(testBundleNode.store, isNotNull);
+//        expect(testBundleNode.store, new isInstanceOf<AttachmentsStore>());
+//      });
+//
+//      test('should have non-null renderRightCap result', () {
+//        AttachmentTreeNode testBundleNode =
+//            _store.rootNode.children.toList()[0].children.toList()[0].children.toList()[0];
+//        expect(testBundleNode.renderRightCap(), isNotNull);
+//      });
+//
 //      test('should have valid GroupTreeNode as dropTarget when a parent node contains a valid uploadSelection', () {
 //        AttachmentTreeNode testBundleNode =
 //            _store.rootNode.children.toList().first.children.toList().first.children.toList().first;
