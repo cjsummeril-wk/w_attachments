@@ -4,5 +4,5 @@ class CreateAttachmentUsagePayload {
   final String producerWurl;
   final String attachmentId;
 
-  const CreateAttachmentUsagePayload({@required this.producerWurl, @required this.attachmentId});
+  CreateAttachmentUsagePayload({@required this.producerWurl, @required this.attachmentId});
 }

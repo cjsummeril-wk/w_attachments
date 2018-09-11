@@ -4,5 +4,5 @@ class UploadAttachmentPayload {
   final String selection; // WURL type
   final bool allowMultiple;
 
-  const UploadAttachmentPayload({@required this.selection, this.allowMultiple: true});
+  UploadAttachmentPayload({@required this.selection, this.allowMultiple: true});
 }

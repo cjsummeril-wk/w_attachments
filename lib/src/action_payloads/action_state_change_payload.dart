@@ -4,5 +4,5 @@ class ActionStateChangePayload {
   final StatefulActionItem action;
   final String newState;
 
-  const ActionStateChangePayload({@required this.action, @required this.newState});
+  ActionStateChangePayload({@required this.action, @required this.newState});
 }

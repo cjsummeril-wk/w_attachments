@@ -5,5 +5,5 @@ class DownloadAllAsZipPayload {
   final String label;
   final String zipSelection;
 
-  const DownloadAllAsZipPayload({@required this.keysToDownload, @required this.label, @required this.zipSelection});
+  DownloadAllAsZipPayload({@required this.keysToDownload, @required this.label, @required this.zipSelection});
 }

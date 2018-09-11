@@ -4,5 +4,5 @@ class DropFilesPayload {
   final String selection;
   final List<File> files;
 
-  const DropFilesPayload({@required String this.selection, @required List<File> this.files});
+  DropFilesPayload({@required String this.selection, @required List<File> this.files});
 }

@@ -52,7 +52,7 @@ class AttachmentsServiceApi extends Disposable {
     return _attachmentsService.getAttachmentUsagesByIds(idsToLoad: idsToLoad);
   }
 
-  Future<AttachmentsByProducersPayload> getAttachmentUsagesByProducers({@required List<String> producerWurls}) async {
+  Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
     return _attachmentsService.getAttachmentsByProducers(producerWurls: producerWurls);
   }
 
