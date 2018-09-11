@@ -46,20 +46,10 @@ class AttachmentsService extends Disposable {
     manageDisposable(_appIntelligence);
   }
 
-//  createAttachmentServiceProvider() async {
-//    FServiceProvider attchProvider = _msgClient?.newClient(msg.newServiceDescriptor(natsSubject: 'attch-v1'));
-//    await attchProvider.transport.open();
-//    print(attchProvider);
-//    if (attchProvider != null) {
-//      _attachmentsServiceClient = new attachments_service.FAttachmentServiceClient(attchProvider);
-//    }
-//  }
-
   @mustCallSuper
   @override
   Future<Null> onDispose() async {
     serviceWindow = null;
-//    _attachmentsServiceClient = null;
     _uploadStatusStreamController = null;
     super.onDispose();
   }

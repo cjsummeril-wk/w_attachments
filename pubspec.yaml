@@ -14,7 +14,6 @@ dependencies:
   intl: ">=0.14.0 <2.0.0"
   logging: ^0.11.3
   meta: ^1.0.5
-  mockito: ">=0.11.0 <3.0.0"
   quiver: ^0.25.0
   react: ">=3.7.0 <5.0.0"
   sass_builder: ^1.1.5
@@ -31,20 +30,25 @@ dependencies:
       url: https://pub.workiva.org
     version: ^2.19.0
   frugal:
-      hosted:
-        name: frugal
-        url: https://pub.workiva.org
-      version: ^2.13.0
+    hosted:
+      name: frugal
+      url: https://pub.workiva.org
+    version: ^2.13.0
+  messaging_sdk:
+    hosted:
+      name: messaging_sdk
+      url: https://pub.workiva.org
+    version: ^2.31.0
   truss:
     hosted:
       name: truss
       url: https://pub.workiva.org
     version: ^3.33.3
-  user_analytics:
-    hosted:
-      name: user_analytics
-      url: https://pub.workiva.org
-    version: ^3.42.0
+#  user_analytics:
+#    hosted:
+#      name: user_analytics
+#      url: https://pub.workiva.org
+#    version: ^3.42.0
   w_session:
     hosted:
       name: w_session
@@ -60,6 +64,11 @@ dependencies:
       name: wdesk_sdk
       url: https://pub.workiva.org
     version: ^2.94.0
+  web_skin:
+      hosted:
+        name: web_skin
+        url: https://pub.workiva.org
+      version: ^1.43.0
   web_skin_dart:
     hosted:
       name: web_skin_dart
@@ -82,6 +91,7 @@ dev_dependencies:
   dart_style: ^1.0.7
   dartdoc: ^0.13.0
   dependency_validator: ^1.1.1
+  mockito: ">=2.2.2 <3.0.0"
   over_react: ^1.25.0
   over_react_test: ^1.4.0
   sass: ^1.0.0
@@ -91,6 +101,11 @@ dev_dependencies:
       url: https://pub.workiva.org
     version: ^1.4.2
   test: ^0.12.24+2
+  wuri_sdk:
+    hosted:
+      name: wuri_sdk
+      url: https://pub.workiva.org
+    version: ^0.5.3
 
 transformers:
   - sass_builder:

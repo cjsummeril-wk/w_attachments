@@ -40,6 +40,7 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
     _subs.clear();
   }
 
+  @override
   render() {
     var nodeClasses = new ClassNameBuilder()
       ..add('node-container')
@@ -103,7 +104,7 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
   /// Renders the empty space that pushes the content item to the right.
   /// This gives the node a nested appearance.
   depthPadding() {
-    List padders = new List();
+    List padders = [];
 
     void addPadder(key) {
       padders.add((Dom.span()

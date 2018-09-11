@@ -8,8 +8,8 @@ abstract class Group {
   IconGlyph customIconGlyph;
 
   Group(
-      {@required String this.name,
-      List<Group> this.childGroups,
+      {@required this.name,
+      this.childGroups,
       this.customIconGlyph: IconGlyph.FOLDER_ATTACHMENTS_G2});
 
   Set<Attachment> regroup(List<Attachment> newAttachments);
@@ -18,5 +18,6 @@ abstract class Group {
 
   bool get hasChildren => childGroups?.isNotEmpty == true;
 
+  @override
   String toString() => 'name = $name, attachments = $attachments, children = $childGroups';
 }

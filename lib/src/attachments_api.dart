@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:meta/meta.dart';
-import 'package:w_attachments_client/src/attachments_service.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/attachments_config.dart';
@@ -56,9 +55,6 @@ class AttachmentsApi {
 
   /// true if the attachments panel is displayed in headerless mode, false if not.
   bool get showingHeaderlessGroup => _attachmentsStore.showingHeaderlessGroup;
-
-//  /// the selection used when generating a zip package, a zip is a bundle subtype and needs selection data for it.
-//  Selection get zipSelection => _attachmentsStore.zipSelection;
 
   // Custom Getter methods
   /// getAnchorsByWurl is the list of all [Anchor]s whose ProducerWurl matches the provided one.

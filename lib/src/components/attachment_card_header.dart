@@ -37,7 +37,7 @@ class AttachmentCardHeaderComponent extends FluxUiComponent<AttachmentCardHeader
         ..isHovered = props.isHovered
         ..isSelected = props.isSelected
         ..renderAsCardHeaderActions = true
-        ..className = 'node-menu-item')()))(!props.store.enableLabelEdit
+        ..addedClassName = 'node-menu-item')()))(!props.store.enableLabelEdit
         ? _labelText
         : (AttachmentFileLabel()
           ..actions = props.actions

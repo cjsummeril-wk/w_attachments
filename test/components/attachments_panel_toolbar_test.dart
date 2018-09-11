@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:html' hide Selection;
 
 import 'package:over_react/over_react.dart';

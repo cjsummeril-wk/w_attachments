@@ -50,7 +50,7 @@ class AttachmentFileLabelComponent extends FluxUiComponent<AttachmentFileLabelPr
       if (newValue.isEmpty == true) {
         return false;
       }
-      String fileName = utils.fixFilenameExtension(oldValue, newValue);
+//      String fileName = utils.fixFilenameExtension(oldValue, newValue);
 //      if (fileName?.isNotEmpty == true) {
 //        props.store.attachmentsActions.updateFilename(new UpdateFilenamePayload(keyToUpdate: props.attachment.id, newFilename: fileName));
 //      } else {

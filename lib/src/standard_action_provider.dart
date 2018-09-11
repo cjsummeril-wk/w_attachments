@@ -18,6 +18,7 @@ class StandardActionProvider implements ActionProvider {
     return new StandardActionProvider._internal(api: api);
   }
 
+  @override
   List<PanelActionItem> getPanelActions() {
     List<PanelActionItem> panelActions = [];
 
@@ -56,6 +57,7 @@ class StandardActionProvider implements ActionProvider {
     return panelActions;
   }
 
+  @override
   List<AttachmentActionItem> getAttachmentActions(Attachment attachment) {
     List<AttachmentActionItem> attachmentActions = [];
 //    if (attachment.isUploadComplete) {
@@ -96,6 +98,7 @@ class StandardActionProvider implements ActionProvider {
     return attachmentActions;
   }
 
+  @override
   List<GroupActionItem> getGroupActions(ContextGroup group) {
     List<GroupActionItem> groupActions = [];
 

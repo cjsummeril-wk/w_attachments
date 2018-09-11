@@ -4,7 +4,7 @@ class AttachmentActionItem extends StatefulActionItem {
   AttachmentActionCallback callback;
 
   AttachmentActionItem(
-      {@required AttachmentActionCallback this.callback,
+      {@required this.callback,
       @required ReactElement icon,
       String testId,
       String tooltip,

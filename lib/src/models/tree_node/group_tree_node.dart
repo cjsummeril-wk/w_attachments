@@ -39,7 +39,7 @@ class GroupTreeNode extends AttachmentsTreeNode<Group> {
           ..actionProvider = actionProvider
           ..group = content
           ..hoveredOn = store.hoveredNode == this
-          ..className = 'node-action-item')()
+          ..addedClassName = 'node-action-item')()
         : null;
   }
 }

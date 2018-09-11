@@ -2,7 +2,6 @@ library w_attachments_client.test.components.attachments_container_test;
 
 import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';
-import 'package:uuid/uuid.dart';
 import 'package:w_session/mock.dart';
 import 'package:w_session/w_session.dart';
 import 'package:web_skin_dart/ui_components.dart';
@@ -54,14 +53,14 @@ void main() {
       });
 
       test('should render empty view', () {
-        test_utils.expectTestIdWasFound(renderedModule, AttachmentsContainerTestIds.emptyView);
+        test_utils.expectTestIdWasFound(renderedModule, AttachmentsContainerComponent.emptyViewTestId);
       });
 
       group('should use config for', () {
         EmptyViewComponent emptyViewComponent;
 
         setUp(() {
-          emptyViewComponent = getComponentByTestId(renderedModule, AttachmentsContainerTestIds.emptyView);
+          emptyViewComponent = getComponentByTestId(renderedModule, AttachmentsContainerComponent.emptyViewTestId);
           expect(emptyViewComponent, isNotNull);
         });
 

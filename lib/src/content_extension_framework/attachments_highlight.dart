@@ -5,16 +5,6 @@ class AttachmentsHighlight extends Highlight {
 
   AttachmentsHighlight({this.wuri});
 
-  @override
-  void set isHovered(bool value) {
-    super.isHovered = value;
-  }
-
-  @override
-  void set isSelected(bool value) {
-    super.isSelected = value;
-  }
-
   /// Handle the removal of a highlight.
   ///
   /// Content providers should override this method in their subclasses.

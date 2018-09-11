@@ -4,7 +4,7 @@ class GroupActionItem extends StatefulActionItem {
   GroupActionCallback callback;
 
   GroupActionItem(
-      {@required GroupActionCallback this.callback,
+      {@required this.callback,
       @required ReactElement icon,
       String testId,
       String tooltip,

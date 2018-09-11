@@ -4,5 +4,5 @@ class SelectAttachmentsPayload {
   final List<String> selectionKeys;
   final bool maintainSelections;
 
-  SelectAttachmentsPayload({@required List<String> this.selectionKeys, bool this.maintainSelections: false});
+  SelectAttachmentsPayload({@required this.selectionKeys, this.maintainSelections: false});
 }

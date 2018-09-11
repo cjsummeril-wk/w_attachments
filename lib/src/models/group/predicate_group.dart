@@ -8,14 +8,15 @@ class PredicateGroup extends Group {
   SortFunction sortMethod;
 
   PredicateGroup(
-      {@required PredicateFunction this.predicate,
+      {@required this.predicate,
       @required String name,
-      SortFunction this.sortMethod: FilenameGroupSort.compare,
+      this.sortMethod: FilenameGroupSort.compare,
       List<Group> childGroups,
       IconGlyph customIconGlyph})
       : super(
             name: name, childGroups: childGroups, customIconGlyph: customIconGlyph ?? IconGlyph.FOLDER_ATTACHMENTS_G2);
 
+  @override
   Set<Attachment> regroup(List<Attachment> newAttachments) {
     // filter the given attachments to match this context group
     // all attachments for this group and its child groups will initially be in this list

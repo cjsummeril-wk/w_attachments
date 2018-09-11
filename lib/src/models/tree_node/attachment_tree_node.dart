@@ -44,6 +44,6 @@ class AttachmentTreeNode extends AttachmentsTreeNode<Attachment> {
       ..attachment = content
       ..isHovered = store.hoveredNode == this
       ..isSelected = store.currentlySelected?.contains(key) == true
-      ..className = 'node-action-item node-menu-item')();
+      ..addedClassName = 'node-action-item node-menu-item')();
   }
 }

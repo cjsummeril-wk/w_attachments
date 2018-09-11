@@ -14,7 +14,7 @@ class AttachmentActionRendererProps extends FluxUiProps<AttachmentsActions, Atta
   bool isHovered;
   bool isSelected;
   bool renderAsCardHeaderActions;
-  String className;
+  String addedClassName;
 }
 
 @Component()
@@ -24,7 +24,7 @@ class AttachmentActionRendererComponent extends FluxUiComponent<AttachmentAction
     ..isHovered = false
     ..isSelected = false
     ..renderAsCardHeaderActions = false
-    ..className = '');
+    ..addedClassName = '');
 
   @override
   redrawOn() => [];
@@ -40,7 +40,7 @@ class AttachmentActionRendererComponent extends FluxUiComponent<AttachmentAction
 
     if (menuItems.isNotEmpty && (props.isHovered == true || props.isSelected == true)) {
       var actionDropdown = (DropdownButton()
-        ..className = props.className
+        ..className = props.addedClassName
         ..noText = true
         ..onClick = _handleDropdownClick
         ..isOverlay = true

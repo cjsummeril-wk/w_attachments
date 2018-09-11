@@ -4,7 +4,7 @@ class AttachmentsServiceApiMock extends AttachmentsServiceApi {
   AttachmentsService _service;
 
   AttachmentsServiceApiMock.fromService({@required AttachmentsService service}) : super.fromService(service: service) {
-    this._service = service;
+    _service = service;
   }
 
   @visibleForTesting

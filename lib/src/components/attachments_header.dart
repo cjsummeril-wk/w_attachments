@@ -10,6 +10,7 @@ class AttachmentsHeaderProps extends FluxUiProps<AttachmentsActions, Attachments
 
 @Component()
 class AttachmentsHeaderComponent extends FluxUiComponent<AttachmentsHeaderProps> {
+  @override
   render() => ((Block()
         ..shrink = true
         ..collapse = BlockCollapse.ALL

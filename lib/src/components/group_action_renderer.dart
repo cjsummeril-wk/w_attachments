@@ -12,7 +12,7 @@ class GroupActionRendererProps extends FluxUiProps<AttachmentsActions, Attachmen
   ContextGroup group;
 
   bool hoveredOn;
-  String className;
+  String addedClassName;
 }
 
 @Component()
@@ -20,7 +20,7 @@ class GroupActionRendererComponent extends FluxUiComponent<GroupActionRendererPr
   @override
   getDefaultProps() => (newProps()
     ..hoveredOn = false
-    ..className = '');
+    ..addedClassName = '');
 
   @override
   redrawOn() => [];
@@ -39,7 +39,7 @@ class GroupActionRendererComponent extends FluxUiComponent<GroupActionRendererPr
   _renderGroupHeaderButton(StatefulActionItem action, String key) {
     return props.hoveredOn == true
         ? (OverlayTrigger()
-          ..className = props.className
+          ..className = props.addedClassName
           ..placement = OverlayPlacement.TOP
           ..overlay = Tooltip()(action.tooltip)
           ..key = key

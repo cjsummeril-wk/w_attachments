@@ -6,7 +6,7 @@ class Filter {
   String name;
   List<PredicateGroup> predicates;
 
-  Filter({@required String this.name, @required List<PredicateGroup> this.predicates});
+  Filter({@required this.name, @required this.predicates});
 
   List<PredicateGroup> applyToContextGroup(ContextGroup group) {
     return new List<PredicateGroup>.from(predicates).map((predicateGroup) {
@@ -15,6 +15,13 @@ class Filter {
     }).toList();
   }
 
+  @override
   int get hashCode => name.hashCode;
+  
+  @override
+  bool operator ==(other) =>
+    other is Filter && other.name == name;
+
+  @override
   String toString() => '<name=$name, predicates=$predicates>';
 }

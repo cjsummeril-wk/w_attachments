@@ -9,11 +9,11 @@ abstract class ActionItem {
   bool isDivider = false;
 
   ActionItem(
-      {@required ReactElement this.icon,
-      String this.testId,
-      String this.tooltip,
-      String this.label,
-      bool this.isDisabled: false});
+      {@required this.icon,
+      this.testId,
+      this.tooltip,
+      this.label,
+      this.isDisabled: false});
 
   Function get callbackFunction;
 

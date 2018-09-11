@@ -5,16 +5,16 @@ class PanelActionItem extends StatefulActionItem {
   ShouldShowPanelActionItemCallback shouldShow;
 
   PanelActionItem(
-      {@required PanelActionCallback this.callback,
+      {@required this.callback,
       @required ReactElement icon,
-      ShouldShowPanelActionItemCallback this.shouldShow,
+      this.shouldShow,
       String testId,
       String tooltip,
       String label,
       Map<String, ReactElement> states,
       bool isDisabled: false})
       : super(icon: icon, states: states, testId: testId, tooltip: tooltip, label: label, isDisabled: isDisabled) {
-    this.shouldShow ??= () => true;
+    shouldShow ??= () => true;
   }
 
   @override

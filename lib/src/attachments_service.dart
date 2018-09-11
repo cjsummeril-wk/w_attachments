@@ -1,10 +1,8 @@
 library w_attachments_client.service;
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:core';
 import 'dart:html' hide Client, Selection;
-import 'dart:math';
 
 import 'package:app_intelligence/app_intelligence_browser.dart';
 import 'package:frugal/frugal.dart';

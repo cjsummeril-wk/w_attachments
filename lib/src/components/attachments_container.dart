@@ -8,25 +8,24 @@ class AttachmentsContainerProps extends FluxUiProps<AttachmentsActions, Attachme
   ActionProvider actionProvider;
 }
 
-class AttachmentsContainerTestIds {
-  static final utils.TestIdGenerator _testId = utils.buildTestIdGenerator(containerPrefix: 'attachmentsContainer');
-
-  static final String emptyView = _testId('empty-view');
-  static final String virtualTree = _testId('virtual-tree-container');
-}
-
 @Component()
 class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainerProps> {
   RegionCollapseComponent _regionCollapse;
 
+  static final utils.TestIdGenerator _testId = utils.buildTestIdGenerator(containerPrefix: 'attachmentsContainer');
+
+  static final String emptyViewTestId = _testId('empty-view');
+  static final String virtualTreeTestId = _testId('virtual-tree-container');
+
   // if any groups have childGroups, render as Tree, else render as regions
+  @override
   render() => props.store.groups.any((Group group) => group.childGroups?.isNotEmpty == true)
       ? _renderAsVirtualTree()
       : _renderAsRegions();
 
   _renderAsVirtualTree() => (Dom.div()
     ..className = 'w-attachments attachments-container'
-    ..addTestId(AttachmentsContainerTestIds.virtualTree))((w_virtual_components.VirtualTree()
+    ..addTestId(virtualTreeTestId))((w_virtual_components.VirtualTree()
     ..hideRootNode = true
     ..nodeRenderer = attachmentTreeNodeRenderer
     ..root = props.store.rootNode
@@ -77,7 +76,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
   }
 
   _renderEmptyView() => (EmptyView()
-    ..addTestId(AttachmentsContainerTestIds.emptyView)
+    ..addTestId(emptyViewTestId)
     ..glyph = props.store.moduleConfig.emptyViewIcon
     ..header = props.store.moduleConfig.emptyViewText
     ..type = EmptyViewType.VBLOCK)();

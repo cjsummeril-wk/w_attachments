@@ -102,9 +102,9 @@ class FileMimeType {
   ///        etc.
   ///     }
   static Map<String, IconGlyph> IconByMimeType = new Map.unmodifiable(_mimeTypesByDocType.values.fold(
-      new Map<String, IconGlyph>(),
+      <String, IconGlyph>{},
       (Map result, Map mimeTypeInfo) => result
-        ..addAll(mimeTypeInfo['mimeTypes'].fold(new Map<String, IconGlyph>(), (Map result, String mimeType) {
+        ..addAll(mimeTypeInfo['mimeTypes'].fold(<String, IconGlyph>{}, (Map result, String mimeType) {
           result[mimeType] = mimeTypeInfo['icon'];
           return result;
         }))));

@@ -37,7 +37,7 @@ String fixFilenameExtension(String oldFilename, String newFilename) {
   filename ??= '';
   String ext = '.${getExtensionFromFilename(oldFilename)}';
   if (ext != '.' && filename.endsWith(ext) == false) {
-    filename += ext;
+    filename = '$filename$ext';
   }
   if (filename == ext) {
     filename = '';

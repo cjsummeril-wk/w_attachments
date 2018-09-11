@@ -9,7 +9,7 @@ class ThreadPool extends Disposable {
   final ListQueue<ThreadPoolWorker> _tasks = new ListQueue<ThreadPoolWorker>();
   final StreamController _queueStreamController;
 
-  ThreadPool(this._workerCount, [String this._taskType]) : _queueStreamController = new StreamController() {
+  ThreadPool(this._workerCount, [this._taskType]) : _queueStreamController = new StreamController() {
     if (_workerCount == null || _workerCount <= 0) {
       throw new Exception('Worker count was null or less than or equal to 0! Setting to default value of 2 workers.');
     }
