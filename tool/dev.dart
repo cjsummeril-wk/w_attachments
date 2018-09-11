@@ -18,12 +18,7 @@ main(List<String> args) async {
   config.examples;
   config.format
     ..paths = ['example/', 'lib/', 'test/', 'tool/']
-    ..exclude = [
-      'test/generated_runner_test.dart',
-      'example/index.dart',
-      'example/src/components/',
-      'lib/src/components/'
-    ]
+    ..exclude = ['test/generated_runner_test.dart']
     ..lineLength = 120;
   config.test
     ..platforms = ['dartium']

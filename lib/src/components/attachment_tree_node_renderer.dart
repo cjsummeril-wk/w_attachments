@@ -8,11 +8,7 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
 
   bool get isEmptyNode => node is EmptyTreeNode;
 
-  bool get selected => (
-    !isEmptyNode &&
-    node.content is Attachment &&
-    node.store.currentlySelected.contains(node.key)
-  );
+  bool get selected => (!isEmptyNode && node.content is Attachment && node.store.currentlySelected.contains(node.key));
 
   dynamic _avatarAnchorComponent;
 
@@ -64,19 +60,8 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
       ..onDragOver = _onDragOver
       ..onDrop = _onDrop
       ..key = isEmptyNode ? 'node-empty' : 'node-${node.key}'
-      ..ref = ((ref) => _avatarAnchorComponent = ref)
-    )(
-      (Block()
-        ..className = nodeClasses.toClassName())(
-        depthPadding(),
-        expandIcon(),
-        Block()(
-          node.renderIcon(),
-          _renderContentText(),
-          node.renderRightCap()
-        )
-      )
-    );
+      ..ref = ((ref) => _avatarAnchorComponent = ref))((Block()..className = nodeClasses.toClassName())(
+        depthPadding(), expandIcon(), Block()(node.renderIcon(), _renderContentText(), node.renderRightCap())));
   }
 
   void _handleExpansionToggleClick(react.SyntheticMouseEvent e) {
@@ -95,15 +80,11 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
   }
 
   _onMouseEnter(_) {
-    node.actions.hoverOverAttachmentNode(
-      new HoverOverNodePayload(hovered: node)
-    );
+    node.actions.hoverOverAttachmentNode(new HoverOverNodePayload(hovered: node));
   }
 
   _onMouseLeave(_) {
-    node.actions.hoverOutAttachmentNode(
-      new HoverOutNodePayload(unhovered: node)
-    );
+    node.actions.hoverOutAttachmentNode(new HoverOutNodePayload(unhovered: node));
   }
 
   expandIcon() {
@@ -114,11 +95,9 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
     return (BlockContent()
       ..className = 'expand-node-item'
       ..onClick = _handleExpansionToggleClick
-      ..shrink = true)(
-      (Dom.span()
-        ..addTestId('wa.TreeNodeRenderer.ExpandIcon')
-        ..className = 'caret ${expandClass}')()
-      );
+      ..shrink = true)((Dom.span()
+      ..addTestId('wa.TreeNodeRenderer.ExpandIcon')
+      ..className = 'caret ${expandClass}')());
   }
 
   /// Renders the empty space that pushes the content item to the right.
@@ -142,36 +121,27 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
 
     return (Block()
       ..className = 'node-depth-padding-item'
-      ..shrink = true
-    )(padders);
+      ..shrink = true)(padders);
   }
 
   _renderContentText() {
     return (BlockContent()
-      ..className = 'content-item node-content-input'
-    )(
-      (node is AttachmentTreeNode && node.store.enableLabelEdit) ?
-      (AttachmentFileLabel()
-        ..actions = node.actions
-        ..attachment = node.content
-        ..labelText = node.label
-        ..store = node.store
-      )() :
-      node.label
-    );
+      ..className = 'content-item node-content-input')((node is AttachmentTreeNode && node.store.enableLabelEdit)
+        ? (AttachmentFileLabel()
+          ..actions = node.actions
+          ..attachment = node.content
+          ..labelText = node.label
+          ..store = node.store)()
+        : node.label);
   }
 
   _toggleSelectAttachment() async {
     if (node is AttachmentTreeNode) {
       if (selected) {
-        node.actions.deselectAttachments(
-          new DeselectAttachmentsPayload(selectionKeys: [node.key])
-        );
-      }
-      else {
-        node.actions.selectAttachments(
-          new SelectAttachmentsPayload(selectionKeys: [node.key], maintainSelections: false)
-        );
+        node.actions.deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: [node.key]));
+      } else {
+        node.actions
+            .selectAttachments(new SelectAttachmentsPayload(selectionKeys: [node.key], maintainSelections: false));
       }
     }
     node.trigger();
@@ -187,9 +157,8 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
           // isDragTarget is the part of the dropzone that the mouse is actually hovering over during drag
           // if hovering over the dropTarget, the dropTarget is dark blue and all its descendants are light blue
           // if hovering over any descendant of dropTarget, all descendants are dark blue and the dropTarget is light blue
-          draggedOverNode.isDragTarget = (node == node.dropTarget)
-            ? node.dropTarget == draggedOverNode
-            : node.dropTarget != draggedOverNode;
+          draggedOverNode.isDragTarget =
+              (node == node.dropTarget) ? node.dropTarget == draggedOverNode : node.dropTarget != draggedOverNode;
           draggedOverNode.isInDropzone = true;
           draggedOverNode.trigger();
           return true;
@@ -231,9 +200,7 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
 
       _counter = 0;
       var selection = (node?.dropTarget?.content as ContextGroup)?.uploadSelection;
-      node.actions.dropFiles(
-        new DropFilesPayload(selection: selection, files: event.dataTransfer?.files)
-      );
+      node.actions.dropFiles(new DropFilesPayload(selection: selection, files: event.dataTransfer?.files));
     }
   }
 
@@ -256,9 +223,7 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
     if (el != null) {
       var avatar = new AttachmentAvatarHandler(node.content as Attachment);
       _draggable = new Draggable(el, avatarHandler: avatar);
-      _subs
-        ..add(_draggable.onDragStart.listen(_handleDragStart))
-        ..add(_draggable.onDragEnd.listen(_handleDragEnd));
+      _subs..add(_draggable.onDragStart.listen(_handleDragStart))..add(_draggable.onDragEnd.listen(_handleDragEnd));
     }
   }
 

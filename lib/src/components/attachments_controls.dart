@@ -25,42 +25,26 @@ class AttachmentsControlsComponent extends FluxUiComponent<AttachmentsControlsPr
 
     return (Block()
       ..className = 'attachments-controls'
-      ..shrink = true
-    )(
-      _panelActions.map((ActionItem action) => _renderMenuButton(
-        actionItem: action,
-        key: 'attachments_controls_${keyCounter++}'
-      ))
-    );
+      ..shrink = true)(_panelActions.map(
+        (ActionItem action) => _renderMenuButton(actionItem: action, key: 'attachments_controls_${keyCounter++}')));
   }
 
-  _renderMenuButton({@required PanelActionItem actionItem, @required String key}) => (
-    actionItem?.shouldShow() == true ? (
-      (Block()
+  _renderMenuButton({@required PanelActionItem actionItem, @required String key}) => (actionItem?.shouldShow() == true
+      ? ((Block()
         ..addTestId(actionItem.testId)
         ..shrink = true
         ..align = BlockAlign.END
         ..collapse = BlockCollapse.ALL
-        ..key = key
-      )(
-        (OverlayTrigger()
-          ..placement = OverlayPlacement.TOP
-          ..overlay = Tooltip()(actionItem.tooltip)
-        )(
-          (Button()
-            ..noText = true
-            ..onClick = actionItem.callbackFunction != null ? (
-              (react.SyntheticMouseEvent event) => actionItem.callbackFunction(actionItem)
-            ) : null
-            ..skin = ButtonSkin.VANILLA
-            ..size = ButtonSize.XSMALL
-            ..isDisabled = actionItem.isDisabled
-            ..allowedHandlersWhenDisabled = EventHandlers.MOUSE_HOVER
-          )(
-            actionItem.currentStateView
-          )
-        )
-      )
-    ) : null
-  );
+        ..key = key)((OverlayTrigger()
+        ..placement = OverlayPlacement.TOP
+        ..overlay = Tooltip()(actionItem.tooltip))((Button()
+        ..noText = true
+        ..onClick = actionItem.callbackFunction != null
+            ? ((react.SyntheticMouseEvent event) => actionItem.callbackFunction(actionItem))
+            : null
+        ..skin = ButtonSkin.VANILLA
+        ..size = ButtonSize.XSMALL
+        ..isDisabled = actionItem.isDisabled
+        ..allowedHandlersWhenDisabled = EventHandlers.MOUSE_HOVER)(actionItem.currentStateView))))
+      : null);
 }

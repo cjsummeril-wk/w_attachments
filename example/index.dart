@@ -33,18 +33,13 @@ enum ViewModeSettings { Regions, Headerless, Tree }
 
 void configureLogging(AppIntelligence ai) {
   var loggerStream = Logger.root.onRecord.asBroadcastStream();
-  _subs
-    ..add(loggerStream.listen(new DebugConsoleHandler()))
-    ..add(loggerStream.listen(ai.logging));
+  _subs..add(loggerStream.listen(new DebugConsoleHandler()))..add(loggerStream.listen(ai.logging));
 }
 
 /// wAttachments Example App Main Function
 Future main() async {
-  final AppIntelligence appIntelligence = new AppIntelligence(
-    'wattachments',
-    appId: Uri.base.host,
-    captureTotalAppRunningTime: false
-  );
+  final AppIntelligence appIntelligence =
+      new AppIntelligence('wattachments', appId: Uri.base.host, captureTotalAppRunningTime: false);
 
   configureLogging(appIntelligence);
   react_client.setClientConfiguration();
@@ -64,8 +59,7 @@ Future main() async {
 
   // Add some content
   // The right hand panel is added in the AttachmentsExampleApp componentWillMount
-  shell.api
-      .addContentItem(() => AttachmentsExampleApp({}), () => react.span({}, 'Attachments Example'));
+  shell.api.addContentItem(() => AttachmentsExampleApp({}), () => react.span({}, 'Attachments Example'));
 }
 
 /// React Component Builder
@@ -91,15 +85,11 @@ class _AttachmentsExampleApp extends react.Component {
 
   Map<String, dynamic> _inputRefs = {};
 
-  ContextGroup defaultTestGroup = new ContextGroup(
-    displayAsHeaderless: true,
-    filterName: ExampleDocumentId,
-    pivots: [new GroupPivot(
-      type: GroupPivotType.ALL,
-      id: ExampleDocumentId,
-      selection: ExampleDocumentId)]//new Selection(documentId: ExampleDocumentId))],
+  ContextGroup defaultTestGroup = new ContextGroup(displayAsHeaderless: true, filterName: ExampleDocumentId, pivots: [
+    new GroupPivot(type: GroupPivotType.ALL, id: ExampleDocumentId, selection: ExampleDocumentId)
+  ] //new Selection(documentId: ExampleDocumentId))],
 //    uploadSelection: new Selection(documentId: ExampleDocumentId)
-  );
+      );
 
   // example app constants
   static const exampleApp = 'exampleApp';
@@ -126,8 +116,7 @@ class _AttachmentsExampleApp extends react.Component {
   componentWillMount() {
     _generatePredicates();
     _extensionContext = new example_cef.ExampleAttachmentsExtensionContext();
-    _attachmentsService = new AttachmentsTestService()
-      ..resetTest({exampleApp: true});
+    _attachmentsService = new AttachmentsTestService()..resetTest({exampleApp: true});
 
     _config = new AttachmentsConfig(
 //      zipSelection: new Selection()
@@ -173,52 +162,32 @@ class _AttachmentsExampleApp extends react.Component {
 
   @override
   render() {
-    var modulePanel = (Dom.div()..className = 'module-controls')(
-      _renderModuleSettings()
-    );
-    var controlsPanel = (Dom.div()..className = 'attachment-providers')(
-      _renderProviderSettings()
-    );
-    var contextPanel = (Dom.div()..className = 'context-component')(
-      (ContextList()
-        ..config = _config
-        ..module = _attachmentsModule
-        ..serviceApi = _serviceApi
-        ..context = _extensionContext
-        ..contextsToHighlight = contextsForLoadedAttachments
-        ..useDefaultGroup = (
-          _inputRefs[viewMode] != null ?
-            int.parse(_inputRefs[viewMode].getValue()[0]) == ViewModeSettings.Headerless.index :
-            false
-        )
-        ..defaultGroup = defaultTestGroup
-        ..viewMode = (
-          _inputRefs[viewMode] != null ?
-            ViewModeSettings.values[int.parse(_inputRefs[viewMode].getValue()[0])] :
-            ViewModeSettings.Regions // default value is Regions, should sync with [toggleViewMode] button default
-        )
-      )()
-    );
+    var modulePanel = (Dom.div()..className = 'module-controls')(_renderModuleSettings());
+    var controlsPanel = (Dom.div()..className = 'attachment-providers')(_renderProviderSettings());
+    var contextPanel = (Dom.div()..className = 'context-component')((ContextList()
+      ..config = _config
+      ..module = _attachmentsModule
+      ..serviceApi = _serviceApi
+      ..context = _extensionContext
+      ..contextsToHighlight = contextsForLoadedAttachments
+      ..useDefaultGroup = (_inputRefs[viewMode] != null
+          ? int.parse(_inputRefs[viewMode].getValue()[0]) == ViewModeSettings.Headerless.index
+          : false)
+      ..defaultGroup = defaultTestGroup
+      ..viewMode = (_inputRefs[viewMode] != null
+              ? ViewModeSettings.values[int.parse(_inputRefs[viewMode].getValue()[0])]
+              : ViewModeSettings.Regions // default value is Regions, should sync with [toggleViewMode] button default
+          ))());
 
     // TODO: [ATEAM-2883] remove attachment creator or refactor it to be a test for the service_api
-    var createAttachControl = (
-      Dom.div()
-        ..className = 'add-attachment-controls'
-    )(
-      (AttachmentCreator()
-        ..module = _attachmentsModule
-        ..store = _attachmentsModule.store
-        ..context = _extensionContext
-      )()
-    );
+    var createAttachControl = (Dom.div()..className = 'add-attachment-controls')((AttachmentCreator()
+      ..module = _attachmentsModule
+      ..store = _attachmentsModule.store
+      ..context = _extensionContext)());
 
-    var controlsPanelWrapper =(Dom.div()
-      ..className = 'attachment-controls'
-    )(controlsPanel, createAttachControl);
+    var controlsPanelWrapper = (Dom.div()..className = 'attachment-controls')(controlsPanel, createAttachControl);
 
-    return (BlockContent()
-      ..className = 'master-app'
-    )(modulePanel, contextPanel, controlsPanelWrapper);
+    return (BlockContent()..className = 'master-app')(modulePanel, contextPanel, controlsPanelWrapper);
   }
 
   _renderProviderSettings() {
@@ -229,11 +198,8 @@ class _AttachmentsExampleApp extends react.Component {
       ..step = 1
       ..ref = ((input) {
         _inputRefs[numAttachments] = input;
-      })
-    )();
-    var loadAttachments = (Button()
-      ..onClick = _handleLoadClick
-    )('Load Test Attachments from mock server');
+      }))();
+    var loadAttachments = (Button()..onClick = _handleLoadClick)('Load Test Attachments from mock server');
 
     // automatic loading checkbox
     var autoCheckbox = (CheckboxInput()
@@ -257,8 +223,7 @@ class _AttachmentsExampleApp extends react.Component {
 
   _renderModuleSettings() {
     var serverDelay = (TextInput()
-      ..helpTooltip =
-          'The simulated delay between attachments load and update events. Used to mimic server delay.'
+      ..helpTooltip = 'The simulated delay between attachments load and update events. Used to mimic server delay.'
       ..type = TextInputType.NUMBER
       ..label = 'Server Delay (s):'
       ..defaultValue = '1'
@@ -268,42 +233,33 @@ class _AttachmentsExampleApp extends react.Component {
         _inputRefs[serverDelaySetting] = input;
       })();
     var toggleViewMode = (ToggleButtonGroup()
-      ..groupLabel = 'Toggle View Mode'
-      ..isJustified = true
-      ..ref = (input) {
-        _inputRefs[viewMode] = input;
-      })(
-      (RadioButton()
-        ..value = ViewModeSettings.Regions.index
-        ..defaultChecked = true
-      )('Regions'),
-      (RadioButton()..value = ViewModeSettings.Headerless.index)('Headerless'),
-      (RadioButton()..value = ViewModeSettings.Tree.index)('Nested Tree'));
+          ..groupLabel = 'Toggle View Mode'
+          ..isJustified = true
+          ..ref = (input) {
+            _inputRefs[viewMode] = input;
+          })(
+        (RadioButton()
+          ..value = ViewModeSettings.Regions.index
+          ..defaultChecked = true)('Regions'),
+        (RadioButton()..value = ViewModeSettings.Headerless.index)('Headerless'),
+        (RadioButton()..value = ViewModeSettings.Tree.index)('Nested Tree'));
     var filterCreator = (DropdownButton()
       ..displayText = 'Set Filters for headerless group'
       ..skin = ButtonSkin.WARNING
       ..isDisabled = _inputRefs[viewMode] != null
-        ? int.parse(_inputRefs[viewMode].getValue()[0]) != ViewModeSettings.Headerless.index
-        : true
-      ..isOverlay = true
-      )(
-        (DropdownMenu())(
-          availablePredicates.map((PredicateGroup pg) => (
-            (CheckboxSelectOption()
-              ..isChecked = selectedPredicateGroups.containsKey(pg.name)
-              ..key = 'predicateOption:${pg.name}'
-              ..onChange = _handleFilterChanged
-              ..value = pg.name
-            )(pg.name))
-          )
-        )
-    );
+          ? int.parse(_inputRefs[viewMode].getValue()[0]) != ViewModeSettings.Headerless.index
+          : true
+      ..isOverlay = true)((DropdownMenu())(availablePredicates.map((PredicateGroup pg) => ((CheckboxSelectOption()
+      ..isChecked = selectedPredicateGroups.containsKey(pg.name)
+      ..key = 'predicateOption:${pg.name}'
+      ..onChange = _handleFilterChanged
+      ..value = pg.name)(pg.name)))));
     var uploadSpeed = (ToggleButtonGroup()
-      ..groupLabel = 'Upload Speed'
-      ..isJustified = true
-      ..ref = (input) {
-        _inputRefs[uploadSpeedSetting] = input;
-      })(
+          ..groupLabel = 'Upload Speed'
+          ..isJustified = true
+          ..ref = (input) {
+            _inputRefs[uploadSpeedSetting] = input;
+          })(
         (RadioButton()..value = UploadSpeed.Snail.index)('Snail'),
         (RadioButton()..value = UploadSpeed.Slow.index)('Slow'),
         (RadioButton()
@@ -322,7 +278,7 @@ class _AttachmentsExampleApp extends react.Component {
       ..ref = (input) {
         _inputRefs[readerMode] = input;
       }
-      ..onClick = (_){
+      ..onClick = (_) {
         SampleReaderPermissionsActionProvider.readOnly = _inputRefs[readerMode].getInputDomNode().checked;
         _attachmentsModule.api.refreshPanelToolbar();
       })();
@@ -367,10 +323,20 @@ class _AttachmentsExampleApp extends react.Component {
       ..skin = ButtonSkin.ALTERNATE
       ..onClick = _handleUpdateClick)('Update Module');
 
-    var form = Form()(serverDelay, uploadSpeed, toggleViewMode, filterCreator,
-      guaranteeError, viewerModeBox, multipleUploadBox, draggableAttachmentBox,
-      editableLabelsBox, showFilenameAsLabelBox, dropzoneAttachmentBox,
-      clickToSelectBox, updateButton);
+    var form = Form()(
+        serverDelay,
+        uploadSpeed,
+        toggleViewMode,
+        filterCreator,
+        guaranteeError,
+        viewerModeBox,
+        multipleUploadBox,
+        draggableAttachmentBox,
+        editableLabelsBox,
+        showFilenameAsLabelBox,
+        dropzoneAttachmentBox,
+        clickToSelectBox,
+        updateButton);
 
     var cardBlock = CardBlock()(form);
 
@@ -383,26 +349,30 @@ class _AttachmentsExampleApp extends react.Component {
 
   _generatePredicates() {
     availablePredicates = [
-      new PredicateGroup(name: 'A-M', sortMethod: sortMethod, predicate: (Attachment attachment) {
-        return new RegExp(r"^[a-m]").hasMatch(
-          attachment.filename.toLowerCase()
-        );
-      }),
-      new PredicateGroup(name: 'N-Z', sortMethod: sortMethod, predicate: (Attachment attachment) {
-        return new RegExp(r"^[n-z]").hasMatch(
-          attachment.filename.toLowerCase()
-        );
-      }),
-      new PredicateGroup(name: 'Supported files (xlxs)', sortMethod: sortMethod, predicate: (Attachment attachment) {
-        return ExampleSupportedMimeTypes.contains(
-          attachment.filemime
-        );
-      }),
-      new PredicateGroup(name: 'Unsupported files', sortMethod: sortMethod, predicate: (Attachment attachment) {
-        return !ExampleSupportedMimeTypes.contains(
-          attachment.filemime
-        );
-      })
+      new PredicateGroup(
+          name: 'A-M',
+          sortMethod: sortMethod,
+          predicate: (Attachment attachment) {
+            return new RegExp(r"^[a-m]").hasMatch(attachment.filename.toLowerCase());
+          }),
+      new PredicateGroup(
+          name: 'N-Z',
+          sortMethod: sortMethod,
+          predicate: (Attachment attachment) {
+            return new RegExp(r"^[n-z]").hasMatch(attachment.filename.toLowerCase());
+          }),
+      new PredicateGroup(
+          name: 'Supported files (xlxs)',
+          sortMethod: sortMethod,
+          predicate: (Attachment attachment) {
+            return ExampleSupportedMimeTypes.contains(attachment.filemime);
+          }),
+      new PredicateGroup(
+          name: 'Unsupported files',
+          sortMethod: sortMethod,
+          predicate: (Attachment attachment) {
+            return !ExampleSupportedMimeTypes.contains(attachment.filemime);
+          })
     ];
   }
 
@@ -424,56 +394,53 @@ class _AttachmentsExampleApp extends react.Component {
 
     List<Filter> currentFilters = new List.from(_attachmentsModule.api.filters);
     Filter newFilter = new Filter(
-      name: ExampleDocumentId,
-      predicates: selectedPredicateGroups.values.toList()
-        ..sort((PredicateGroup a, PredicateGroup b) {
-          return availablePredicatesById[a.name].compareTo(availablePredicatesById[b.name]);
-        })
-    );
+        name: ExampleDocumentId,
+        predicates: selectedPredicateGroups.values.toList()
+          ..sort((PredicateGroup a, PredicateGroup b) {
+            return availablePredicatesById[a.name].compareTo(availablePredicatesById[b.name]);
+          }));
 
     int newFilterIndex = currentFilters.indexOf(newFilter);
     if (newFilterIndex >= 0) {
       currentFilters[newFilterIndex] = newFilter;
-    }
-    else {
+    } else {
       currentFilters.add(newFilter);
     }
     _attachmentsModule.api.setFilters(filters: currentFilters);
   }
 
-  _handleLoadClick(react.SyntheticMouseEvent event , {bool resettingModule: false}) async {
+  _handleLoadClick(react.SyntheticMouseEvent event, {bool resettingModule: false}) async {
     _clearExtensionContext();
     _numberOfRequestedAttachments = int.parse(_inputRefs[numAttachments].getValue());
     final Uuid uuid = new Uuid();
-    final Segment spreadsheetId = new Segment('spreadsheet', uuid.v4().substring(0,22));
+    final Segment spreadsheetId = new Segment('spreadsheet', uuid.v4().substring(0, 22));
     Random rand = new Random();
 
     if (_inputRefs[purgeCache].getInputDomNode().checked || resettingModule) {
       sectionIds = new List.generate(3, (int index) => new Segment('section', uuid.v4().substring(0, 22)));
-      observedRegionIds = new List.generate(_numberOfRequestedAttachments, (int index) => new Wurl(
-        'annotations',
-        0,
-        [spreadsheetId, sectionIds[rand.nextInt(sectionIds.length)], new Segment('selection', uuid.v4().substring(0, 22))]
-      ).toString());
+      observedRegionIds = new List.generate(
+          _numberOfRequestedAttachments,
+          (int index) => new Wurl('annotations', 0, [
+                spreadsheetId,
+                sectionIds[rand.nextInt(sectionIds.length)],
+                new Segment('selection', uuid.v4().substring(0, 22))
+              ]).toString());
     }
-    while(observedRegionIds.length < _numberOfRequestedAttachments) {
-      observedRegionIds.add(new Wurl(
-        'annotations',
-        0,
-        [spreadsheetId, sectionIds[rand.nextInt(sectionIds.length)], new Segment('selection', uuid.v4().substring(0, 22))]
-      ).toString());
+    while (observedRegionIds.length < _numberOfRequestedAttachments) {
+      observedRegionIds.add(new Wurl('annotations', 0, [
+        spreadsheetId,
+        sectionIds[rand.nextInt(sectionIds.length)],
+        new Segment('selection', uuid.v4().substring(0, 22))
+      ]).toString());
     }
 
     await _attachmentsModule.api.getAttachmentsByProducers(producerWurlsToLoad: observedRegionIds);
-    List<String> regionWuris = _extensionContext.observedRegionApi.regions.map((cef.ObservedRegion region) => region.wuri);
+    List<String> regionWuris =
+        _extensionContext.observedRegionApi.regions.map((cef.ObservedRegion region) => region.wuri);
     for (String wurl in observedRegionIds) {
       if (!regionWuris.contains(wurl)) {
-        await _extensionContext.observedRegionApi.create(
-          selection: new cef.Selection(scope: wurl, wuri: wurl)
-        );
-        _extensionContext.highlightApi.createV3(
-          key: wurl, wuri: wurl
-        );
+        await _extensionContext.observedRegionApi.create(selection: new cef.Selection(scope: wurl, wuri: wurl));
+        _extensionContext.highlightApi.createV3(key: wurl, wuri: wurl);
         contextsForLoadedAttachments.add(wurl);
       }
     }
@@ -494,22 +461,19 @@ class _AttachmentsExampleApp extends react.Component {
       for (String context in newContexts.toSet()) {
         var regExp = new RegExp('section:.*(?=\/)');
         String section = regExp.stringMatch(context);
-        ContextGroup toAdd = _attachmentsModule.api.groups.firstWhere((group) => group is ContextGroup && group.name == section,
-          orElse: () => null);
+        ContextGroup toAdd = _attachmentsModule.api.groups
+            .firstWhere((group) => group is ContextGroup && group.name == section, orElse: () => null);
         if (toAdd != null) {
           relatedGroups.add(toAdd);
         } else {
           relatedGroups.add(new ContextGroup(
-            name: section,
-            childGroups: [],
-            pivots: [new GroupPivot(
-              type: GroupPivotType.ALL,
-              id: section,
-              selection: context
-            )],
-            sortMethod: (_inputRefs[showFilenameAsLabel].getInputDomNode().checked) ? FilenameGroupSort.compare : LabelGroupSort.compare,
-            uploadSelection: section
-          ));
+              name: section,
+              childGroups: [],
+              pivots: [new GroupPivot(type: GroupPivotType.ALL, id: section, selection: context)],
+              sortMethod: (_inputRefs[showFilenameAsLabel].getInputDomNode().checked)
+                  ? FilenameGroupSort.compare
+                  : LabelGroupSort.compare,
+              uploadSelection: section));
         }
       }
     }
@@ -524,19 +488,17 @@ class _AttachmentsExampleApp extends react.Component {
           break;
         case ViewModeSettings.Tree:
           PredicateGroup parent = new PredicateGroup(
-            sortMethod: sortMethod,
-            predicate: ((Attachment attachment) => true),
-            name: 'Attribute Matrix - Predicate Group',
-            childGroups: relatedGroups,
-            customIconGlyph: IconGlyph.FILE_SHEET_G2
-          );
+              sortMethod: sortMethod,
+              predicate: ((Attachment attachment) => true),
+              name: 'Attribute Matrix - Predicate Group',
+              childGroups: relatedGroups,
+              customIconGlyph: IconGlyph.FILE_SHEET_G2);
           PredicateGroup grandparent = new PredicateGroup(
-            sortMethod: sortMethod,
-            predicate: ((Attachment attachment) => true),
-            name: 'Interim Testing - Predicate Group',
-            childGroups: [parent],
-            customIconGlyph: IconGlyph.BEAKER_BADGE
-          );
+              sortMethod: sortMethod,
+              predicate: ((Attachment attachment) => true),
+              name: 'Interim Testing - Predicate Group',
+              childGroups: [parent],
+              customIconGlyph: IconGlyph.BEAKER_BADGE);
           await _attachmentsModule.api.setGroups(groups: [grandparent]);
           break;
       }
@@ -549,7 +511,8 @@ class _AttachmentsExampleApp extends react.Component {
     SampleReaderPermissionsActionProvider.readOnly = _inputRefs[readerMode].getInputDomNode().checked;
     SampleReaderPermissionsActionProvider.allowMultiple = _inputRefs[multipleUpload].getInputDomNode().checked;
 
-    sortMethod = _inputRefs[showFilenameAsLabel].getInputDomNode().checked ? FilenameGroupSort.compare : LabelGroupSort.compare;
+    sortMethod =
+        _inputRefs[showFilenameAsLabel].getInputDomNode().checked ? FilenameGroupSort.compare : LabelGroupSort.compare;
     defaultTestGroup.sortMethod = sortMethod;
     _generatePredicates();
 
@@ -559,12 +522,8 @@ class _AttachmentsExampleApp extends react.Component {
     AttachmentsTestService newService;
     if (newErrorSetting != _attachmentsService.getConfigSetting(guaranteeErrorSetting) ||
         newUploadSpeed != _attachmentsService.getConfigSetting(uploadSpeedSetting)) {
-
       newService = new AttachmentsTestService()
-        ..resetTest({exampleApp: true,
-          guaranteeErrorSetting: newErrorSetting,
-          uploadSpeedSetting: newUploadSpeed
-        });
+        ..resetTest({exampleApp: true, guaranteeErrorSetting: newErrorSetting, uploadSpeedSetting: newUploadSpeed});
     }
 
     List<cef.Selection> currentSelections = _extensionContext.selectionApi.getCurrentSelections();
@@ -587,11 +546,11 @@ class _AttachmentsExampleApp extends react.Component {
       _attachmentsService = newService;
       _serviceApi = new AttachmentsServiceApi.fromService(service: _attachmentsService);
       _attachmentsModule = new AttachmentsModule(
-        config: config,
-        session: session,
-        extensionContext: _extensionContext,
-        attachmentsService: _attachmentsService,
-        actionProviderFactory: SampleReaderPermissionsActionProvider.actionProviderFactory);
+          config: config,
+          session: session,
+          extensionContext: _extensionContext,
+          attachmentsService: _attachmentsService,
+          actionProviderFactory: SampleReaderPermissionsActionProvider.actionProviderFactory);
 
       await _attachmentsModule.load();
     } else {
@@ -610,8 +569,7 @@ class _AttachmentsExampleApp extends react.Component {
         break;
       case ViewModeSettings.Tree:
         _resetGroups(
-          _extensionContext.observedRegionApi.regions.map((cef.ObservedRegion region) => region?.wuri).toList()
-        );
+            _extensionContext.observedRegionApi.regions.map((cef.ObservedRegion region) => region?.wuri).toList());
         break;
     }
     redraw();

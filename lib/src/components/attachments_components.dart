@@ -5,29 +5,22 @@ class AttachmentsComponents extends ModuleComponents {
   final AttachmentsStore store;
   final ActionProvider actionProvider;
 
-  AttachmentsComponents({
-    @required AttachmentsActions this.attachmentsActions,
-    @required this.store,
-    @required this.actionProvider
-  });
+  AttachmentsComponents(
+      {@required AttachmentsActions this.attachmentsActions, @required this.store, @required this.actionProvider});
 
   @override
   content() => (AttachmentsContainer()
     ..store = store
     ..actionProvider = actionProvider
-    ..actions = attachmentsActions
-  )();
+    ..actions = attachmentsActions)();
 
   icon() => (Icon()
     ..glyph = IconGlyph.ATTACHMENT
-    ..addTestId('attachments.AttachmentViewComponent.Icon')
-  )();
+    ..addTestId('attachments.AttachmentViewComponent.Icon'))();
 
   /// __Deprecated.__ Use [titleV2] instead.
   @deprecated
-  title() => (AttachmentsHeader()
-    ..headingLabel = 'Attachments'
-  )();
+  title() => (AttachmentsHeader()..headingLabel = 'Attachments')();
 
   PanelTitleProps titleV2() => PanelTitle()
     ..addTestId('attachment.AttachmentViewComponent.Heading')
@@ -38,11 +31,10 @@ class AttachmentsComponents extends ModuleComponents {
   menu() => (AttachmentsControls()
     ..actions = attachmentsActions
     ..store = store
-    ..actionProvider = actionProvider
-  )();
+    ..actionProvider = actionProvider)();
 
   AttachmentsPanelToolbarProps panelToolbar() => AttachmentsPanelToolbar()
-      ..actions = attachmentsActions
-      ..store = store
-      ..panelActions = store.actionItems;
+    ..actions = attachmentsActions
+    ..store = store
+    ..panelActions = store.actionItems;
 }

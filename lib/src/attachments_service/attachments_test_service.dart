@@ -59,19 +59,17 @@ class AttachmentsTestService extends AttachmentsService {
   }
 
   @override
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage({@required String producerWurl, @required String attachmentId}) async {
+  Future<AttachmentUsageCreatedPayload> createAttachmentUsage(
+      {@required String producerWurl, @required String attachmentId}) async {
     Anchor anchor = new Anchor.fromFAnchor(_createFAnchors([producerWurl]).first);
     AttachmentUsage usage = new AttachmentUsage.fromFAttachmentUsage(_createFAttachmentUsages([anchor.id]).first);
     Attachment attachment = _attachmentsCache[usage.attachmentId];
     if (attachmentId?.isNotEmpty == true) {
-       attachment = new Attachment.fromFAttachment(_createFAttachments([usage.attachmentId]).first);
+      attachment = new Attachment.fromFAttachment(_createFAttachments([usage.attachmentId]).first);
     }
-    return new AttachmentUsageCreatedPayload(
-      anchor: anchor,
-      attachmentUsage: usage,
-      attachment: attachment);
+    return new AttachmentUsageCreatedPayload(anchor: anchor, attachmentUsage: usage, attachment: attachment);
   }
-  
+
   @override
   Future<Iterable<Attachment>> getAttachmentsByIds({@required List<String> idsToLoad}) async {
     if (_cfg[purgeCache]) {
@@ -145,7 +143,7 @@ class AttachmentsTestService extends AttachmentsService {
       _anchorsCache[anchor.producerWurl] = newAnchor;
       anchors.add(newAnchor);
     }
-    
+
     List<String> anchorIdsForWhichToCreateUsages = new List.from(anchors.map((Anchor a) => a.id));
     for (String anchorId in anchors.map((Anchor a) => a.id)) {
       if (_usagesCache.keys.contains(anchorId)) {
@@ -159,8 +157,9 @@ class AttachmentsTestService extends AttachmentsService {
       _usagesCache[usage.anchorId] = newUsage;
       attachmentUsages.add(newUsage);
     }
-    
-    List<String> idsForWhichToCreateAttachments = new List.from(attachmentUsages.map((AttachmentUsage usage) => usage.attachmentId));
+
+    List<String> idsForWhichToCreateAttachments =
+        new List.from(attachmentUsages.map((AttachmentUsage usage) => usage.attachmentId));
     for (String id in attachmentUsages.map((AttachmentUsage usage) => usage.attachmentId)) {
       if (_attachmentsCache.keys.contains(id)) {
         attachments.add(_attachmentsCache[id]);
@@ -178,7 +177,8 @@ class AttachmentsTestService extends AttachmentsService {
       _hasEncounteredError = true;
       throw new FAnnotationError();
     }
-    return new Future.value(new AttachmentsByProducersPayload(attachments: attachments, attachmentUsages: attachmentUsages, anchors: anchors));
+    return new Future.value(new AttachmentsByProducersPayload(
+        attachments: attachments, attachmentUsages: attachmentUsages, anchors: anchors));
   }
 
   ///

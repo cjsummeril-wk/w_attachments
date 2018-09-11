@@ -14,8 +14,8 @@ class AttachmentsPanelToolbarComponent extends FluxUiComponent<AttachmentsPanelT
 
   @override
   get consumedProps => const [
-    const $Props(AttachmentsPanelToolbarProps),
-  ];
+        const $Props(AttachmentsPanelToolbarProps),
+      ];
 
   @override
   componentWillMount() {
@@ -32,22 +32,17 @@ class AttachmentsPanelToolbarComponent extends FluxUiComponent<AttachmentsPanelT
       ..addTestId('attachment.AttachmentViewComponent.Toolbar')
       ..belowToolbarContent = (Block()
         ..id = utils.UPLOAD_INPUT_CACHE_CONTAINER
-        ..style = {
-          'display': 'none'
-        }
-      )()
+        ..style = {'display': 'none'})()
       ..className = classes.toClassName()
-      ..toolbarItems = _renderItems()
-    )();
+      ..toolbarItems = _renderItems())();
   }
 
   List<ReactElement> _renderItems() {
     int keyCounter = 1;
     // take each template from the Action Provider and render the action button associated.
-    return props.store.actionItems.map((ActionItem action) => _renderMenuButton(
-      actionItem: action,
-      key: 'attachments_controls_${keyCounter++}'
-    )).toList();
+    return props.store.actionItems
+        .map((ActionItem action) => _renderMenuButton(actionItem: action, key: 'attachments_controls_${keyCounter++}'))
+        .toList();
   }
 
   ReactElement _renderMenuButton({@required PanelActionItem actionItem, @required String key}) {
@@ -64,9 +59,6 @@ class AttachmentsPanelToolbarComponent extends FluxUiComponent<AttachmentsPanelT
       ..aria.label = actionItem.tooltip
       ..isDisabled = actionItem.isDisabled
       ..allowedHandlersWhenDisabled = EventHandlers.MOUSE_HOVER
-      ..addTestId(actionItem.testId)
-    )(
-        actionItem.currentStateView
-    );
+      ..addTestId(actionItem.testId))(actionItem.currentStateView);
   }
 }

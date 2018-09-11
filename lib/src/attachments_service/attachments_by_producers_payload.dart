@@ -5,5 +5,6 @@ class AttachmentsByProducersPayload {
   final List<AttachmentUsage> attachmentUsages;
   final List<Anchor> anchors;
 
-  const AttachmentsByProducersPayload({@required this.attachments, @required this.attachmentUsages, @required this.anchors});
+  const AttachmentsByProducersPayload(
+      {@required this.attachments, @required this.attachmentUsages, @required this.anchors});
 }

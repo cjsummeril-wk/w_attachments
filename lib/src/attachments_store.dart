@@ -136,22 +136,28 @@ class AttachmentsStore extends Store {
   List<Attachment> get attachments => new List<Attachment>.unmodifiable(_attachments);
   List<String> get attachmentKeys => new List<String>.unmodifiable(_attachments.map((attachment) => attachment?.id));
   List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
-  List<Anchor> getAnchorsByWurl(String wurl) => _anchors[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchors[wurl]);
-  List<AttachmentUsage> getAttachmentUsagesByAnchorId(String anchorId) => new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
+  List<Anchor> getAnchorsByWurl(String wurl) =>
+      _anchors[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchors[wurl]);
+  List<AttachmentUsage> getAttachmentUsagesByAnchorId(String anchorId) =>
+      new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
   List<AttachmentUsage> getAttachmentUsagesByAnchors(List<Anchor> anchors) {
     List<AttachmentUsage> attachmentUsagesToReturn = [];
     List<String> attachmentUsagesToGet = anchors.map((Anchor anchor) => anchor.id);
-    attachmentUsagesToReturn.addAll(
-      _attachmentUsages.where((AttachmentUsage usage) => attachmentUsagesToGet.contains(usage.anchorId)));
+    attachmentUsagesToReturn
+        .addAll(_attachmentUsages.where((AttachmentUsage usage) => attachmentUsagesToGet.contains(usage.anchorId)));
     return attachmentUsagesToReturn;
   }
+
   List<Attachment> getAttachmentsFromUsages(List<AttachmentUsage> usages) {
     List<Attachment> attachmentsToReturn = [];
     List<String> attachmentIdsToGet = usages.map((AttachmentUsage usage) => usage.attachmentId);
-    attachmentsToReturn.addAll(_attachments.where((Attachment attachment) => attachmentIdsToGet.contains(attachment.id)));
+    attachmentsToReturn
+        .addAll(_attachments.where((Attachment attachment) => attachmentIdsToGet.contains(attachment.id)));
     return attachmentsToReturn;
-  } 
-  List<AttachmentUsage> getUsagesFromAttachment(Attachment attachment) => _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachment.id);
+  }
+
+  List<AttachmentUsage> getUsagesFromAttachment(Attachment attachment) =>
+      _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachment.id);
   List<Attachment> getAttachmentsByProducerWurl(String producerWurl) {
     List<AttachmentUsage> usages = getAttachmentUsagesByAnchors(getAnchorsByWurl(producerWurl));
     return getAttachmentsFromUsages(usages);
@@ -280,13 +286,14 @@ class AttachmentsStore extends Store {
     if (!request.maintainAttachments) {
       _attachments.removeWhere((Attachment attachment) => attachment.isUploadComplete || attachment.isUploadFailed);
     }
-    AttachmentsByProducersPayload newAttachments = await attachmentsService.getAttachmentsByProducers(producerWurls: request.producerWurls);
+    AttachmentsByProducersPayload newAttachments =
+        await attachmentsService.getAttachmentsByProducers(producerWurls: request.producerWurls);
     for (String wurl in request.producerWurls) {
       _anchors[wurl] = newAttachments.anchors.where((Anchor anchor) => anchor.producerWurl == wurl);
     }
     for (AttachmentUsage attachmentUsage in newAttachments.attachmentUsages) {
       AttachmentUsage foundAttachmentUsage =
-      _attachmentUsages.firstWhere((AttachmentUsage usage) => (usage?.id == usage?.id), orElse: () => null);
+          _attachmentUsages.firstWhere((AttachmentUsage usage) => (usage?.id == usage?.id), orElse: () => null);
       if (foundAttachmentUsage == null) {
         _attachmentUsages.add(attachmentUsage);
       }
@@ -300,11 +307,10 @@ class AttachmentsStore extends Store {
     }
     _regroup();
   }
-  
+
   _createAttachmentUsage(CreateAttachmentUsagePayload request) async {
     AttachmentUsageCreatedPayload newAttachmentUsage = await attachmentsService.createAttachmentUsage(
-      producerWurl: request.producerWurl,
-      attachmentId: request.attachmentId);
+        producerWurl: request.producerWurl, attachmentId: request.attachmentId);
     _upsertAttachment(new UpsertAttachmentPayload(toUpsert: newAttachmentUsage.attachment));
   }
 
@@ -422,7 +428,8 @@ class AttachmentsStore extends Store {
     }
     request?.selectionKeys?.forEach((String key) {
       if (currentlySelected.add(key)) {
-        attachmentsEvents.attachmentSelected(new AttachmentSelectedEventPayload(selectedAttachmentKey: key), dispatchKey);
+        attachmentsEvents.attachmentSelected(
+            new AttachmentSelectedEventPayload(selectedAttachmentKey: key), dispatchKey);
         _treeNodes[key]?.forEach((node) => node.trigger());
       }
     });
@@ -438,7 +445,8 @@ class AttachmentsStore extends Store {
     });
   }
 
-  Attachment _getAttachmentByKey(String key) => _attachments.firstWhere((attachment) => attachment.id == key, orElse: () => null);
+  Attachment _getAttachmentByKey(String key) =>
+      _attachments.firstWhere((attachment) => attachment.id == key, orElse: () => null);
 
 //  _selectAndUploadFiles(UploadAttachmentPayload request) async {
 //    List<File> files = await attachmentsService.selectFiles(allowMultiple: request.allowMultiple);

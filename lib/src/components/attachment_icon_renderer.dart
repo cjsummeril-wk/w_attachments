@@ -16,15 +16,10 @@ class AttachmentIconRendererComponent extends FluxUiComponent<AttachmentIconRend
   @override
   render() => props.attachment == null ? _renderBlank() : _renderIcon();
 
-  _renderBlank() => (Icon()
-    ..addTestId('wa.CardComponent.HeaderTitle.BlankDocTypeIcon')
-  )();
+  _renderBlank() => (Icon()..addTestId('wa.CardComponent.HeaderTitle.BlankDocTypeIcon'))();
 
-  _renderIcon() => (
-    [Status.Started, Status.Progress].contains(props.attachment.uploadStatus) ?
-      _renderSpinner() :
-      _renderDocIcon()
-  );
+  _renderIcon() =>
+      ([Status.Started, Status.Progress].contains(props.attachment.uploadStatus) ? _renderSpinner() : _renderDocIcon());
 
   _renderDocIcon() {
     IconGlyph docGlyph;
@@ -50,22 +45,17 @@ class AttachmentIconRendererComponent extends FluxUiComponent<AttachmentIconRend
           docGlyph = FileMimeType.IconByMimeType[props.attachment.filemime] ?? IconGlyph.FILE_G2;
           break;
       }
-    }
-    else if (props.attachment.isUploadFailed == true) {
+    } else if (props.attachment.isUploadFailed == true) {
       docGlyph = IconGlyph.BLOCKED;
       docIconColorSetting = IconColors.ONE;
-    }
-    else {
+    } else {
       docGlyph = FileMimeType.IconByMimeType[props.attachment.filemime] ?? IconGlyph.FILE_G2;
     }
     return (Icon()
       ..addTestId('wa.CardComponent.HeaderTitle.DocTypeIcon')
       ..colors = docIconColorSetting
-      ..glyph = docGlyph
-    )();
+      ..glyph = docGlyph)();
   }
 
-  _renderSpinner() => (ProgressSpinner()
-    ..size = ProgressSpinnerSize.SMALL
-  )();
+  _renderSpinner() => (ProgressSpinner()..size = ProgressSpinnerSize.SMALL)();
 }

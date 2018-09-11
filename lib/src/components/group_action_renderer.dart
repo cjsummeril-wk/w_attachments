@@ -20,8 +20,7 @@ class GroupActionRendererComponent extends FluxUiComponent<GroupActionRendererPr
   @override
   getDefaultProps() => (newProps()
     ..hoveredOn = false
-    ..className = ''
-  );
+    ..className = '');
 
   @override
   redrawOn() => [];
@@ -38,26 +37,24 @@ class GroupActionRendererComponent extends FluxUiComponent<GroupActionRendererPr
   }
 
   _renderGroupHeaderButton(StatefulActionItem action, String key) {
-    return props.hoveredOn == true ?
-    (OverlayTrigger()
-      ..className = props.className
-      ..placement = OverlayPlacement.TOP
-      ..overlay = Tooltip()(action.tooltip)
-      ..key = key
-      ..addProps(Button()
-        ..skin = ButtonSkin.VANILLA)
-    )(
-      (Button()
-        ..noText = true
-        ..onClick = action.callbackFunction != null ? ((react.SyntheticMouseEvent event) {
-          action.callbackFunction(action, props.group);
-          return _stopBubbling(event);
-        }) : null
-        ..skin = ButtonSkin.VANILLA
-        ..isDisabled = action.isDisabled
-        ..allowedHandlersWhenDisabled = EventHandlers.MOUSE_HOVER
-      )(action.currentStateView)
-    ) : null;
+    return props.hoveredOn == true
+        ? (OverlayTrigger()
+          ..className = props.className
+          ..placement = OverlayPlacement.TOP
+          ..overlay = Tooltip()(action.tooltip)
+          ..key = key
+          ..addProps(Button()..skin = ButtonSkin.VANILLA))((Button()
+          ..noText = true
+          ..onClick = action.callbackFunction != null
+              ? ((react.SyntheticMouseEvent event) {
+                  action.callbackFunction(action, props.group);
+                  return _stopBubbling(event);
+                })
+              : null
+          ..skin = ButtonSkin.VANILLA
+          ..isDisabled = action.isDisabled
+          ..allowedHandlersWhenDisabled = EventHandlers.MOUSE_HOVER)(action.currentStateView))
+        : null;
   }
 
   _stopBubbling(react.SyntheticEvent event) {

@@ -49,26 +49,19 @@ class ContextListComponent extends UiComponent<ContextListProps> {
         ..isHighlighted = props.contextsToHighlight.contains(region.wuri)
         ..useDefaultGroup = props.useDefaultGroup
         ..defaultGroup = props.defaultGroup
-        ..viewMode = props.viewMode
-      )();
+        ..viewMode = props.viewMode)();
       regionCards.add(contextCard);
     });
 
     var addRegionButton = (Icon()
       ..className = 'add-region-button'
       ..glyph = IconGlyph.PLUS_SIGN
-      ..onClick = handleAddRegion
-    )();
-    return (Dom.div()..className = 'regions-div')(
-      addRegionButton,
-      (CardCollapse()..isAccordion = true)(regionCards)
-    );
+      ..onClick = handleAddRegion)();
+    return (Dom.div()..className = 'regions-div')(addRegionButton, (CardCollapse()..isAccordion = true)(regionCards));
   }
 
   handleAddRegion(_) {
-    props.context.observedRegionApi.addVisibleRegion(
-      new Uuid().v4().toString().substring(0, 22)
-    );
+    props.context.observedRegionApi.addVisibleRegion(new Uuid().v4().toString().substring(0, 22));
     redraw();
   }
 

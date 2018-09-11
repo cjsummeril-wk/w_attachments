@@ -7,10 +7,10 @@ class Anchor {
   String producerWurl;
 
   Anchor.fromFAnchor(FAnchor fAnchor)
-    : id = fAnchor.id,
-      accountResourceId = fAnchor.accountResourceId,
-      producerWurl = fAnchor.producerWurl,
-      disconnected = fAnchor.disconnected;
+      : id = fAnchor.id,
+        accountResourceId = fAnchor.accountResourceId,
+        producerWurl = fAnchor.producerWurl,
+        disconnected = fAnchor.disconnected;
 
   FAnchor toFAnchor(Anchor anchor) => new FAnchor()
     ..id = id

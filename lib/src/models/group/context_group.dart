@@ -80,10 +80,11 @@ class ContextGroup extends Group {
 
   @override
   int get hashCode => hash2(name.hashCode, displayAsHeaderless);
-  
+
   @override
-  bool operator ==(other) => other is ContextGroup && other.name == name && other.displayAsHeaderless == displayAsHeaderless;
-  
+  bool operator ==(other) =>
+      other is ContextGroup && other.name == name && other.displayAsHeaderless == displayAsHeaderless;
+
   @override
   String toString() => '<${super.toString()}, pivots=$pivots, displayAsHeaderless=$displayAsHeaderless>';
 }

@@ -5,17 +5,12 @@ class AttachmentAvatarHandler extends AvatarHandler {
 
   int zIndex = 999999;
 
-  reactComponent() => (Block()
-      ..className = 'is-dragging dragged-attachment')(
-        (Icon()
-          ..className = 'dragged-attachment-icon'
-          ..colors = IconColors.TWO
-          ..glyph = FileMimeType.IconByMimeType[attachment.filemime] ?? IconGlyph.FILE_G2
-        )(),
-        (Dom.div()
-          ..className = 'dragged-attachment-text'
-        )(attachment.filename)
-      );
+  reactComponent() => (Block()..className = 'is-dragging dragged-attachment')(
+      (Icon()
+        ..className = 'dragged-attachment-icon'
+        ..colors = IconColors.TWO
+        ..glyph = FileMimeType.IconByMimeType[attachment.filemime] ?? IconGlyph.FILE_G2)(),
+      (Dom.div()..className = 'dragged-attachment-text')(attachment.filename));
 
   AvatarFactory avatarFactory = () => new html.DivElement();
 

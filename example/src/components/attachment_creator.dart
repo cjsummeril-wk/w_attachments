@@ -38,17 +38,14 @@ class AttachmentCreatorState extends UiState {
 }
 
 @Component()
-class AttachmentCreatorComponent
-  extends FluxUiStatefulComponent<AttachmentCreatorProps, AttachmentCreatorState> {
-
+class AttachmentCreatorComponent extends FluxUiStatefulComponent<AttachmentCreatorProps, AttachmentCreatorState> {
   @override
   getInitialState() => (newState()
     ..isUpdating = false
     ..attachmentFileName = 'evidence.xlsx'
     ..attachmentAuthor = 'John Smith'
     ..hasSelectedRegion = _selectedRegionExists
-    ..uploadStatus = Status.Complete
-  );
+    ..uploadStatus = Status.Complete);
 
   ToggleButtonGroupComponent _toggleButtonGroupRef;
 
@@ -65,28 +62,26 @@ class AttachmentCreatorComponent
 
   @override
   render() {
-    var attachmentFileNameInput = (
-      TextInput()
-        ..helpTooltip = 'The filename of the attachment'
-        ..type = TextInputType.TEXT
-        ..label = 'Attachment File Name'
-        ..value = state.attachmentFileName
-        ..onChange = _handleAttachmentFileNameChange
-        ..isDisabled = _areInputsDisabled()
-    )();
-    var attachmentAuthorInput = (
-      TextInput()
-        ..helpTooltip = 'The author of the attachment'
-        ..type = TextInputType.TEXT
-        ..label = 'Attachment Author'
-        ..value = state.attachmentAuthor
-        ..onChange = _handleAttachmentAuthorChange
-        ..isDisabled = _areInputsDisabled()
-    )();
+    var attachmentFileNameInput = (TextInput()
+      ..helpTooltip = 'The filename of the attachment'
+      ..type = TextInputType.TEXT
+      ..label = 'Attachment File Name'
+      ..value = state.attachmentFileName
+      ..onChange = _handleAttachmentFileNameChange
+      ..isDisabled = _areInputsDisabled())();
+    var attachmentAuthorInput = (TextInput()
+      ..helpTooltip = 'The author of the attachment'
+      ..type = TextInputType.TEXT
+      ..label = 'Attachment Author'
+      ..value = state.attachmentAuthor
+      ..onChange = _handleAttachmentAuthorChange
+      ..isDisabled = _areInputsDisabled())();
     var uploadStatusInput = (ToggleButtonGroup()
-      ..groupLabel = 'Upload Status'
-      ..ref = (ToggleButtonGroupComponent ref) { _toggleButtonGroupRef = ref; }
-      ..isDisabled = _areInputsDisabled())(
+          ..groupLabel = 'Upload Status'
+          ..ref = (ToggleButtonGroupComponent ref) {
+            _toggleButtonGroupRef = ref;
+          }
+          ..isDisabled = _areInputsDisabled())(
         (RadioButton()
           ..size = ButtonSize.XSMALL
           ..onChange = _handleUploadStatusChange
@@ -112,23 +107,16 @@ class AttachmentCreatorComponent
           ..onChange = _handleUploadStatusChange
           ..value = Status.Started
           ..checked = state.uploadStatus == Status.Started)('Started'));
-    var addAttachmentButton = (Block()(
-      (Button()
-        ..onClick = _handleAddAttachment
-        ..isDisabled = _areInputsDisabled())(state.isUpdating ? 'Update Attachment' : 'Add Attachment')));
+    var addAttachmentButton = (Block()((Button()
+      ..onClick = _handleAddAttachment
+      ..isDisabled = _areInputsDisabled())(state.isUpdating ? 'Update Attachment' : 'Add Attachment')));
 
-    var attachmentsCardBlock = (
-      CardBlock()(
-        Form()(
-          attachmentFileNameInput, attachmentAuthorInput, uploadStatusInput, addAttachmentButton
-        )
-      )
-    );
+    var attachmentsCardBlock =
+        (CardBlock()(Form()(attachmentFileNameInput, attachmentAuthorInput, uploadStatusInput, addAttachmentButton)));
 
     return (Card()
       ..className = 'add-attachment-card'
-      ..actsAs = CardActsAs.WELL
-    )(attachmentsCardBlock);
+      ..actsAs = CardActsAs.WELL)(attachmentsCardBlock);
   }
 
   Status _statusFromString(List<String> status) {
@@ -205,25 +193,19 @@ class AttachmentCreatorComponent
   }
 
   _handleAttachmentFileNameChange(react.SyntheticEvent event) {
-    if (props.onAttachmentFileNameChange != null &&
-        props.onAttachmentFileNameChange(event) == false) {
+    if (props.onAttachmentFileNameChange != null && props.onAttachmentFileNameChange(event) == false) {
       return;
     }
 
-    setState(newState()
-      ..attachmentFileName = event.target.value
-    );
+    setState(newState()..attachmentFileName = event.target.value);
   }
 
   _handleAttachmentAuthorChange(react.SyntheticEvent event) {
-    if (props.onAttachmentAuthorChange != null &&
-        props.onAttachmentAuthorChange(event) == false) {
+    if (props.onAttachmentAuthorChange != null && props.onAttachmentAuthorChange(event) == false) {
       return;
     }
 
-    setState(newState()
-      ..attachmentAuthor = event.target.value
-    );
+    setState(newState()..attachmentAuthor = event.target.value);
   }
 
   _handleSelectAttachment(AttachmentSelectedEventPayload result) {
@@ -245,37 +227,28 @@ class AttachmentCreatorComponent
 
   _handleUnselectAttachment(AttachmentDeselectedEventPayload result) {
     _currentlySelected.remove(result.deselectedAttachmentKey);
-    setState(newState()
-      ..isUpdating = false
-    );
+    setState(newState()..isUpdating = false);
     if (_areInputsDisabled()) {
       setState(getInitialState());
     }
   }
 
   _handleUploadStatusChange(react.SyntheticEvent event) {
-    if (props.onUploadStatusChange != null &&
-        props.onUploadStatusChange(event) == false) {
+    if (props.onUploadStatusChange != null && props.onUploadStatusChange(event) == false) {
       return;
     }
 
-    setState(newState()
-      ..uploadStatus = _statusFromString(_toggleButtonGroupRef.getValue())
-    );
+    setState(newState()..uploadStatus = _statusFromString(_toggleButtonGroupRef.getValue()));
   }
 
   bool get _selectedRegionExists {
-    props.context.selectionApi
-      .getCurrentSelections()
-      ?.isNotEmpty == true;
+    props.context.selectionApi.getCurrentSelections()?.isNotEmpty == true;
   }
 
   _handleRegionsDidChange(List<String> values) => redraw();
 
   _handleSelectionDidChange(_) {
     _currentlySelected = new Set<String>();
-    setState(newState()
-      ..hasSelectedRegion = _selectedRegionExists
-    );
+    setState(newState()..hasSelectedRegion = _selectedRegionExists);
   }
 }

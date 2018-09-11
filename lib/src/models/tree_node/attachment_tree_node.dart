@@ -1,7 +1,8 @@
 part of w_attachments_client.models.tree_node;
 
 class AttachmentTreeNode extends AttachmentsTreeNode<Attachment> {
-  AttachmentTreeNode(Attachment content, ActionProvider actionProvider, AttachmentsStore store, AttachmentsActions actions,
+  AttachmentTreeNode(
+      Attachment content, ActionProvider actionProvider, AttachmentsStore store, AttachmentsActions actions,
       {bool isCollapsed: false, Size size})
       : super(content, actionProvider, store, actions, isCollapsed: isCollapsed, size: size);
 

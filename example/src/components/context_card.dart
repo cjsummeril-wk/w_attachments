@@ -58,9 +58,9 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
   }
 
   AttachmentsHighlight get attachmentHighlight =>
-    props.context?.highlightApi?.highlights?.containsKey(props.regionId) == true ?
-      props.context.highlightApi.highlights[props.regionId] :
-      props.context.highlightApi.createV3(key: props.regionId, wuri: props.regionId);
+      props.context?.highlightApi?.highlights?.containsKey(props.regionId) == true
+          ? props.context.highlightApi.highlights[props.regionId]
+          : props.context.highlightApi.createV3(key: props.regionId, wuri: props.regionId);
 
   Map<String, PredicateGroup> convertPredicateListToMap(List<PredicateGroup> predicates) {
     return predicates.fold({}, (result, predicate) {
@@ -70,9 +70,7 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
   }
 
   @override
-  getDefaultProps() => (newProps()
-    ..regionId = ''
-  );
+  getDefaultProps() => (newProps()..regionId = '');
 
   @override
   getInitialState() => (newState()
@@ -81,18 +79,15 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
     ..attachmentDragging = false
     ..isDraggingOver = false
     ..selectedPredicateGroups = {}
-    ..selectedItems = ''
-  );
+    ..selectedItems = '');
 
   ContextGroup get _contextGroup =>
-    props.module.api.groups.firstWhere(
-      (group) => group.name == props.regionId, orElse: () => null
-    ) ?? _searchChildGroups(props.regionId, props.module.api.groups);
+      props.module.api.groups.firstWhere((group) => group.name == props.regionId, orElse: () => null) ??
+      _searchChildGroups(props.regionId, props.module.api.groups);
 
-  bool get isVisibleRegion =>
-    props.context.observedRegionApi.getVisibleRegions().any(
-      (cef.ObservedRegion region) => region.wuri == props.regionId
-    );
+  bool get isVisibleRegion => props.context.observedRegionApi
+      .getVisibleRegions()
+      .any((cef.ObservedRegion region) => region.wuri == props.regionId);
 
   bool get isSelected {
     List<cef.Selection> currentSelections = props.context.selectionApi.getCurrentSelections();
@@ -109,9 +104,7 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
   componentDidMount() {
     super.componentDidMount();
 
-    setState(newState()
-      ..selectedPredicateGroups = convertPredicateListToMap(getCurrentPredicatesFromStore())
-    );
+    setState(newState()..selectedPredicateGroups = convertPredicateListToMap(getCurrentPredicatesFromStore()));
 
     Dropzone _dropzone = new Dropzone(react_dom.findDOMNode(_card));
 
@@ -134,26 +127,30 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
     super.componentWillMount();
     sortMethod = props.config.showFilenameAsLabel ? FilenameGroupSort.compare : LabelGroupSort.compare;
     availablePredicates = [
-      new PredicateGroup(name: 'A-M', sortMethod: sortMethod, predicate: (Attachment attachment) {
-        return new RegExp(r"^[a-m]").hasMatch(
-          attachment.filename.toLowerCase()
-        );
-      }),
-      new PredicateGroup(name: 'N-Z', sortMethod: sortMethod, predicate: (Attachment attachment) {
-        return new RegExp(r"^[n-z]").hasMatch(
-          attachment.filename.toLowerCase()
-        );
-      }),
-      new PredicateGroup(name: 'Supported files (xlxs)', sortMethod: sortMethod, predicate: (Attachment attachment) {
-        return ExampleSupportedMimeTypes.contains(
-          attachment.filemime
-        );
-      }),
-      new PredicateGroup(name: 'Unsupported files', sortMethod: sortMethod, predicate: (Attachment attachment) {
-        return !ExampleSupportedMimeTypes.contains(
-          attachment.filemime
-        );
-      })
+      new PredicateGroup(
+          name: 'A-M',
+          sortMethod: sortMethod,
+          predicate: (Attachment attachment) {
+            return new RegExp(r"^[a-m]").hasMatch(attachment.filename.toLowerCase());
+          }),
+      new PredicateGroup(
+          name: 'N-Z',
+          sortMethod: sortMethod,
+          predicate: (Attachment attachment) {
+            return new RegExp(r"^[n-z]").hasMatch(attachment.filename.toLowerCase());
+          }),
+      new PredicateGroup(
+          name: 'Supported files (xlxs)',
+          sortMethod: sortMethod,
+          predicate: (Attachment attachment) {
+            return ExampleSupportedMimeTypes.contains(attachment.filemime);
+          }),
+      new PredicateGroup(
+          name: 'Unsupported files',
+          sortMethod: sortMethod,
+          predicate: (Attachment attachment) {
+            return !ExampleSupportedMimeTypes.contains(attachment.filemime);
+          })
     ];
   }
 
@@ -165,42 +162,30 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
       ..size = ButtonSize.SMALL
       ..skin = ButtonSkin.PRIMARY
       ..onClick = _handleMakeVisibleClick
-      ..isDisabled = props.viewMode == ViewModeSettings.Headerless
-    )(isVisible ? 'Make Invisible' : 'Make Visible');
+      ..isDisabled = props.viewMode == ViewModeSettings.Headerless)(isVisible ? 'Make Invisible' : 'Make Visible');
 
     var selectAttachmentsButton = (Button()
       ..size = ButtonSize.SMALL
       ..skin = ButtonSkin.ALTERNATE
       ..isDisabled = !state.isHighlighted || props.viewMode == ViewModeSettings.Headerless
-      ..onClick = _handleSelectAttachmentsClick
-    )('Select attached');
+      ..onClick = _handleSelectAttachmentsClick)('Select attached');
 
     var allPredicateOptions = [];
     availablePredicates.forEach((predicateGroup) {
-      bool isChecked = state.selectedPredicateGroups.containsKey(
-        predicateGroup.name
-      );
-      allPredicateOptions.add(
-        (CheckboxSelectOption()
-          ..value = predicateGroup.name
-          ..key = 'predicateOption:${predicateGroup.name}'
-          ..isChecked = isChecked
-          ..onClick = _handleFilterButtonClicked
-          ..onChange = _handleFilterChanged
-        )('${predicateGroup.name}')
-      );
+      bool isChecked = state.selectedPredicateGroups.containsKey(predicateGroup.name);
+      allPredicateOptions.add((CheckboxSelectOption()
+        ..value = predicateGroup.name
+        ..key = 'predicateOption:${predicateGroup.name}'
+        ..isChecked = isChecked
+        ..onClick = _handleFilterButtonClicked
+        ..onChange = _handleFilterChanged)('${predicateGroup.name}'));
     });
     var filterCreator = (DropdownButton()
       ..displayText = 'Set Filter'
       ..skin = ButtonSkin.WARNING
       ..isDisabled = !state.isHighlighted || props.viewMode == ViewModeSettings.Headerless
       ..isOverlay = true
-      ..onClick = _handleFilterButtonClicked
-    )(
-      (DropdownMenu())(
-        allPredicateOptions
-      )
-    );
+      ..onClick = _handleFilterButtonClicked)((DropdownMenu())(allPredicateOptions));
     return ((Card()
       ..className = 'context-card'
       ..header = props.regionId
@@ -209,38 +194,28 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
       ..isSelected = state.isHighlighted
       ..onClick = _handleClick
       ..ref = ((CardComponent ref) => _card = ref)
-      ..bodyFooter = !state.attachmentDragging ? [
-        (VBlock()
-          ..key = 1
-        )(
-          (BlockContent()
-            ..key = 3
-            ..collapse = BlockCollapse.TOP
-            ..overflow = true
-          )(
-            '${associatedAttachments.length} attachments'
-          ),
-          (BlockContent()
-            ..key = 4
-            ..collapse = BlockCollapse.TOP
-            ..overflow = true
-          )(
-            state.selectedItems?.isNotEmpty == true ? 'Selected: ${state.selectedItems}' : 'No selected attachment'
-          )),
-        (Block()
-          ..className = 'grid-block grid-shrink'
-          ..key = 2)((ButtonGroup()
-            ..isVertical = true
-            ..className = 'region-button-group'
-          )(makeVisibleButton, selectAttachmentsButton, filterCreator)
-        )
-      ] : null
-    )(
-      !state.attachmentDragging
+      ..bodyFooter = !state.attachmentDragging
+          ? [
+              (VBlock()..key = 1)(
+                  (BlockContent()
+                    ..key = 3
+                    ..collapse = BlockCollapse.TOP
+                    ..overflow = true)('${associatedAttachments.length} attachments'),
+                  (BlockContent()
+                    ..key = 4
+                    ..collapse = BlockCollapse.TOP
+                    ..overflow = true)(state.selectedItems?.isNotEmpty == true
+                      ? 'Selected: ${state.selectedItems}'
+                      : 'No selected attachment')),
+              (Block()
+                ..className = 'grid-block grid-shrink'
+                ..key = 2)((ButtonGroup()
+                ..isVertical = true
+                ..className = 'region-button-group')(makeVisibleButton, selectAttachmentsButton, filterCreator))
+            ]
+          : null)(!state.attachmentDragging
         ? 'highlighted: ${state.isHighlighted}, selected: ${isSelected}, visible: ${state.isVisibleRegion}'
-        : _renderDropZone()
-      )
-    );
+        : _renderDropZone()));
   }
 
   _stopBubbling(react.SyntheticEvent event) {
@@ -252,7 +227,7 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
     if (groups?.isNotEmpty == true) {
       for (Group group in groups) {
         ContextGroup found = group.childGroups?.firstWhere((group) => group.name == name, orElse: () => null) ??
-          _searchChildGroups(name, group.childGroups);
+            _searchChildGroups(name, group.childGroups);
         if (found != null) {
           return found;
         }
@@ -268,9 +243,7 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
       return;
     }
 
-    setState(newState()
-      ..isVisibleRegion = !isVisibleRegion
-    );
+    setState(newState()..isVisibleRegion = !isVisibleRegion);
 
     if (!isVisibleRegion) {
       props.context.observedRegionApi.addVisibleRegion(props.regionId);
@@ -283,7 +256,8 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
     _stopBubbling(event);
     Group group = _findGroup(props.module.api.groups);
     List<Attachment> attachmentsToSelect = group?.attachments;
-    List<String> attachmentKeysToSelect = attachmentsToSelect?.map((Attachment attachment) => attachment.id)?.toList() ?? [];
+    List<String> attachmentKeysToSelect =
+        attachmentsToSelect?.map((Attachment attachment) => attachment.id)?.toList() ?? [];
 
     if (!props.module.api.currentlySelectedAttachments.containsAll(attachmentKeysToSelect.toSet())) {
       props.module.api.selectAttachmentsByIds(attachmentIds: attachmentKeysToSelect);
@@ -309,39 +283,32 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
 
   void _handleHighlightWasAdded(AttachmentsHighlight addedHighlight) {
     if (addedHighlight?.wuri == props.regionId) {
-      setState(newState()
-        ..isHighlighted = true
-      );
+      setState(newState()..isHighlighted = true);
     }
   }
 
   void _handleHighlightWasRemoved(AttachmentsHighlight removedHighlight) {
     if (removedHighlight?.wuri == props.regionId) {
-      setState(newState()
-        ..isHighlighted = false
-      );
+      setState(newState()..isHighlighted = false);
     }
   }
 
   _handleClick(react.SyntheticMouseEvent event) {
     if (props.viewMode != ViewModeSettings.Headerless) {
       bool isHighlighted = !state.isHighlighted;
-      setState(newState()
-        ..isHighlighted = isHighlighted
-      );
+      setState(newState()..isHighlighted = isHighlighted);
       attachmentHighlight.isSelected = isHighlighted;
 
       props.context.selectionApi.changeCurrentSelection(
-        (props.context.selectionApi.getCurrentSelections()?.first?.wuri != props.regionId && isHighlighted)
-          ? props.regionId : null
-      );
+          (props.context.selectionApi.getCurrentSelections()?.first?.wuri != props.regionId && isHighlighted)
+              ? props.regionId
+              : null);
     }
   }
 
   _handleDragEnter(DropzoneEvent event) {
     if (_counter == 0) {
-      setState(newState()
-        ..isDraggingOver = true);
+      setState(newState()..isDraggingOver = true);
     }
     _counter++;
   }
@@ -352,27 +319,26 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
     }
 
     if (_counter == 0) {
-      setState(newState()
-        ..isDraggingOver = false);
+      setState(newState()..isDraggingOver = false);
     }
   }
 
   _handleDrop(DropzoneEvent event) async {
     _counter = 0;
 
-    setState(newState()
-      ..isDraggingOver = false);
+    setState(newState()..isDraggingOver = false);
 
     // Arbitrary dropzone action here, use any function or API call you need in your dropzone.
     // This particular functionality represents one possible way to reuse annotations for one selection.
     if (event.avatarHandler != null) {
       Attachment attachment = (event.avatarHandler as AttachmentAvatarHandler).attachment;
       List<Attachment> attachmentsAtThisRegionId = props.module.api.getAttachmentsByProducerWurl(props.regionId);
-      
+
       if (!attachmentsAtThisRegionId.contains(attachment)) {
         await props.serviceApi.createAttachmentUsage(props.regionId, attachment.id);
 
-        List<String> revisedKeys = props.context.observedRegionApi.regions.map((cef.ObservedRegion region) => region.wuri);
+        List<String> revisedKeys =
+            props.context.observedRegionApi.regions.map((cef.ObservedRegion region) => region.wuri);
         props.module.api.getAttachmentsByProducers(producerWurlsToLoad: revisedKeys);
       }
     }
@@ -385,33 +351,30 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
       ..add('grid-block')
       ..add('is-drop-target--dragover', state.isDraggingOver);
 
-    return (CardBlock()
-      ..className = classes.toClassName()
-    )(
-      (Icon()
-        ..align = IconAlign.LEFT
-        ..glyph = IconGlyph.UPLOADED
-        ..colors = IconColors.TWO
-      )(), 'Example Drop Zone - Makes a new usage of the same attached file. '
-      'Does nothing if dropping on the same context as the attachment.'
-    );
+    return (CardBlock()..className = classes.toClassName())(
+        (Icon()
+          ..align = IconAlign.LEFT
+          ..glyph = IconGlyph.UPLOADED
+          ..colors = IconColors.TWO)(),
+        'Example Drop Zone - Makes a new usage of the same attached file. '
+        'Does nothing if dropping on the same context as the attachment.');
   }
 
   void _handleDragEnd(event) => setState(newState()..attachmentDragging = false);
   void _handleDragStart(event) => setState(newState()..attachmentDragging = true);
 
   _handleHighlightActiveChanged(bool isActive) {
-    List<String> active_wuris = props.context.highlightApi.selectedHighlights?.map(
-      (AttachmentsHighlight highlight) => highlight.wuri
-    )?.toList() ?? <String>[];
+    List<String> active_wuris = props.context.highlightApi.selectedHighlights
+            ?.map((AttachmentsHighlight highlight) => highlight.wuri)
+            ?.toList() ??
+        <String>[];
 
     List<ContextGroup> relatedGroups = [];
     for (String wuri in active_wuris) {
       ContextGroup toAdd = props.module.api.groups.firstWhere((group) => group.name == wuri, orElse: () => null);
       if (props.viewMode != ViewModeSettings.Tree && toAdd != null) {
         relatedGroups.add(toAdd);
-      }
-      else {
+      } else {
         toAdd = _searchChildGroups(wuri, props.module.api.groups);
         if (toAdd?.name == wuri) {
           relatedGroups.add(toAdd);
@@ -422,16 +385,11 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
     // Add this card's group if it doesn't already exist
     if (isActive && !relatedGroups.any((group) => group.name == props.regionId)) {
       relatedGroups.add(new ContextGroup(
-        name: props.regionId,
-        childGroups: [],
-        pivots: [new GroupPivot(
-          type: GroupPivotType.REGION,
-          id: props.regionId,
-          selection: props.regionId
-        )],
-        sortMethod: props.config.showFilenameAsLabel ? FilenameGroupSort.compare : LabelGroupSort.compare,
-        uploadSelection: props.regionId
-      ));
+          name: props.regionId,
+          childGroups: [],
+          pivots: [new GroupPivot(type: GroupPivotType.REGION, id: props.regionId, selection: props.regionId)],
+          sortMethod: props.config.showFilenameAsLabel ? FilenameGroupSort.compare : LabelGroupSort.compare,
+          uploadSelection: props.regionId));
       // Remove this card's group if it's no longer active
     } else if (!isActive && relatedGroups.any((group) => group.name == props.regionId)) {
       relatedGroups.remove(relatedGroups.firstWhere((group) => group.name == props.regionId));
@@ -443,17 +401,15 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
 
     if (props.viewMode == ViewModeSettings.Tree) {
       PredicateGroup parent = new PredicateGroup(
-        predicate: ((Attachment attachment) => true),
-        name: 'Attribute Matrix - Predicate Group',
-        childGroups: relatedGroups,
-        customIconGlyph: IconGlyph.FILE_SHEET_G2
-      );
+          predicate: ((Attachment attachment) => true),
+          name: 'Attribute Matrix - Predicate Group',
+          childGroups: relatedGroups,
+          customIconGlyph: IconGlyph.FILE_SHEET_G2);
       PredicateGroup grandparent = new PredicateGroup(
-        predicate: ((Attachment attachment) => true),
-        name: 'Interim Testing - Predicate Group',
-        childGroups: [parent],
-        customIconGlyph: IconGlyph.BEAKER_BADGE
-      );
+          predicate: ((Attachment attachment) => true),
+          name: 'Interim Testing - Predicate Group',
+          childGroups: [parent],
+          customIconGlyph: IconGlyph.BEAKER_BADGE);
       props.module.api.setGroups(groups: [grandparent]);
     } else {
       props.module.api.setGroups(groups: relatedGroups);
@@ -469,13 +425,10 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
     if (state.selectedPredicateGroups.containsKey(predName)) {
       state.selectedPredicateGroups.remove(predName);
     } else {
-      state.selectedPredicateGroups[predName] =
-        availablePredicates.firstWhere((pred) => pred.name == predName);
+      state.selectedPredicateGroups[predName] = availablePredicates.firstWhere((pred) => pred.name == predName);
     }
 
-    setState(newState()
-      ..selectedPredicateGroups = state.selectedPredicateGroups
-    );
+    setState(newState()..selectedPredicateGroups = state.selectedPredicateGroups);
 
     if (props.viewMode != ViewModeSettings.Tree) {
       _contextGroup?.filterName = props.regionId;
@@ -488,12 +441,11 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
 
     List<Filter> currentFilters = new List.from(props.module.api.filters);
     Filter newFilter = new Filter(
-      name: props.regionId,
-      predicates: state.selectedPredicateGroups.values.toList()
-        ..sort((PredicateGroup a, PredicateGroup b) {
-          return availablePredicatesById[a.name].compareTo(availablePredicatesById[b.name]);
-        })
-    );
+        name: props.regionId,
+        predicates: state.selectedPredicateGroups.values.toList()
+          ..sort((PredicateGroup a, PredicateGroup b) {
+            return availablePredicatesById[a.name].compareTo(availablePredicatesById[b.name]);
+          }));
 
     num newFilterIndex = currentFilters.indexOf(newFilter);
     if (newFilterIndex >= 0) {
@@ -528,11 +480,12 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
   }
 
   void updateSelectedFilesDisplay() {
-    List<Attachment> selectedAttachments = props.module.api.getAttachmentsByProducerWurl(props.regionId).where((Attachment attachment) =>
-      _currentlySelected.contains(attachment.id)).toList();
-    setState(newState()
-      ..selectedItems = selectedAttachments.map((Attachment attachment) => attachment.filename).join('\n')
-    );
+    List<Attachment> selectedAttachments = props.module.api
+        .getAttachmentsByProducerWurl(props.regionId)
+        .where((Attachment attachment) => _currentlySelected.contains(attachment.id))
+        .toList();
+    setState(
+        newState()..selectedItems = selectedAttachments.map((Attachment attachment) => attachment.filename).join('\n'));
   }
 
   List<Attachment> get associatedAttachments {

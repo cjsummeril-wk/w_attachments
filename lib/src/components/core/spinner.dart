@@ -84,8 +84,7 @@ class SpinnerLabelType {
 
   const SpinnerLabelType._internal(this.className);
 
-  static const SpinnerLabelType DEFAULT =
-      const SpinnerLabelType._internal('progress-spinner-container');
+  static const SpinnerLabelType DEFAULT = const SpinnerLabelType._internal('progress-spinner-container');
   static const SpinnerLabelType STACKED =
       const SpinnerLabelType._internal('progress-spinner-container progress-spinner-stacked');
 }

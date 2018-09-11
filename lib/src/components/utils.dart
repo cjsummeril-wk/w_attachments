@@ -5,9 +5,8 @@ const String TEST_ID_PREFIX = 'w_attachments_client';
 
 typedef String TestIdGenerator(String);
 
-TestIdGenerator buildTestIdGenerator({String containerPrefix}) => (
-  (String suffix) => '$TEST_ID_PREFIX.$containerPrefix.$suffix'
-);
+TestIdGenerator buildTestIdGenerator({String containerPrefix}) =>
+    ((String suffix) => '$TEST_ID_PREFIX.$containerPrefix.$suffix');
 
 String stripExtensionFromFilename(String filename) {
   String retval = filename ?? '';

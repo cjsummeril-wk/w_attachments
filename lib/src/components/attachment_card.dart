@@ -26,8 +26,7 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
   @override
   getInitialState() => (newState()
     ..hoveredOn = false
-    ..isDragging = false
-  );
+    ..isDragging = false);
 
   @override
   componentDidMount() {
@@ -45,9 +44,8 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
     _disposeAvatar();
   }
 
-  bool get _selected => (
-    props.attachment?.id?.isNotEmpty == true && props.store.currentlySelected.contains(props.attachment.id)
-  );
+  bool get _selected =>
+      (props.attachment?.id?.isNotEmpty == true && props.store.currentlySelected.contains(props.attachment.id));
 
   @override
   render() {
@@ -68,8 +66,7 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
       ..onMouseLeave = _handleMouseLeave
       ..selectedEdgeColor = CardEdgeColor.GRAY_LIGHT
       ..skin = _selected ? CardSkin.DEFAULT : CardSkin.WHITE
-      ..ref = ((ref) => _avatarAnchorComponent = ref)
-    )('insert body here');
+      ..ref = ((ref) => _avatarAnchorComponent = ref))('insert body here');
   }
 
   _renderHeader() {
@@ -81,52 +78,40 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
       ..isHovered = state.hoveredOn
       ..key = props.attachment.id
       ..attachment = props.attachment
-      ..ref = 'cardHeader-${props.attachment.id}'
-    )();
+      ..ref = 'cardHeader-${props.attachment.id}')();
   }
 
   _handleMouseOver(e) {
     if (!state.hoveredOn) {
-      setState(newState()
-        ..hoveredOn = true
-      );
+      setState(newState()..hoveredOn = true);
     }
   }
 
   _handleMouseLeave(e) {
     if (state.hoveredOn) {
-      setState(newState()
-        ..hoveredOn = false
-      );
+      setState(newState()..hoveredOn = false);
     }
   }
 
   _handleClick(e) {
     if (props.store.enableClickToSelect) {
       if (_selected) {
-        props.actions.deselectAttachments(
-          new DeselectAttachmentsPayload(selectionKeys: [props.attachment?.id])
-        );
+        props.actions.deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: [props.attachment?.id]));
       } else {
         props.actions.selectAttachments(
-          new SelectAttachmentsPayload(selectionKeys: [props.attachment?.id], maintainSelections: false)
-        );
+            new SelectAttachmentsPayload(selectionKeys: [props.attachment?.id], maintainSelections: false));
       }
     }
   }
 
   _handleDragStart(DraggableEvent event) {
     props.store.attachmentsEvents.attachmentDragStart(event, props.store.dispatchKey);
-    setState(newState()
-      ..isDragging = true
-    );
+    setState(newState()..isDragging = true);
   }
 
   _handleDragEnd(DraggableEvent event) {
     props.store.attachmentsEvents.attachmentDragEnd(event, props.store.dispatchKey);
-    setState(newState()
-      ..isDragging = false
-    );
+    setState(newState()..isDragging = false);
   }
 
   void _refreshAvatar() {
@@ -134,15 +119,10 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
 
     html.Element el = react_dom.findDOMNode(_avatarAnchorComponent);
     if (el != null) {
-      _draggable = new Draggable(
-        el,
-        avatarHandler: new AttachmentAvatarHandler(props.attachment)
-          ..zIndex = 999999
-          ..avatarFactory = () => (
-            new html.DivElement()
-              ..append(new html.DivElement())
-          )
-      );
+      _draggable = new Draggable(el,
+          avatarHandler: new AttachmentAvatarHandler(props.attachment)
+            ..zIndex = 999999
+            ..avatarFactory = () => (new html.DivElement()..append(new html.DivElement())));
       listenToStream(_draggable.onDragStart, _handleDragStart);
       listenToStream(_draggable.onDragEnd, _handleDragEnd);
     }

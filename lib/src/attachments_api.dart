@@ -28,10 +28,9 @@ class AttachmentsApi {
   /// attachmentUsages is the list of all [AttachmentUsage]s loaded into the store.
   List<AttachmentUsage> get attachmentUsages => _attachmentsStore.attachmentUsages;
 
-
   /// attachmentKeys is the list of all selection keys for the [Attachment]s currently loaded into the store.
   List<String> get attachmentKeys => _attachmentsStore.attachmentKeys;
-  
+
   cef.ExtensionContext get extensionContext => _attachmentsStore.extensionContext;
 
   /// currentlyDisplayedSingle is the [ContextGroup] that is currently displayed in headless mode.
@@ -60,7 +59,7 @@ class AttachmentsApi {
 
 //  /// the selection used when generating a zip package, a zip is a bundle subtype and needs selection data for it.
 //  Selection get zipSelection => _attachmentsStore.zipSelection;
-  
+
   // Custom Getter methods
   /// getAnchorsByWurl is the list of all [Anchor]s whose ProducerWurl matches the provided one.
   List<Anchor> getAnchorsByWurl(String wurl) => _attachmentsStore.getAnchorsByWurl(wurl);
@@ -69,15 +68,16 @@ class AttachmentsApi {
   List<Attachment> getAttachmentsByProducerWurl(String wurl) => _attachmentsStore.getAttachmentsByProducerWurl(wurl);
 
   /// getAttachmentUsagesByAnchorId is the list of all [AttachmentUsage]s whose AnchorId matches the provided one.
-  List<AttachmentUsage> getAttachmentUsagesByAnchorId(String anchorId) => _attachmentsStore.getAttachmentUsagesByAnchorId(anchorId);
+  List<AttachmentUsage> getAttachmentUsagesByAnchorId(String anchorId) =>
+      _attachmentsStore.getAttachmentUsagesByAnchorId(anchorId);
 
   /// getAttachmentUsagesByAnchors is the list of all [AttachmentUsage]s whose AnchorId matches an ID of one of the anchors provided.
   List<AttachmentUsage> getAttachmentUsagesByAnchors(List<Anchor> anchors) =>
-    _attachmentsStore.getAttachmentUsagesByAnchors(anchors);
+      _attachmentsStore.getAttachmentUsagesByAnchors(anchors);
 
   /// getAttachmentsFromUsages is the list of all [Attachment]s whose AttachmentId is defined in one of the provided AttachmentUsages.
   List<Attachment> getAttachmentsFromUsages(List<AttachmentUsage> usages) =>
-    _attachmentsStore.getAttachmentsFromUsages(usages);
+      _attachmentsStore.getAttachmentsFromUsages(usages);
 
   // Attachment Actions
   /// deselectAttachmentsByIds deselects attachment cards based on the passed in [attachmentIds]
@@ -97,26 +97,26 @@ class AttachmentsApi {
   // Module Actions
   Future<Null> createAttachmentUsage({@required String producerWurl, @required String attachmentId}) async {
     await _attachmentsActions.createAttachmentUsage(
-      new CreateAttachmentUsagePayload(producerWurl: producerWurl, attachmentId: attachmentId));
+        new CreateAttachmentUsagePayload(producerWurl: producerWurl, attachmentId: attachmentId));
   }
 
-  /// Calls w-annotations-service endpoint to retrieve all attachments, attachment usages, and anchors for the 
+  /// Calls w-annotations-service endpoint to retrieve all attachments, attachment usages, and anchors for the
   /// provided producerWurls.
   ///
   ///   [producerWurlsToLoad] is a list of Selection keys associated with an attachment bundle.
   ///   [maintainAttachments] sets whether or not the list should be cleared before load or appended to
   ///   if [maintainAttachments] is false (default), the list will be cleared; if true the list will be maintained
-  Future<Null> getAttachmentsByProducers({@required List<String> producerWurlsToLoad, bool maintainAttachments: false}) async =>
-      await _attachmentsActions.getAttachmentsByProducers(
-          new GetAttachmentsByProducersPayload(producerWurls: producerWurlsToLoad, maintainAttachments: maintainAttachments));
+  Future<Null> getAttachmentsByProducers(
+          {@required List<String> producerWurlsToLoad, bool maintainAttachments: false}) async =>
+      await _attachmentsActions.getAttachmentsByProducers(new GetAttachmentsByProducersPayload(
+          producerWurls: producerWurlsToLoad, maintainAttachments: maintainAttachments));
 
   /// selectAttachmentsBySelectionKeys selects attachment cards based on the passed in [attachmentIds]
   ///
   ///   [attachmentIds] is a list of [Attachment] ids
   ///   [maintainSelections] allows the current selections to be preserved while appending new selections,
   ///   otherwise current selections will have deselect called on them first
-  Future<Null> selectAttachmentsByIds(
-          {@required List<String> attachmentIds, bool maintainSelections: false}) async =>
+  Future<Null> selectAttachmentsByIds({@required List<String> attachmentIds, bool maintainSelections: false}) async =>
       await _attachmentsActions.selectAttachments(
           new SelectAttachmentsPayload(selectionKeys: attachmentIds, maintainSelections: maintainSelections));
 

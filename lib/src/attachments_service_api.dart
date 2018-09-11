@@ -27,14 +27,14 @@ class AttachmentsServiceApi extends Disposable {
   ///
   ///   [messagingClient] is the required [NatsMessagingClient] object to use for frugal calls.
   AttachmentsServiceApi({@required msg.NatsMessagingClient messagingClient, AppIntelligence appIntelligence}) {
-    _attachmentsService =
-        manageAndReturnDisposable(new AttachmentsService(messagingClient: messagingClient, appIntelligence: appIntelligence));
+    _attachmentsService = manageAndReturnDisposable(
+        new AttachmentsService(messagingClient: messagingClient, appIntelligence: appIntelligence));
   }
 
   /// Constructor for a new service api from an existent service.
   /// This is for use cases with an experience that needs to make direct calls to
   /// the frugal endpoints as well as represent an attachments panel at the same time.
-  /// 
+  ///
   ///   [service] is the previously initialized [AttachmentsService]
   AttachmentsServiceApi.fromService({@required AttachmentsService service}) {
     _attachmentsService = service;

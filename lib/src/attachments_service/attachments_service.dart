@@ -31,7 +31,8 @@ class AttachmentsService extends Disposable {
 
   FContext get context => _msgClient.createFContext();
 
-  AttachmentsService({msg.NatsMessagingClient messagingClient, AppIntelligence appIntelligence, ModalManager modalManager})
+  AttachmentsService(
+      {msg.NatsMessagingClient messagingClient, AppIntelligence appIntelligence, ModalManager modalManager})
       : _uploadStatusStreamController = new StreamController<UploadStatus>.broadcast() {
     _appIntelligence = (appIntelligence != null)
         ? appIntelligence.clone(appIntelName)
@@ -63,7 +64,8 @@ class AttachmentsService extends Disposable {
     super.onDispose();
   }
 
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage({@required String producerWurl, @required String attachmentId}) async {
+  Future<AttachmentUsageCreatedPayload> createAttachmentUsage(
+      {@required String producerWurl, @required String attachmentId}) async {
     return null;
   }
 

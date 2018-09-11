@@ -10,21 +10,12 @@ class AttachmentsHeaderProps extends FluxUiProps<AttachmentsActions, Attachments
 
 @Component()
 class AttachmentsHeaderComponent extends FluxUiComponent<AttachmentsHeaderProps> {
-  render() => (
-    (Block()
-      ..shrink = true
-      ..collapse = BlockCollapse.ALL
-      ..align = BlockAlign.CENTER
-    )(
-      (Dom.text()
-        ..addTestId('attachment.AttachmentViewComponent.Heading')
-      )(props.headingLabel),
+  render() => ((Block()
+        ..shrink = true
+        ..collapse = BlockCollapse.ALL
+        ..align = BlockAlign.CENTER)(
+      (Dom.text()..addTestId('attachment.AttachmentViewComponent.Heading'))(props.headingLabel),
       (Block()
         ..id = utils.UPLOAD_INPUT_CACHE_CONTAINER
-        ..style = {
-          'display': 'none'
-        }
-      )()
-    )
-  );
+        ..style = {'display': 'none'})()));
 }

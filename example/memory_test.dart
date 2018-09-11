@@ -28,11 +28,9 @@ void _createAndDisposeSubject() {
   final ExtensionContext extensionContext = new example_cef.ExampleAttachmentsExtensionContext();
   final Segment spreadsheetId = new Segment('spreadsheet', uuid.v4().substring(0, 22));
   final Segment sectionId = new Segment('section', uuid.v4().substring(0, 22));
-  final String primarySelection = new Wurl(
-    'annotations',
-    0,
-    [spreadsheetId, sectionId, new Segment('selection', uuid.v4().substring(0, 22))]
-  ).toString();
+  final String primarySelection =
+      new Wurl('annotations', 0, [spreadsheetId, sectionId, new Segment('selection', uuid.v4().substring(0, 22))])
+          .toString();
 
   final AttachmentsModule attachments = new AttachmentsModule(
       actionProviderFactory: SampleReaderPermissionsActionProvider.actionProviderFactory,

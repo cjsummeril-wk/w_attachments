@@ -5,5 +5,6 @@ class AttachmentUsageCreatedPayload {
   final AttachmentUsage attachmentUsage;
   final Anchor anchor;
 
-  const AttachmentUsageCreatedPayload({@required this.attachment, @required this.attachmentUsage, @required this.anchor});
+  const AttachmentUsageCreatedPayload(
+      {@required this.attachment, @required this.attachmentUsage, @required this.anchor});
 }

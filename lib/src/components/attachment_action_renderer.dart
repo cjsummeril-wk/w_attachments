@@ -24,8 +24,7 @@ class AttachmentActionRendererComponent extends FluxUiComponent<AttachmentAction
     ..isHovered = false
     ..isSelected = false
     ..renderAsCardHeaderActions = false
-    ..className = ''
-  );
+    ..className = '');
 
   @override
   redrawOn() => [];
@@ -47,10 +46,7 @@ class AttachmentActionRendererComponent extends FluxUiComponent<AttachmentAction
         ..isOverlay = true
         ..useLegacyPositioning = false
         ..pullMenuRight = true
-        ..size = ButtonSize.XSMALL
-      )(
-        DropdownMenu()(menuItems)
-      );
+        ..size = ButtonSize.XSMALL)(DropdownMenu()(menuItems));
       if (props.renderAsCardHeaderActions) {
         return CardHeaderActions()(actionDropdown);
       } else {
@@ -65,15 +61,14 @@ class AttachmentActionRendererComponent extends FluxUiComponent<AttachmentAction
     if (action.isDivider) {
       return (MenuItem()
         ..isDivider = true
-        ..key=key)();
+        ..key = key)();
     }
     return (MenuItem()
       ..key = key
       ..isDisabled = action.isDisabled
       ..onSelect = (action.callbackFunction != null)
-        ? ((react.SyntheticEvent event, Object object) => action.callbackFunction(action, props.attachment))
-        : null
-    )(action.currentStateView, action.label);
+          ? ((react.SyntheticEvent event, Object object) => action.callbackFunction(action, props.attachment))
+          : null)(action.currentStateView, action.label);
   }
 
   _handleDropdownClick(event) {
@@ -82,8 +77,7 @@ class AttachmentActionRendererComponent extends FluxUiComponent<AttachmentAction
 
     if (props.store.enableClickToSelect && !props.store.currentlySelected.contains(props.attachment?.id)) {
       props.actions.selectAttachments(
-        new SelectAttachmentsPayload(selectionKeys: [props.attachment?.id], maintainSelections: false)
-      );
+          new SelectAttachmentsPayload(selectionKeys: [props.attachment?.id], maintainSelections: false));
     }
   }
 }

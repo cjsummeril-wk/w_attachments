@@ -9,12 +9,12 @@ class AttachmentUsage {
   String parentId;
 
   AttachmentUsage.fromFAttachmentUsage(FAttachmentUsage fAttachmentUsage)
-    : id = fAttachmentUsage.id,
-      label = fAttachmentUsage.label,
-      accountResourceId = fAttachmentUsage.accountResourceId,
-      anchorId = fAttachmentUsage.anchorId,
-      parentId = fAttachmentUsage.parentId,
-      attachmentId = fAttachmentUsage.attachmentId;
+      : id = fAttachmentUsage.id,
+        label = fAttachmentUsage.label,
+        accountResourceId = fAttachmentUsage.accountResourceId,
+        anchorId = fAttachmentUsage.anchorId,
+        parentId = fAttachmentUsage.parentId,
+        attachmentId = fAttachmentUsage.attachmentId;
 
   FAttachmentUsage toFAttachmentUsage(AttachmentUsage attachmentUsage) => new FAttachmentUsage()
     ..id = id

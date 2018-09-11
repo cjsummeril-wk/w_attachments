@@ -31,26 +31,25 @@ class AttachmentFileLabelComponent extends FluxUiComponent<AttachmentFileLabelPr
   render() {
     String placeholderText = (props.store.showFilenameAsLabel) ? 'filename' : 'label';
 
-    return (
-      (ClickToEditInput()
-          ..alwaysReadOnly = !props.store.enableLabelEdit
-          ..className = 'attachment-label'
-          ..defaultValue = props.labelText
-          ..formGroupTitle = ''
-          ..hideLabel = true
-          ..label = 'Label'
-          ..onCommit = _onCommit
-          ..onDidEnterEditable = _onDidEnterEditable
-          ..placeholder = 'Enter a ${placeholderText}'
-          ..ref = ((ref) => _labelRef = ref)
-          ..selectedFormGroupTitle = ''
-      )()
-    );
+    return ((ClickToEditInput()
+      ..alwaysReadOnly = !props.store.enableLabelEdit
+      ..className = 'attachment-label'
+      ..defaultValue = props.labelText
+      ..formGroupTitle = ''
+      ..hideLabel = true
+      ..label = 'Label'
+      ..onCommit = _onCommit
+      ..onDidEnterEditable = _onDidEnterEditable
+      ..placeholder = 'Enter a ${placeholderText}'
+      ..ref = ((ref) => _labelRef = ref)
+      ..selectedFormGroupTitle = '')());
   }
 
   _onCommit(String oldValue, String newValue, SyntheticFormEvent event) {
     if (props.store.showFilenameAsLabel) {
-      if (newValue.isEmpty == true) { return false; }
+      if (newValue.isEmpty == true) {
+        return false;
+      }
       String fileName = utils.fixFilenameExtension(oldValue, newValue);
 //      if (fileName?.isNotEmpty == true) {
 //        props.store.attachmentsActions.updateFilename(new UpdateFilenamePayload(keyToUpdate: props.attachment.id, newFilename: fileName));
@@ -58,7 +57,8 @@ class AttachmentFileLabelComponent extends FluxUiComponent<AttachmentFileLabelPr
 //        return false;
 //      }
     } else {
-      props.store.attachmentsActions.updateLabel(new UpdateLabelPayload(keyToUpdate: props.attachment.id, newLabel: newValue));
+      props.store.attachmentsActions
+          .updateLabel(new UpdateLabelPayload(keyToUpdate: props.attachment.id, newLabel: newValue));
     }
   }
 

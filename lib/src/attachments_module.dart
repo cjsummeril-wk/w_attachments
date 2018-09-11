@@ -38,7 +38,6 @@ class AttachmentsModule extends Module {
       AttachmentsConfig config,
       StaticAssetLoader staticAssetLoader,
       msg.NatsMessagingClient messagingClient}) {
-
     // Default the config if one wasn't provided
     config ??= new AttachmentsConfig();
 
@@ -47,9 +46,7 @@ class AttachmentsModule extends Module {
 
     // attachmentsService should only be managed if it is created right here. Is there a cleaner way?
     attachmentsService ??= manageAndReturnDisposable(
-        new AttachmentsService(
-          appIntelligence: appIntelligence,
-          messagingClient: messagingClient));
+        new AttachmentsService(appIntelligence: appIntelligence, messagingClient: messagingClient));
 
     _events = manageAndReturnDisposable(new AttachmentsEvents());
     _store = manageAndReturnDisposable(new AttachmentsStore(
@@ -64,9 +61,7 @@ class AttachmentsModule extends Module {
         initialFilters: initialFilters ?? [],
         moduleConfig: config));
     _components = new AttachmentsComponents(
-        store: _store,
-        actionProvider: actionProvider,
-        attachmentsActions: attachmentsActions);
+        store: _store, actionProvider: actionProvider, attachmentsActions: attachmentsActions);
   }
 
   @override
