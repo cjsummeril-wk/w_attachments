@@ -8,6 +8,7 @@ import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 import 'package:web_skin_dart/ui_components.dart';
 
+import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 
 import './mocks.dart';

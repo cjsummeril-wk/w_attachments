@@ -18,7 +18,6 @@ import 'package:w_attachments_client/w_attachments_service_api.dart';
 import 'package:w_session/mock.dart';
 import 'package:w_session/w_session.dart';
 
-import './src/components/attachment_creator.dart';
 import './src/components/context_list.dart';
 import './src/example_content_extension_framework.dart' as example_cef;
 import './src/sample_reader_permissions_action_provider.dart';
@@ -179,13 +178,7 @@ class _AttachmentsExampleApp extends react.Component {
               : ViewModeSettings.Regions // default value is Regions, should sync with [toggleViewMode] button default
           ))());
 
-    // TODO: [ATEAM-2883] remove attachment creator or refactor it to be a test for the service_api
-    var createAttachControl = (Dom.div()..className = 'add-attachment-controls')((AttachmentCreator()
-      ..module = _attachmentsModule
-      ..store = _attachmentsModule.store
-      ..context = _extensionContext)());
-
-    var controlsPanelWrapper = (Dom.div()..className = 'attachment-controls')(controlsPanel, createAttachControl);
+    var controlsPanelWrapper = (Dom.div()..className = 'attachment-controls')(controlsPanel);
 
     return (BlockContent()..className = 'master-app')(modulePanel, contextPanel, controlsPanelWrapper);
   }
@@ -301,7 +294,7 @@ class _AttachmentsExampleApp extends react.Component {
         _inputRefs[editableLabels] = input;
       })();
     var showFilenameAsLabelBox = (CheckboxInput()
-      ..defaultChecked = false
+      ..defaultChecked = true
       ..label = 'Show Filename as Label'
       ..ref = (input) {
         _inputRefs[showFilenameAsLabel] = input;

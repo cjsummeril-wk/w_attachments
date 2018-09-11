@@ -1,8 +1,6 @@
 library w_attachments_client;
 
-export 'package:w_attachments_client/src/action_payloads.dart';
 export 'package:w_attachments_client/src/action_provider.dart';
-export 'package:w_attachments_client/src/attachments_actions.dart';
 export 'package:w_attachments_client/src/attachments_api.dart';
 export 'package:w_attachments_client/src/attachments_config.dart';
 export 'package:w_attachments_client/src/attachments_events.dart';

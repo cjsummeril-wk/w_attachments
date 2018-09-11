@@ -1,14 +1,12 @@
-import 'dart:async';
-import 'dart:html' hide Client, Selection;
-
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
-import 'package:uuid/uuid.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_flux/w_flux.dart';
-import 'package:wuri_sdk/wuri_sdk.dart';
 import 'package:w_module/w_module.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
+
+import 'package:w_attachments_client/src/action_payloads.dart';
+import 'package:w_attachments_client/src/attachments_actions.dart';
 
 typedef ActionProvider ActionProviderFactory(AttachmentsApi api);
 
@@ -308,12 +306,6 @@ class AttachmentsStore extends Store {
     _regroup();
   }
 
-  _createAttachmentUsage(CreateAttachmentUsagePayload request) async {
-    AttachmentUsageCreatedPayload newAttachmentUsage = await attachmentsService.createAttachmentUsage(
-        producerWurl: request.producerWurl, attachmentId: request.attachmentId);
-    _upsertAttachment(new UpsertAttachmentPayload(toUpsert: newAttachmentUsage.attachment));
-  }
-
   _setActionItemState(ActionStateChangePayload request) {
     if (request?.action != null) {
       request.action.itemState = request.newState;
@@ -359,66 +351,6 @@ class AttachmentsStore extends Store {
     }
   }
 
-//  _updateFilename(UpdateFilenamePayload request) async {
-//    Attachment toUpdate = _getAttachmentByKey(request.keyToUpdate);
-//    bool filenameChanged =
-//        (toUpdate?.filename?.isEmpty == false && toUpdate.filename != request.newFilename);
-//    List<Attachment> affectedAttachments =
-//        _attachments.where((attachment) => attachment.attachmentId == toUpdate.attachmentId).toList();
-//
-//    for (Attachment attachment in affectedAttachments) {
-//      attachment.filename = request.newFilename;
-//    }
-//    if (filenameChanged) {
-//      await attachmentsService.updateFilename(attachment: toUpdate);
-//    }
-//    trigger();
-//    // treeNodes are not rendered as part of a general `trigger()` so must be triggered individually
-//    List nodes = _treeNodes[request.keyToUpdate];
-//    if (nodes?.isNotEmpty == true) {
-//      for (AttachmentsTreeNode node in nodes) {
-//        node.trigger();
-//      }
-//    }
-//  }
-
-//  _updateLabel(UpdateLabelPayload request) async {
-//    Attachment attachment = _getAttachmentByKey(request.keyToUpdate);
-//    attachment.label = request.newLabel;
-//
-//    await attachmentsService.updateLabel(attachment: attachment);
-//
-//    trigger();
-//    // treeNodes are not rendered as part of a general `trigger()` so must be triggered individually
-//    List nodes = _treeNodes[request.keyToUpdate];
-//    if (nodes?.isNotEmpty == true) {
-//      for (AttachmentsTreeNode node in nodes) {
-//        node.trigger();
-//      }
-//    }
-//  }
-
-//  Future<AttachmentRemovedServicePayload> _removeAttachment(RemoveAttachmentPayload request) async {
-//    AttachmentRemovedServicePayload removeResult = await attachmentsService.removeAttachment(request.keyToRemove);
-//    attachmentsEvents.attachmentRemoved(
-//        new AttachmentRemovedEventPayload(
-//            removedSelectionKey: removeResult.removedSelectionKey, responseStatus: removeResult.responseStatus),
-//        dispatchKey);
-//    return removeResult;
-//  }
-
-//  _selectFileAndReplace(ReplaceAttachmentPayload request) async {
-//    List<File> files = await attachmentsService.selectFiles(allowMultiple: false);
-//    _replaceAttachment(request.keyToReplace, files.first);
-//  }
-//
-//  _replaceAttachment(String keyToReplace, File replacement) async {
-//    Attachment toReplace = _getAttachmentByKey(keyToReplace);
-//    List<Attachment> affectedAttachments =
-//        _attachments.where((attachment) => attachment.annotation.attachmentId == toReplace.annotation.attachmentId).toList();
-//    await attachmentsService.replaceAttachment(toReplace: affectedAttachments, replacement: replacement);
-//  }
-
   _selectAttachments(SelectAttachmentsPayload request) {
     if (!request.maintainSelections && currentlySelected.isNotEmpty) {
       _deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: currentlySelected.toList()));
@@ -447,63 +379,6 @@ class AttachmentsStore extends Store {
 
   Attachment _getAttachmentByKey(String key) =>
       _attachments.firstWhere((attachment) => attachment.id == key, orElse: () => null);
-
-//  _selectAndUploadFiles(UploadAttachmentPayload request) async {
-//    List<File> files = await attachmentsService.selectFiles(allowMultiple: request.allowMultiple);
-//    _uploadFiles(request.selection, files);
-//  }
-
-//  _uploadFiles(Selection selection, List<File> files) async {
-//    try {
-//      await attachmentsService.uploadFiles(selection: selection, files: files);
-//    } catch (e, stackTrace) {
-//      _logger.severe('Error when uploading files', e, stackTrace);
-//      Attachment attachment = new Attachment()
-//        ..selection = selection
-//        ..annotation = (new Annotation()
-//          ..type = attachmentType
-//          ..label = newUploadLabel);
-//      files.forEach((file) {
-//        Attachment fileAttachment = new Attachment.from(attachment);
-//        String newKey = 'local_key_${new Uuid().v4()}';
-//        fileAttachment.selection.key = newKey;
-//        fileAttachment.annotation.filename = file.name;
-//        fileAttachment.annotation.filemime = file.type;
-//        fileAttachment.annotation.filesize = file.size;
-//        fileAttachment.uploadStatus = Status.Failed;
-//        _handleUploadStatus(new UploadStatus(fileAttachment, Status.Failed));
-//      });
-//    }
-//  }
-//
-//  Future<bool> _cancelUpload(CancelUploadAttachmentPayload request) async {
-//    Attachment toCancel = _getAttachmentByKey(request.keyToCancel);
-//    List<Attachment> attachmentsToCancel =
-//        _attachments.where((attachment) => attachment.annotation.attachmentId == toCancel.annotation.attachmentId).toList();
-//    bool cancelResult = await attachmentsService.cancelUploads(attachmentsToCancel);
-//    attachmentsEvents.attachmentUploadCanceled(
-//        new AttachmentUploadCanceledEventPayload(
-//            canceledSelectionKeys: new List<String>.from(attachmentsToCancel.map((attachment) => attachment?.key)),
-//            cancelCompleted: cancelResult),
-//        dispatchKey);
-//    return cancelResult;
-//  }
-
-//  Future<bool> _cancelUploads(CancelUploadsAttachmentsPayload request) async {
-//    List<Attachment> attachmentsToCancel = [];
-//    for (String key in request.keysToCancel) {
-//      Attachment attachment = _getAttachmentByKey(key);
-//      if (attachment != null) {
-//        attachmentsToCancel.add(attachment);
-//      }
-//    }
-//    bool cancelResult = await attachmentsService.cancelUploads(attachmentsToCancel);
-//    attachmentsEvents.attachmentUploadCanceled(
-//        new AttachmentUploadCanceledEventPayload(
-//            canceledSelectionKeys: request.keysToCancel, cancelCompleted: cancelResult),
-//        dispatchKey);
-//    return cancelResult;
-//  }
 
   _handleAttachmentRemoved(AttachmentRemovedEventPayload removeEvent) {
     if (removeEvent.responseStatus) {

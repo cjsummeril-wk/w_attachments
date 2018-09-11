@@ -9,7 +9,8 @@ import 'package:w_session/w_session.dart';
 import 'package:wdesk_sdk/experience_framework.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
-import 'attachments_store.dart';
+import 'package:w_attachments_client/src/attachments_actions.dart';
+import 'package:w_attachments_client/src/attachments_store.dart';
 
 typedef ActionProvider ActionProviderFactory(AttachmentsApi api);
 

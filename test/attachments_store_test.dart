@@ -9,10 +9,11 @@ import 'package:uuid/uuid.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
+import 'package:w_attachments_client/src/action_payloads.dart';
+import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 
 import './mocks.dart';
-import './test_utils.dart' as test_utils;
 
 void main() {
   group('AttachmentsStore', () {
@@ -27,15 +28,7 @@ void main() {
     String validWurl = 'wurl://docs.v1/doc:962DD25A85142FBBD7AC5AC84BAE9BD6';
     String testUsername = 'Ron Swanson';
     String veryGoodResourceId = 'very good resource id';
-    String veryGoodDocumentId = 'very good document id';
     String veryGoodSectionId = 'very good section id';
-    String veryGoodRegionId = 'very good region id';
-    String veryGoodEdgeName = 'very good edge name';
-    String otherResourceId = 'resource id';
-    String otherDocumentId = 'document id';
-    String otherSectionId = 'section id';
-    String otherRegionId = 'region id';
-    String otherEdgeName = 'edge name';
 
     group('constructor', () {
       setUp(() {
