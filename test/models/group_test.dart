@@ -201,8 +201,8 @@ void main() {
 
         ContextGroup veryGoodGroup = new ContextGroup(name: 'veryGoodGroup', pivots: [
           new GroupPivot(
-              type: GroupPivotType.ALL,
-              id: veryGoodResourceId,
+            type: GroupPivotType.ALL,
+            id: veryGoodResourceId,
 //              selection: new Selection(resourceId: veryGoodResourceId, edgeName: veryGoodEdgeName)
           )
         ]);
@@ -225,19 +225,19 @@ void main() {
 //        Selection veryGoodSelection = new Selection(resourceId: veryGoodResourceId, edgeName: veryGoodEdgeName);
 
         ContextGroup veryGoodGroup = new ContextGroup(
-            name: 'veryGoodGroup',
-            pivots: [
-              new GroupPivot(
-                  type: GroupPivotType.DOCUMENT,
-                  id: veryGoodDocumentId,
+          name: 'veryGoodGroup',
+          pivots: [
+            new GroupPivot(
+              type: GroupPivotType.DOCUMENT,
+              id: veryGoodDocumentId,
 //                  selection: new Selection(resourceId: veryGoodResourceId, edgeName: veryGoodEdgeName)
-              ),
-              new GroupPivot(
-                  type: GroupPivotType.SECTION,
-                  id: veryGoodSectionId,
+            ),
+            new GroupPivot(
+              type: GroupPivotType.SECTION,
+              id: veryGoodSectionId,
 //                  selection: new Selection(resourceId: veryGoodResourceId, edgeName: veryGoodEdgeName)
-              )
-            ],
+            )
+          ],
 //            uploadSelection: veryGoodSelection
         );
 
@@ -252,8 +252,8 @@ void main() {
       test('should have hash, toString and "==" functionality', () async {
         ContextGroup theGroup = new ContextGroup(name: 'veryGoodGroup', pivots: [
           new GroupPivot(
-              type: GroupPivotType.RESOURCE,
-              id: 'very_good_resource_id',
+            type: GroupPivotType.RESOURCE,
+            id: 'very_good_resource_id',
 //              selection: new Selection(resourceId: 'very_good_resource_id')
           )
         ]);
@@ -264,8 +264,8 @@ void main() {
 
         ContextGroup theOtherGroup = new ContextGroup(name: 'veryGoodGroup', pivots: [
           new GroupPivot(
-              type: GroupPivotType.RESOURCE,
-              id: 'very_good_resource_id',
+            type: GroupPivotType.RESOURCE,
+            id: 'very_good_resource_id',
 //              selection: new Selection(resourceId: 'very_good_resource_id')
           )
         ]);
@@ -291,8 +291,8 @@ void main() {
               name: 'theGroup',
               pivots: [
                 new GroupPivot(
-                    type: GroupPivotType.ALL,
-                    id: veryGoodResourceId,
+                  type: GroupPivotType.ALL,
+                  id: veryGoodResourceId,
 //                    selection: new Selection(resourceId: veryGoodResourceId)
                 )
               ],
@@ -310,8 +310,8 @@ void main() {
               name: 'theGroup',
               pivots: [
                 new GroupPivot(
-                    type: GroupPivotType.ALL,
-                    id: veryGoodResourceId,
+                  type: GroupPivotType.ALL,
+                  id: veryGoodResourceId,
 //                    selection: new Selection(resourceId: veryGoodResourceId)
                 )
               ],
@@ -343,13 +343,15 @@ void main() {
       });
 
       test('should have hash, toString and "==" functionality', () async {
-        PredicateGroup theGroup = new PredicateGroup(name: 'veryGoodGroup', predicate: ((Attachment attachment) => true));
+        PredicateGroup theGroup =
+            new PredicateGroup(name: 'veryGoodGroup', predicate: ((Attachment attachment) => true));
 
         expect(theGroup.hashCode, isNotNull);
         expect(theGroup.toString(), isNotNull);
         expect(theGroup == theGroup, isTrue);
 
-        PredicateGroup theOtherGroup = new PredicateGroup(name: 'otherGroup', predicate: ((Attachment attachment) => true));
+        PredicateGroup theOtherGroup =
+            new PredicateGroup(name: 'otherGroup', predicate: ((Attachment attachment) => true));
 
         expect(theGroup == theOtherGroup, isFalse);
       });

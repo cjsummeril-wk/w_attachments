@@ -107,8 +107,7 @@ void main() {
 
       result[0].itemState = state;
       expect(result[0].currentStateName, state);
-      expect((getDartComponent(render(result[0].currentStateView)).props as IconProps).glyph,
-          IconGlyph.FOLDER_ZIP_G2);
+      expect((getDartComponent(render(result[0].currentStateView)).props as IconProps).glyph, IconGlyph.FOLDER_ZIP_G2);
       expect(result[0].callbackFunction, isNotNull);
     });
 

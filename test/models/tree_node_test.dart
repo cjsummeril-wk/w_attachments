@@ -43,14 +43,14 @@ void main() {
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
 
         ContextGroup veryGoodGroup = new ContextGroup(
-            name: 'veryGoodGroup',
-            pivots: [
-              new GroupPivot(
-                  type: GroupPivotType.RESOURCE,
-                  id: 'very_good_resource_id',
+          name: 'veryGoodGroup',
+          pivots: [
+            new GroupPivot(
+              type: GroupPivotType.RESOURCE,
+              id: 'very_good_resource_id',
 //                  selection: new Selection(resourceId: 'very_good_resource_id')
-              )
-            ],
+            )
+          ],
 //            uploadSelection: new Selection(resourceId: 'very_good_resource_id')
         );
 
@@ -91,15 +91,15 @@ void main() {
             new PredicateGroup(name: 'childGroupWithNoSelection', predicate: ((Attachment attachment) => true));
 
         ContextGroup groupWithSelection = new ContextGroup(
-            name: 'groupWithSelection',
-            pivots: [
-              new GroupPivot(
-                  type: GroupPivotType.RESOURCE,
-                  id: 'very_good_resource_id',
+          name: 'groupWithSelection',
+          pivots: [
+            new GroupPivot(
+              type: GroupPivotType.RESOURCE,
+              id: 'very_good_resource_id',
 //                  selection: new Selection(resourceId: 'very_good_resource_id')
-              )
-            ],
-            childGroups: [childGroupWithNoSelection],
+            )
+          ],
+          childGroups: [childGroupWithNoSelection],
 //            uploadSelection: new Selection(resourceId: 'very_good_resource_id')
         );
 
@@ -164,14 +164,14 @@ void main() {
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
 
         ContextGroup veryGoodGroup = new ContextGroup(
-            name: 'veryGoodGroup',
-            pivots: [
-              new GroupPivot(
-                  type: GroupPivotType.RESOURCE,
-                  id: 'very_good_resource_id',
+          name: 'veryGoodGroup',
+          pivots: [
+            new GroupPivot(
+              type: GroupPivotType.RESOURCE,
+              id: 'very_good_resource_id',
 //                  selection: new Selection(resourceId: 'very_good_resource_id')
-              )
-            ],
+            )
+          ],
 //            uploadSelection: new Selection(resourceId: 'very_good_resource_id')
         );
 
@@ -188,7 +188,8 @@ void main() {
       });
 
       test('should have non-null actionProvider, actions, and store', () {
-        AttachmentTreeNode testBundleNode = _store.rootNode.children.toList()[0].children.toList()[0].children.toList()[0];
+        AttachmentTreeNode testBundleNode =
+            _store.rootNode.children.toList()[0].children.toList()[0].children.toList()[0];
         expect(testBundleNode.actionProvider, isNotNull);
         expect(testBundleNode.actionProvider, new isInstanceOf<ActionProvider>());
         expect(testBundleNode.actions, isNotNull);
@@ -198,7 +199,8 @@ void main() {
       });
 
       test('should have non-null renderRightCap result', () {
-        AttachmentTreeNode testBundleNode = _store.rootNode.children.toList()[0].children.toList()[0].children.toList()[0];
+        AttachmentTreeNode testBundleNode =
+            _store.rootNode.children.toList()[0].children.toList()[0].children.toList()[0];
         expect(testBundleNode.renderRightCap(), isNotNull);
       });
 
