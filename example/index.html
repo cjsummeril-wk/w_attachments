@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- MUST BE THE FIRST META TAG WITHIN <HEAD> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <title>Attachments Panel Example</title>
+
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="../packages/web_skin/dist/css/web-skin.min.css">
+    <link rel="stylesheet" href="../packages/web_skin/dist/css/peripherals/icons-beta.min.css">
+    <link rel="stylesheet" href="../packages/web_skin/dist/css/peripherals/grid-v2.min.css">
+    <link rel="stylesheet" href="../packages/web_skin/dist/css/peripherals/dropdown-submenu.min.css">
+    <link rel="stylesheet" href="../packages/truss/rich_app_shell.css">
+    <link rel="stylesheet" href="../packages/w_attachments/style/w_attachment.css">
+    <link rel="stylesheet" href="example.css">
+
+    <!-- favicon / branding -->
+    <link rel="shortcut icon" type="image/x-icon" href="../packages/web_skin/dist/ico/favicon.ico">
+    <!-- Google TV -->
+    <link rel="icon" type="image/png" href="../packages/web_skin/dist/ico/favicon-196x196.png" sizes="196x196">
+
+    <!-- Modern Browser Bookmark "Favicons" -->
+    <link rel="icon" type="image/png" href="../packages/web_skin/dist/ico/favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="../packages/web_skin/dist/ico/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="../packages/web_skin/dist/ico/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="../packages/web_skin/dist/ico/favicon-32x32.png" sizes="32x32">
+
+    <!-- Standard Browser Bookmark "Favicon" -->
+    <link rel="shortcut icon" type="image/x-icon" href="../packages/web_skin/dist/ico/favicon.ico">
+
+    <!-- App Icons (Android / iOS) -->
+    <!-- For iPad w/ high-resolution Retina display on iOS ≥ 7: -->
+    <link rel="apple-touch-icon" sizes="152x152" href="../packages/web_skin/dist/ico/apple-touch-icon-152.png">
+    <!-- For iPad w/ high-resolution Retina display on iOS ≤ 6: -->
+    <link rel="apple-touch-icon" sizes="144x144" href="../packages/web_skin/dist/ico/apple-touch-icon-144.png">
+    <!-- For iPhone w/ high-resolution Retina display on iOS ≥ 7: -->
+    <link rel="apple-touch-icon" sizes="120x120" href="../packages/web_skin/dist/ico/apple-touch-icon-120.png">
+    <!-- For iPhone w/ high-resolution Retina display on iOS ≤ 6: -->
+    <link rel="apple-touch-icon" sizes="114x114" href="../packages/web_skin/dist/ico/apple-touch-icon-114.png">
+    <!-- For the iPad mini & the first/second-generation iPad on iOS ≥ 7: -->
+    <link rel="apple-touch-icon" sizes="76x76" href="../packages/web_skin/dist/ico/apple-touch-icon-76.png">
+    <!-- For the iPad mini & the first/second-generation iPad on iOS ≤ 6: -->
+    <link rel="apple-touch-icon" sizes="72x72" href="../packages/web_skin/dist/ico/apple-touch-icon-72.png">
+    <!-- For non-Retina iPhone, iPod Touch, & Android 2.1+ devices: -->
+    <link rel="apple-touch-icon" href="../packages/web_skin/dist/ico/apple-touch-icon-57.png">
+
+    <!-- Win8 tiles -->
+    <meta name="msapplication-TileImage" content="../packages/web_skin/dist/ico/mstile-144x144.png">
+    <meta name="msapplication-TileColor" content="#66CC00">
+    <meta name="application-name" content="Rich App Shell Example">
+
+    <!-- IE11 tiles -->
+    <meta name="msapplication-square70x70logo" content="../packages/web_skin/dist/ico/mstile-70x70.png">
+    <meta name="msapplication-square150x150logo" content="../packages/web_skin/dist/ico/mstile-150x150.png">
+    <meta name="msapplication-square310x310logo" content="../packages/web_skin/dist/ico/mstile-310x310.png">
+    <meta name="msapplication-wide310x150logo" content="../packages/web_skin/dist/ico/mstile-310x150.png">
+
+    <style>
+        /* Disable ALL zoom capabilities on IE 11 */
+        body {
+            -ms-content-zooming: none !important;
+        }
+    </style>
+    <script src="packages/web_skin/dist/js/core/modernizr/modernizr-custom.js"></script>
+</head>
+<body>
+
+<!-- TODO: Evaluate using this inlined here. Pro: it renders before scripts load -->
+<div id="shell-container">
+    <div class="wdesk-loading-frame">
+        <div class="wdesk-loading">
+            <div class="wdesk-loading__content">
+                <div class="wdesk-loading__logo">
+                    <h1 class="sr-only">Wdesk</h1>
+                </div>
+                <div class="loading-ellipsis  wdesk-loading__ellipsis">
+                    <i class="loading-ellipsis__message  wdesk-loading__message">Loading</i>
+                    <i class="loading-ellipsis__dot loading-ellipsis__dot--first" aria-hidden="true">.</i>
+                    <i class="loading-ellipsis__dot loading-ellipsis__dot--middle" aria-hidden="true">.</i>
+                    <i class="loading-ellipsis__dot loading-ellipsis__dot--last" aria-hidden="true">.</i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../packages/react/react.js"></script>
+<script src="../packages/react/react_dom.js"></script>
+<script type="application/dart" src="index.dart"></script>
+<script src="../packages/browser/dart.js"></script>
+</body>
+</html>

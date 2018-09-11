@@ -1,0 +1,103 @@
+name: w_attachments_client
+version: 2.3.8
+homepage: https://github.com/Workiva/w_attachments_client
+author: Workiva RAM <denverram@workiva.com>
+description: >
+  w_attachments_client is a generic module that can be used to store and render attachments
+publish_to: https://pub.workiva.org
+
+dependencies:
+  # OSS / Third-party
+  collection: ^1.14.1
+  dnd: ">0.3.4 <0.5.0"
+  http: ^0.11.3
+  intl: ">=0.14.0 <2.0.0"
+  logging: ^0.11.3
+  meta: ^1.0.5
+  mockito: ">=0.11.0 <3.0.0"
+  quiver: ^0.25.0
+  react: ">=3.7.0 <5.0.0"
+  sass_builder: ^1.1.5
+  uuid: ^0.5.3
+  w_common: ^1.7.0
+  w_flux: ^2.6.0
+  w_module: ^1.2.1
+  w_transport: ^3.2.3
+
+  # Private Workiva
+  app_intelligence:
+    hosted:
+      name: app_intelligence
+      url: https://pub.workiva.org
+    version: ^2.19.0
+  frugal:
+      hosted:
+        name: frugal
+        url: https://pub.workiva.org
+      version: ^2.13.0
+  truss:
+    hosted:
+      name: truss
+      url: https://pub.workiva.org
+    version: ^3.33.3
+  user_analytics:
+    hosted:
+      name: user_analytics
+      url: https://pub.workiva.org
+    version: ^3.42.0
+  w_session:
+    hosted:
+      name: w_session
+      url: https://pub.workiva.org
+    version: '>=5.21.0 <7.0.0'
+  w_virtual_components:
+    hosted:
+      name: w_virtual_components
+      url: https://pub.workiva.org
+    version: ^1.17.0
+  wdesk_sdk:
+    hosted:
+      name: wdesk_sdk
+      url: https://pub.workiva.org
+    version: ^2.94.0
+  web_skin_dart:
+    hosted:
+      name: web_skin_dart
+      url: https://pub.workiva.org
+    version: ">=1.19.0 <3.0.0"
+  w_annotations_api:
+      hosted:
+        name: w_annotations_api
+        url: https://pub.workiva.org
+      version: ^0.3.1
+
+dev_dependencies:
+  abide:
+    hosted:
+      name: abide
+      url: https://pub.workiva.org
+    version: ^1.4.1
+  coverage: ^0.8.0
+  dart_dev: ^1.7.8
+  dart_style: ^1.0.7
+  dartdoc: ^0.13.0
+  dependency_validator: ^1.1.1
+  over_react: ^1.25.0
+  over_react_test: ^1.4.0
+  sass: ^1.0.0
+  semver_audit:
+    hosted:
+      name: semver_audit
+      url: https://pub.workiva.org
+    version: ^1.4.2
+  test: ^0.12.24+2
+
+transformers:
+  - sass_builder:
+      outputStyle: compressed
+  - web_skin_dart
+  - test/pub_serve:
+      $include: test/**_test{.*,}.dart
+
+environment:
+  sdk: ">=1.24.0 <2.0.0"

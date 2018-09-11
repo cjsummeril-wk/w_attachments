@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="API docs for the AttachmentsServiceApi class from the w_attachments_service_api library, for the Dart programming language.">
+  <title>AttachmentsServiceApi class - w_attachments_service_api library - Dart API</title>
+  <!-- required because all the links are pseudo-absolute -->
+  <base href="..">
+
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Code+Pro|Roboto:500,400italic,300,400' type='text/css'>
+  <link rel="stylesheet" href="static-assets/prettify.css">
+  <link rel="stylesheet" href="static-assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static-assets/styles.css">
+  <link rel="icon" href="static-assets/favicon.png">
+
+  <!-- Do not remove placeholder -->
+  <!-- Header Placeholder -->
+</head>
+
+<body>
+
+<div id="overlay-under-drawer"></div>
+
+<header class="container-fluid" id="title">
+  <nav class="navbar navbar-fixed-top">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 contents">
+          <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+          <ol class="breadcrumbs gt-separated hidden-xs">
+            <li><a href="index.html">w_attachments</a></li>
+            <li><a href="w_attachments_service_api/w_attachments_service_api-library.html">w_attachments_service_api</a></li>
+            <li class="self-crumb">AttachmentsServiceApi</li>
+          </ol>
+          <div class="self-name">AttachmentsServiceApi</div>
+          <form class="search navbar-right" role="search">
+            <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+          </form>
+        </div> <!-- /col -->
+      </div> <!-- /row -->
+    </div> <!-- /container -->
+  </nav>
+
+  <div class="container masthead">
+    <div class="row">
+      <div class="col-sm-12 contents">
+        <ol class="breadcrumbs gt-separated visible-xs">
+          <li><a href="index.html">w_attachments</a></li>
+          <li><a href="w_attachments_service_api/w_attachments_service_api-library.html">w_attachments_service_api</a></li>
+          <li class="self-crumb">AttachmentsServiceApi</li>
+        </ol>
+        <div class="title-description">
+          <h1 class="title">
+            <span class="kind">class</span> AttachmentsServiceApi
+          </h1>
+        </div>
+        <ul class="subnav">
+          <li><a href="w_attachments_service_api/AttachmentsServiceApi-class.html#instance-properties">Properties</a></li>
+          <li><a href="w_attachments_service_api/AttachmentsServiceApi-class.html#constructors">Constructors</a></li>
+          <li><a href="w_attachments_service_api/AttachmentsServiceApi-class.html#operators">Operators</a></li>
+          <li><a href="w_attachments_service_api/AttachmentsServiceApi-class.html#instance-methods">Methods</a></li>
+        </ul>
+      </div> <!-- /col -->
+    </div> <!-- /row -->
+  </div> <!-- /container -->
+
+</header>
+
+<div class="container body">
+  <div class="row">
+
+  <div class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <h5><a href="index.html">w_attachments</a></h5>
+    <h5><a href="w_attachments_service_api/w_attachments_service_api-library.html">w_attachments_service_api</a></h5>
+
+    <ol>
+    
+    
+    
+    
+      <li class="section-title"><a href="w_attachments_service_api/w_attachments_service_api-library.html#enums">Enums</a></li>
+      <li><a href="w_attachments_service_api/GroupPivotType-class.html">GroupPivotType</a></li>
+      <li><a href="w_attachments_service_api/UploadSpeed-class.html">UploadSpeed</a></li>
+    
+      <li class="section-title"><a href="w_attachments_service_api/w_attachments_service_api-library.html#classes">Classes</a></li>
+      <li><a href="w_attachments_service_api/Annotation-class.html">Annotation</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsService-class.html">AttachmentsService</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi-class.html">AttachmentsServiceApi</a></li>
+      <li><a href="w_attachments_service_api/Bundle-class.html">Bundle</a></li>
+      <li><a href="w_attachments_service_api/ContextGroup-class.html">ContextGroup</a></li>
+      <li><a href="w_attachments_service_api/Filter-class.html">Filter</a></li>
+      <li><a href="w_attachments_service_api/Group-class.html">Group</a></li>
+      <li><a href="w_attachments_service_api/GroupPivot-class.html">GroupPivot</a></li>
+      <li><a href="w_attachments_service_api/MockAttachmentsService-class.html">MockAttachmentsService</a></li>
+      <li><a href="w_attachments_service_api/MockAttachmentsServiceApi-class.html">MockAttachmentsServiceApi</a></li>
+      <li><a href="w_attachments_service_api/PredicateGroup-class.html">PredicateGroup</a></li>
+      <li><a href="w_attachments_service_api/Selection-class.html">Selection</a></li>
+    
+    </ol>
+  </div>
+
+  <div class="col-xs-12 col-sm-9 col-md-8 main-content">
+
+    <section class="desc markdown">
+      <h1>AttachmentsServiceApi</h1>
+<p>is a Headless SDK that allows server interaction for attachments without having to load the full attachments module.</p>
+<h1>Client</h1>
+<p>This class requires a bigsky client. This is used for the authenticated requests to the server.</p>
+<h1>Upload Status</h1>
+<p>When <code>uploadFile</code> is called, all statuses are piped through the <a href="w_attachments_service_api/AttachmentsServiceApi/uploadStatusStream.html">uploadStatusStream</a>, so consumers should be
+subscribing to that stream in order to receive <code>uploadStatus</code> objects.</p>
+<pre class="prettyprint lang-dart"><code>_serviceApi.uploadStatusStream.listen(_addUpdateTestAttachment);
+</code></pre>
+<h1>To dispose of an AttachmentsServiceApi object:</h1>
+<p>Disposable is used here, so to destroy any invocations, use <code>dispose()</code> which terminates the StreamController and
+closes the client, cancelling or closing any outstanding connections.</p>
+    </section>
+    
+    <section>
+      <dl class="dl-horizontal">
+
+
+        <dt>Mixes-in</dt>
+        <dd><ul class="comma-separated clazz-relationships">
+          <li>Disposable</li>
+        </ul></dd>
+
+        <dt>Implemented by</dt>
+        <dd><ul class="comma-separated clazz-relationships">
+          <li><a href="w_attachments_service_api/MockAttachmentsServiceApi-class.html">MockAttachmentsServiceApi</a></li>
+        </ul></dd>
+
+      </dl>
+    </section>
+
+
+
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="AttachmentsServiceApi" class="callable">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/AttachmentsServiceApi.html">AttachmentsServiceApi</a></span><span class="signature">({<span class="parameter" id="-param-bigskyClient"><ol class="annotation-list"><li>required</li></ol> <span class="type-annotation">Client</span> <span class="parameter-name">bigskyClient</span></span>})</span>
+        </dt>
+        <dd>
+          <p>Instantiates a new service API with the supplied bigskyClient.<a href="w_attachments_service_api/AttachmentsServiceApi/AttachmentsServiceApi.html">&hellip;</a>
+</p>
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="didDispose" class="property inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/didDispose.html">didDispose</a></span>
+          <span class="signature">&#8594; Future&lt;Null&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p>A <code>Future</code> that will complete when this object has been disposed.</p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="hashCode" class="property inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/hashCode.html">hashCode</a></span>
+          <span class="signature">&#8594; int</span>
+        </dt>
+        <dd class="inherited">
+          <p>Get a hash code for this object.<a href="w_attachments_service_api/AttachmentsServiceApi/hashCode.html">&hellip;</a>
+</p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="isDisposed" class="property inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/isDisposed.html">isDisposed</a></span>
+          <span class="signature">&#8594; bool</span>
+        </dt>
+        <dd class="inherited">
+          <p>Whether this object has been disposed.</p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="runtimeType" class="property inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/runtimeType.html">runtimeType</a></span>
+          <span class="signature">&#8594; Type</span>
+        </dt>
+        <dd class="inherited">
+          <p>A representation of the runtime type of the object.</p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="uploadStatusStream" class="property">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/uploadStatusStream.html">uploadStatusStream</a></span>
+          <span class="signature">&#8594; Stream&lt;UploadStatus&gt;</span>
+        </dt>
+        <dd>
+          <p>uploadStatusStream can be subscribed to for <code>uploadStatus</code>,
+which contain the bundle being uploaded and the status of that upload.</p>
+          <div class="features">
+    read-only
+  </div>
+</dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor inherited" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="parameter-name">other</span></span>)
+            <span class="returntype parameter">&#8594; bool</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>The equality operator.<a href="w_attachments_service_api/AttachmentsServiceApi/operator_equals.html">&hellip;</a>
+</p>
+          <div class="features">inherited</div>
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="dispose" class="callable inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/dispose.html">dispose</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; Future&lt;Null&gt;</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Dispose of the object, cleaning up to prevent memory leaks.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="downloadAttachment" class="callable">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/downloadAttachment.html">downloadAttachment</a></span><span class="signature">(<wbr><span class="parameter" id="downloadAttachment-param-keyToDownload"><span class="type-annotation">String</span> <span class="parameter-name">keyToDownload</span></span>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Request.GET of the downloadUrl for a particular selection key, then
+attempts a window.open of the URL into a new browser tab.
+calls a window.alert if the url GET fails.<a href="w_attachments_service_api/AttachmentsServiceApi/downloadAttachment.html">&hellip;</a>
+</p>
+        </dd>
+        <dt id="getDownloadUrl" class="callable">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/getDownloadUrl.html">getDownloadUrl</a></span><span class="signature">(<wbr><span class="parameter" id="getDownloadUrl-param-keyToDownload"><span class="type-annotation">String</span> <span class="parameter-name">keyToDownload</span></span>)
+            <span class="returntype parameter">&#8594; Future&lt;String&gt;</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Request.GET of the downloadUrl for a particular selection key.
+returns the url if successful, returns null if the call fails.<a href="w_attachments_service_api/AttachmentsServiceApi/getDownloadUrl.html">&hellip;</a>
+</p>
+        </dd>
+        <dt id="getViewerUrl" class="callable">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/getViewerUrl.html">getViewerUrl</a></span><span class="signature">(<wbr><span class="parameter" id="getViewerUrl-param-keyToView"><span class="type-annotation">String</span> <span class="parameter-name">keyToView</span></span>)
+            <span class="returntype parameter">&#8594; Future&lt;String&gt;</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Request.GET of the viewUrl for a particular selection key.
+returns the url if successful, returns null if the call fails.<a href="w_attachments_service_api/AttachmentsServiceApi/getViewerUrl.html">&hellip;</a>
+</p>
+        </dd>
+        <dt id="manageDisposable" class="callable inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/manageDisposable.html">manageDisposable</a></span><span class="signature">(<wbr><span class="parameter" id="manageDisposable-param-disposable"><span class="type-annotation">Disposable</span> <span class="parameter-name">disposable</span></span>)
+            <span class="returntype parameter">&#8594; void</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Automatically dispose another object when this object is disposed.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="manageStreamController" class="callable inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/manageStreamController.html">manageStreamController</a></span><span class="signature">(<wbr><span class="parameter" id="manageStreamController-param-controller"><span class="type-annotation">StreamController</span> <span class="parameter-name">controller</span></span>)
+            <span class="returntype parameter">&#8594; void</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Automatically cancel a stream controller when this object is disposed.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="manageStreamSubscription" class="callable inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/manageStreamSubscription.html">manageStreamSubscription</a></span><span class="signature">(<wbr><span class="parameter" id="manageStreamSubscription-param-subscription"><span class="type-annotation">StreamSubscription</span> <span class="parameter-name">subscription</span></span>)
+            <span class="returntype parameter">&#8594; void</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Automatically cancel a stream subscription when this object is disposed.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="noSuchMethod" class="callable inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation">Invocation</span> <span class="parameter-name">invocation</span></span>)
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Invoked when a non-existent method or property is accessed.<a href="w_attachments_service_api/AttachmentsServiceApi/noSuchMethod.html">&hellip;</a>
+</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="onDispose" class="callable">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/onDispose.html">onDispose</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Overridden method from w_common.Disposable, closes bigskyClient if it's not already closed.</p>
+        </dd>
+        <dt id="removeAttachment" class="callable">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/removeAttachment.html">removeAttachment</a></span><span class="signature">(<wbr><span class="parameter" id="removeAttachment-param-keyToRemove"><span class="type-annotation">String</span> <span class="parameter-name">keyToRemove</span></span>)
+            <span class="returntype parameter">&#8594; Future&lt;Map&lt;String, bool&gt;&gt;</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Request.DELETE of the bundle with key <code>keyToRemove</code>.
+returns map with {&lt;key of removed bundle&gt;: &lt;bool of delete call success or failure&gt;}<a href="w_attachments_service_api/AttachmentsServiceApi/removeAttachment.html">&hellip;</a>
+</p>
+        </dd>
+        <dt id="selectFiles" class="callable">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/selectFiles.html">selectFiles</a></span><span class="signature">(<wbr>{<span class="parameter" id="selectFiles-param-allowMultiple"><span class="type-annotation">bool</span> <span class="parameter-name">allowMultiple</span>: <span class="default-value">true</span></span>})
+            <span class="returntype parameter">&#8594; Future&lt;Iterable&lt;File&gt;&gt;</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Uses the browser's file selector to create and return a list of <code>File</code>s,
+the list gets filled by the <code>File</code>s as the Future completes.<a href="w_attachments_service_api/AttachmentsServiceApi/selectFiles.html">&hellip;</a>
+</p>
+        </dd>
+        <dt id="toString" class="callable inherited">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/toString.html">toString</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; String</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Returns a string representation of this object.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="uploadFiles" class="callable">
+          <span class="name"><a href="w_attachments_service_api/AttachmentsServiceApi/uploadFiles.html">uploadFiles</a></span><span class="signature">(<wbr><span class="parameter" id="uploadFiles-param-selection"><span class="type-annotation"><a href="w_attachments/Selection-class.html">Selection</a></span> <span class="parameter-name">selection</span></span>, <span class="parameter" id="uploadFiles-param-files"><span class="type-annotation">List&lt;File&gt;</span> <span class="parameter-name">files</span></span>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Request.PUT of a list of files with the same selection data. Once the put is started,
+<code>uploadStatus</code> are sent to the <a href="w_attachments_service_api/AttachmentsServiceApi/uploadStatusStream.html">uploadStatusStream</a> containing the created bundle and
+the status of its upload: <code>Pending, Started, Complete, Failed, Progress</code><a href="w_attachments_service_api/AttachmentsServiceApi/uploadFiles.html">&hellip;</a>
+</p>
+        </dd>
+      </dl>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+    <h5>AttachmentsServiceApi</h5>
+    <ol>
+    
+    
+    
+      <li class="section-title"><a href="w_attachments_service_api/AttachmentsServiceApi-class.html#constructors">Constructors</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/AttachmentsServiceApi.html">AttachmentsServiceApi</a></li>
+    
+      <li class="section-title">
+        <a href="w_attachments_service_api/AttachmentsServiceApi-class.html#instance-properties">Properties</a>
+      </li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/didDispose.html">didDispose</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/hashCode.html">hashCode</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/isDisposed.html">isDisposed</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/runtimeType.html">runtimeType</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/uploadStatusStream.html">uploadStatusStream</a></li>
+    
+      <li class="section-title inherited"><a href="w_attachments_service_api/AttachmentsServiceApi-class.html#operators">Operators</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/operator_equals.html">operator ==</a></li>
+    
+      <li class="section-title"><a href="w_attachments_service_api/AttachmentsServiceApi-class.html#instance-methods">Methods</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/dispose.html">dispose</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/downloadAttachment.html">downloadAttachment</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/getDownloadUrl.html">getDownloadUrl</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/getViewerUrl.html">getViewerUrl</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/manageDisposable.html">manageDisposable</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/manageStreamController.html">manageStreamController</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/manageStreamSubscription.html">manageStreamSubscription</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/noSuchMethod.html">noSuchMethod</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/onDispose.html">onDispose</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/removeAttachment.html">removeAttachment</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/selectFiles.html">selectFiles</a></li>
+      <li class="inherited"><a href="w_attachments_service_api/AttachmentsServiceApi/toString.html">toString</a></li>
+      <li><a href="w_attachments_service_api/AttachmentsServiceApi/uploadFiles.html">uploadFiles</a></li>
+    </ol>
+  </div><!--/.sidebar-offcanvas-->
+
+</div> <!-- row -->
+</div> <!-- container -->
+
+<footer>
+  <div class="container-fluid">
+    <div class="container">
+      <p class="text-center">
+        <span class="no-break">
+          w_attachments 0.0.1
+        </span>
+        &bull;
+        <span class="no-break">
+          <a href="https://www.dartlang.org">
+            <img src="static-assets/favicon.png" alt="Dart" title="Dart" width="16" height="16">
+          </a>
+        </span>
+        &bull;
+        <span class="copyright no-break">
+          <a href="http://creativecommons.org/licenses/by-sa/4.0/">cc license</a>
+        </span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="static-assets/typeahead.bundle.min.js"></script>
+<script src="static-assets/prettify.js"></script>
+<script src="static-assets/script.js"></script>
+<!-- Do not remove placeholder -->
+<!-- Footer Placeholder -->
+
+</body>
+
+</html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="API docs for the AttachmentsModule class from the w_attachments library, for the Dart programming language.">
+  <title>AttachmentsModule class - w_attachments library - Dart API</title>
+  <!-- required because all the links are pseudo-absolute -->
+  <base href="..">
+
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Code+Pro|Roboto:500,400italic,300,400' type='text/css'>
+  <link rel="stylesheet" href="static-assets/prettify.css">
+  <link rel="stylesheet" href="static-assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static-assets/styles.css">
+  <link rel="icon" href="static-assets/favicon.png">
+
+  <!-- Do not remove placeholder -->
+  <!-- Header Placeholder -->
+</head>
+
+<body>
+
+<div id="overlay-under-drawer"></div>
+
+<header class="container-fluid" id="title">
+  <nav class="navbar navbar-fixed-top">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 contents">
+          <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+          <ol class="breadcrumbs gt-separated hidden-xs">
+            <li><a href="index.html">w_attachments</a></li>
+            <li><a href="w_attachments/w_attachments-library.html">w_attachments</a></li>
+            <li class="self-crumb">AttachmentsModule</li>
+          </ol>
+          <div class="self-name">AttachmentsModule</div>
+          <form class="search navbar-right" role="search">
+            <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+          </form>
+        </div> <!-- /col -->
+      </div> <!-- /row -->
+    </div> <!-- /container -->
+  </nav>
+
+  <div class="container masthead">
+    <div class="row">
+      <div class="col-sm-12 contents">
+        <ol class="breadcrumbs gt-separated visible-xs">
+          <li><a href="index.html">w_attachments</a></li>
+          <li><a href="w_attachments/w_attachments-library.html">w_attachments</a></li>
+          <li class="self-crumb">AttachmentsModule</li>
+        </ol>
+        <div class="title-description">
+          <h1 class="title">
+            <span class="kind">class</span> AttachmentsModule
+          </h1>
+        </div>
+        <ul class="subnav">
+          <li><a href="w_attachments/AttachmentsModule-class.html#instance-properties">Properties</a></li>
+          <li><a href="w_attachments/AttachmentsModule-class.html#constructors">Constructors</a></li>
+          <li><a href="w_attachments/AttachmentsModule-class.html#operators">Operators</a></li>
+          <li><a href="w_attachments/AttachmentsModule-class.html#instance-methods">Methods</a></li>
+        </ul>
+      </div> <!-- /col -->
+    </div> <!-- /row -->
+  </div> <!-- /container -->
+
+</header>
+
+<div class="container body">
+  <div class="row">
+
+  <div class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <h5><a href="index.html">w_attachments</a></h5>
+    <h5><a href="w_attachments/w_attachments-library.html">w_attachments</a></h5>
+
+    <ol>
+    
+      <li class="section-title"><a href="w_attachments/w_attachments-library.html#typedefs">Typedefs</a></li>
+      <li><a href="w_attachments/AttachmentsLoaderFactory.html">AttachmentsLoaderFactory</a></li>
+    
+      <li class="section-title"><a href="w_attachments/w_attachments-library.html#properties">Properties</a></li>
+      <li><a href="w_attachments/attachmentsModuleDispatchKey.html">attachmentsModuleDispatchKey</a></li>
+    
+      <li class="section-title"><a href="w_attachments/w_attachments-library.html#functions">Functions</a></li>
+      <li><a href="w_attachments/merge.html">merge</a></li>
+      <li><a href="w_attachments/timestampStringFromMsSinceEpoch.html">timestampStringFromMsSinceEpoch</a></li>
+    
+      <li class="section-title"><a href="w_attachments/w_attachments-library.html#enums">Enums</a></li>
+      <li><a href="w_attachments/GroupPivotType-class.html">GroupPivotType</a></li>
+      <li><a href="w_attachments/UploadSpeed-class.html">UploadSpeed</a></li>
+    
+      <li class="section-title"><a href="w_attachments/w_attachments-library.html#classes">Classes</a></li>
+      <li><a href="w_attachments/AddAttachmentPayload-class.html">AddAttachmentPayload</a></li>
+      <li><a href="w_attachments/Annotation-class.html">Annotation</a></li>
+      <li><a href="w_attachments/AttachmentActions-class.html">AttachmentActions</a></li>
+      <li><a href="w_attachments/AttachmentsApi-class.html">AttachmentsApi</a></li>
+      <li><a href="w_attachments/AttachmentsComponents-class.html">AttachmentsComponents</a></li>
+      <li><a href="w_attachments/AttachmentsEvents-class.html">AttachmentsEvents</a></li>
+      <li><a href="w_attachments/AttachmentsLoader-class.html">AttachmentsLoader</a></li>
+      <li><a href="w_attachments/AttachmentsModule-class.html">AttachmentsModule</a></li>
+      <li><a href="w_attachments/AttachmentsService-class.html">AttachmentsService</a></li>
+      <li><a href="w_attachments/AttachmentsStore-class.html">AttachmentsStore</a></li>
+      <li><a href="w_attachments/Bundle-class.html">Bundle</a></li>
+      <li><a href="w_attachments/ContextGroup-class.html">ContextGroup</a></li>
+      <li><a href="w_attachments/DownloadAttachmentPayload-class.html">DownloadAttachmentPayload</a></li>
+      <li><a href="w_attachments/Filter-class.html">Filter</a></li>
+      <li><a href="w_attachments/Group-class.html">Group</a></li>
+      <li><a href="w_attachments/GroupPivot-class.html">GroupPivot</a></li>
+      <li><a href="w_attachments/LoadAttachmentsPayload-class.html">LoadAttachmentsPayload</a></li>
+      <li><a href="w_attachments/MockAttachmentsService-class.html">MockAttachmentsService</a></li>
+      <li><a href="w_attachments/MockSelectionKey-class.html">MockSelectionKey</a></li>
+      <li><a href="w_attachments/ModuleActions-class.html">ModuleActions</a></li>
+      <li><a href="w_attachments/PredicateGroup-class.html">PredicateGroup</a></li>
+      <li><a href="w_attachments/RemoveAttachmentPayload-class.html">RemoveAttachmentPayload</a></li>
+      <li><a href="w_attachments/SelectAttachmentPayload-class.html">SelectAttachmentPayload</a></li>
+      <li><a href="w_attachments/Selection-class.html">Selection</a></li>
+      <li><a href="w_attachments/SelectionKey-class.html">SelectionKey</a></li>
+      <li><a href="w_attachments/SetFiltersPayload-class.html">SetFiltersPayload</a></li>
+      <li><a href="w_attachments/SetGroupsPayload-class.html">SetGroupsPayload</a></li>
+      <li><a href="w_attachments/UnselectAttachmentPayload-class.html">UnselectAttachmentPayload</a></li>
+      <li><a href="w_attachments/UpdateAttachmentPayload-class.html">UpdateAttachmentPayload</a></li>
+      <li><a href="w_attachments/UploadAttachmentPayload-class.html">UploadAttachmentPayload</a></li>
+      <li><a href="w_attachments/UpsertAttachmentPayload-class.html">UpsertAttachmentPayload</a></li>
+    
+    </ol>
+  </div>
+
+  <div class="col-xs-12 col-sm-9 col-md-8 main-content">
+
+    
+    <section>
+      <dl class="dl-horizontal">
+        <dt>Inheritance</dt>
+        <dd><ul class="gt-separated dark clazz-relationships">
+          <li>Object</li>
+          <li>LifecycleModule</li>
+          <li>Module</li>
+          <li>AttachmentsModule</li>
+        </ul></dd>
+
+
+
+
+      </dl>
+    </section>
+
+
+
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="AttachmentsModule" class="callable">
+          <span class="name"><a href="w_attachments/AttachmentsModule/AttachmentsModule.html">AttachmentsModule</a></span><span class="signature">({<span class="parameter" id="-param-extensionContext"><ol class="annotation-list"><li>required</li></ol> <span class="type-annotation">ExtensionContext</span> <span class="parameter-name">extensionContext</span></span>, <span class="parameter" id="-param-session"><ol class="annotation-list"><li>required</li></ol> <span class="type-annotation">Session</span> <span class="parameter-name">session</span></span>, <span class="parameter" id="-param-documentId"><ol class="annotation-list"><li>required</li></ol> <span class="type-annotation">String</span> <span class="parameter-name">documentId</span></span>, <span class="parameter" id="-param-attachmentLoaderFactory"><span class="type-annotation"><a href="w_attachments/AttachmentsLoaderFactory.html">AttachmentsLoaderFactory</a></span> <span class="parameter-name">attachmentLoaderFactory</span>(<span class="parameter" id="AttachmentsLoaderFactory-param-identifier"><span class="type-annotation">String</span> <span class="parameter-name">identifier</span></span>)</span>, <span class="parameter" id="-param-customStrings"><span class="type-annotation">CustomDisplayStrings</span> <span class="parameter-name">customStrings</span></span>, <span class="parameter" id="-param-attachmentsService"><span class="type-annotation"><a href="w_attachments/AttachmentsService-class.html">AttachmentsService</a></span> <span class="parameter-name">attachmentsService</span></span>, <span class="parameter" id="-param-initialAttachments"><span class="type-annotation">List&lt;<a href="w_attachments/Bundle-class.html">Bundle</a>&gt;</span> <span class="parameter-name">initialAttachments</span></span>, <span class="parameter" id="-param-initialGroups"><span class="type-annotation">List&lt;<a href="w_attachments/ContextGroup-class.html">ContextGroup</a>&gt;</span> <span class="parameter-name">initialGroups</span></span>, <span class="parameter" id="-param-initialFilters"><span class="type-annotation">List&lt;<a href="w_attachments/Filter-class.html">Filter</a>&gt;</span> <span class="parameter-name">initialFilters</span></span>, <span class="parameter" id="-param-apiLoadAttachmentsDebounceMillis"><span class="type-annotation">int</span> <span class="parameter-name">apiLoadAttachmentsDebounceMillis</span>: <span class="default-value">0</span></span>, <span class="parameter" id="-param-disableSelection"><span class="type-annotation">bool</span> <span class="parameter-name">disableSelection</span>: <span class="default-value">false</span></span>, <span class="parameter" id="-param-disableRenames"><span class="type-annotation">bool</span> <span class="parameter-name">disableRenames</span>: <span class="default-value">false</span></span>, <span class="parameter" id="-param-numRenderersFromBottomToTriggerLoading"><span class="type-annotation">int</span> <span class="parameter-name">numRenderersFromBottomToTriggerLoading</span>: <span class="default-value">0</span></span>})</span>
+        </dt>
+        <dd>
+          <p></p>
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="api" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/api.html">api</a></span>
+          <span class="signature">&#8594; <a href="w_attachments/AttachmentsApi-class.html">AttachmentsApi</a></span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read-only
+  </div>
+</dd>
+        <dt id="apiLoadAttachmentsDebounceMillis" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/apiLoadAttachmentsDebounceMillis.html">apiLoadAttachmentsDebounceMillis</a></span>
+          <span class="signature">&#8594; int</span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read / write
+  </div>
+</dd>
+        <dt id="attachmentActions" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/attachmentActions.html">attachmentActions</a></span>
+          <span class="signature">&#8594; <a href="w_attachments/AttachmentActions-class.html">AttachmentActions</a></span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read / write
+  </div>
+</dd>
+        <dt id="childModules" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/childModules.html">childModules</a></span>
+          <span class="signature">&#8594; Iterable&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="components" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/components.html">components</a></span>
+          <span class="signature">&#8594; <a href="w_attachments/AttachmentsComponents-class.html">AttachmentsComponents</a></span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read-only
+  </div>
+</dd>
+        <dt id="didLoad" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/didLoad.html">didLoad</a></span>
+          <span class="signature">&#8594; Stream&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="didLoadChildModule" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/didLoadChildModule.html">didLoadChildModule</a></span>
+          <span class="signature">&#8594; Stream&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="didUnload" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/didUnload.html">didUnload</a></span>
+          <span class="signature">&#8594; Stream&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="didUnloadChildModule" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/didUnloadChildModule.html">didUnloadChildModule</a></span>
+          <span class="signature">&#8594; Stream&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="disableRenames" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/disableRenames.html">disableRenames</a></span>
+          <span class="signature">&#8594; bool</span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read / write
+  </div>
+</dd>
+        <dt id="documentId" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/documentId.html">documentId</a></span>
+          <span class="signature">&#8594; String</span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read / write
+  </div>
+</dd>
+        <dt id="events" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/events.html">events</a></span>
+          <span class="signature">&#8594; <a href="w_attachments/AttachmentsEvents-class.html">AttachmentsEvents</a></span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read-only
+  </div>
+</dd>
+        <dt id="hashCode" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/hashCode.html">hashCode</a></span>
+          <span class="signature">&#8594; int</span>
+        </dt>
+        <dd class="inherited">
+          <p>Get a hash code for this object.<a href="w_attachments/AttachmentsModule/hashCode.html">&hellip;</a>
+</p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="moduleActions" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/moduleActions.html">moduleActions</a></span>
+          <span class="signature">&#8594; <a href="w_attachments/ModuleActions-class.html">ModuleActions</a></span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read / write
+  </div>
+</dd>
+        <dt id="name" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/name.html">name</a></span>
+          <span class="signature">&#8594; String</span>
+        </dt>
+        <dd class="inherited">
+          <p>Name of the module for identification within exceptions and while debugging.</p>
+          <div class="features">
+    read / write, inherited
+  </div>
+</dd>
+        <dt id="numRenderersFromBottomToTriggerLoading" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/numRenderersFromBottomToTriggerLoading.html">numRenderersFromBottomToTriggerLoading</a></span>
+          <span class="signature">&#8594; int</span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read / write
+  </div>
+</dd>
+        <dt id="runtimeType" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/runtimeType.html">runtimeType</a></span>
+          <span class="signature">&#8594; Type</span>
+        </dt>
+        <dd class="inherited">
+          <p>A representation of the runtime type of the object.</p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="store" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/store.html">store</a></span>
+          <span class="signature">&#8594; <a href="w_attachments/AttachmentsStore-class.html">AttachmentsStore</a></span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read-only
+  </div>
+</dd>
+        <dt id="textMeasuringElement" class="property">
+          <span class="name"><a href="w_attachments/AttachmentsModule/textMeasuringElement.html">textMeasuringElement</a></span>
+          <span class="signature">&#8594; Element</span>
+        </dt>
+        <dd>
+          <p></p>
+          <div class="features">
+    read-only
+  </div>
+</dd>
+        <dt id="willLoad" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/willLoad.html">willLoad</a></span>
+          <span class="signature">&#8594; Stream&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="willLoadChildModule" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/willLoadChildModule.html">willLoadChildModule</a></span>
+          <span class="signature">&#8594; Stream&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="willUnload" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/willUnload.html">willUnload</a></span>
+          <span class="signature">&#8594; Stream&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+        <dt id="willUnloadChildModule" class="property inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/willUnloadChildModule.html">willUnloadChildModule</a></span>
+          <span class="signature">&#8594; Stream&lt;LifecycleModule&gt;</span>
+        </dt>
+        <dd class="inherited">
+          <p></p>
+          <div class="features">
+    read-only, inherited
+  </div>
+</dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor inherited" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="parameter-name">other</span></span>)
+            <span class="returntype parameter">&#8594; bool</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>The equality operator.<a href="w_attachments/AttachmentsModule/operator_equals.html">&hellip;</a>
+</p>
+          <div class="features">inherited</div>
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="load" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/load.html">load</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Public method to trigger the loading of a Module.
+Calls the onLoad() method, which can be implemented on a Module.
+Executes the willLoad and didLoad event streams.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="loadChildModule" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/loadChildModule.html">loadChildModule</a></span><span class="signature">(<wbr><span class="parameter" id="loadChildModule-param-newModule"><span class="type-annotation">LifecycleModule</span> <span class="parameter-name">newModule</span></span>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Public method to async load a child module and register it
+for lifecycle management.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="noSuchMethod" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation">Invocation</span> <span class="parameter-name">invocation</span></span>)
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Invoked when a non-existent method or property is accessed.<a href="w_attachments/AttachmentsModule/noSuchMethod.html">&hellip;</a>
+</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="onDidLoadChildModule" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/onDidLoadChildModule.html">onDidLoadChildModule</a></span><span class="signature">(<wbr><span class="parameter" id="onDidLoadChildModule-param-module"><span class="type-annotation">LifecycleModule</span> <span class="parameter-name">module</span></span>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Custom logic to be executed when a child module has been loaded.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="onDidUnloadChildModule" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/onDidUnloadChildModule.html">onDidUnloadChildModule</a></span><span class="signature">(<wbr><span class="parameter" id="onDidUnloadChildModule-param-module"><span class="type-annotation">LifecycleModule</span> <span class="parameter-name">module</span></span>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Custom logic to be executed when a child module has been unloaded.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="onLoad" class="callable">
+          <span class="name"><a href="w_attachments/AttachmentsModule/onLoad.html">onLoad</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Custom logic to be executed during load.
+Initial data queries and interactions with the server can be triggered
+here.  Returns a future with no payload that completes when the module has
+finished loading.</p>
+        </dd>
+        <dt id="onShouldUnload" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/onShouldUnload.html">onShouldUnload</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; ShouldUnloadResult</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Custom logic to be executed during shouldUnload (consequently also in unload).
+Returns a ShouldUnloadResult.
+<code>ShouldUnloadResult.shouldUnload == true</code> indicates that the module is safe to unload.
+<code>ShouldUnloadResult.shouldUnload == false</code> indicates that the module should not be unloaded.
+In this case, ShouldUnloadResult.messages contains a list of string messages indicating
+why unload was rejected.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="onUnload" class="callable">
+          <span class="name"><a href="w_attachments/AttachmentsModule/onUnload.html">onUnload</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd>
+          <p>Custom logic to be executed during unload.
+Called on unload if shouldUnload completes with true. This can be used for
+cleanup. Returns a future with no payload that completes when the module
+has finished unloading.</p>
+        </dd>
+        <dt id="onWillLoadChildModule" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/onWillLoadChildModule.html">onWillLoadChildModule</a></span><span class="signature">(<wbr><span class="parameter" id="onWillLoadChildModule-param-module"><span class="type-annotation">LifecycleModule</span> <span class="parameter-name">module</span></span>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Custom logic to be executed when a child module is to be loaded.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="onWillUnloadChildModule" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/onWillUnloadChildModule.html">onWillUnloadChildModule</a></span><span class="signature">(<wbr><span class="parameter" id="onWillUnloadChildModule-param-module"><span class="type-annotation">LifecycleModule</span> <span class="parameter-name">module</span></span>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Custom logic to be executed when a child module is to be unloaded.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="shouldUnload" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/shouldUnload.html">shouldUnload</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; ShouldUnloadResult</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Public method to query the unloadable state of the Module.
+Calls the onShouldUnload() method, which can be implemented on a Module.
+onShouldUnload is also called on all registered child modules.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="toString" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/toString.html">toString</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; String</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Returns a string representation of this object.</p>
+          <div class="features">inherited</div>
+        </dd>
+        <dt id="unload" class="callable inherited">
+          <span class="name"><a href="w_attachments/AttachmentsModule/unload.html">unload</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; Future</span>
+          </span>
+        </dt>
+        <dd class="inherited">
+          <p>Public method to trigger the Module unload cycle.
+Calls shouldUnload(), and, if that completes successfully,
+continues to call onUnload() on the module and all registered child modules.
+If unloading is rejected, this method will complete with an error.</p>
+          <div class="features">inherited</div>
+        </dd>
+      </dl>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+    <h5>AttachmentsModule</h5>
+    <ol>
+    
+    
+    
+      <li class="section-title"><a href="w_attachments/AttachmentsModule-class.html#constructors">Constructors</a></li>
+      <li><a href="w_attachments/AttachmentsModule/AttachmentsModule.html">AttachmentsModule</a></li>
+    
+      <li class="section-title">
+        <a href="w_attachments/AttachmentsModule-class.html#instance-properties">Properties</a>
+      </li>
+      <li><a href="w_attachments/AttachmentsModule/api.html">api</a></li>
+      <li><a href="w_attachments/AttachmentsModule/apiLoadAttachmentsDebounceMillis.html">apiLoadAttachmentsDebounceMillis</a></li>
+      <li><a href="w_attachments/AttachmentsModule/attachmentActions.html">attachmentActions</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/childModules.html">childModules</a></li>
+      <li><a href="w_attachments/AttachmentsModule/components.html">components</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/didLoad.html">didLoad</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/didLoadChildModule.html">didLoadChildModule</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/didUnload.html">didUnload</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/didUnloadChildModule.html">didUnloadChildModule</a></li>
+      <li><a href="w_attachments/AttachmentsModule/disableRenames.html">disableRenames</a></li>
+      <li><a href="w_attachments/AttachmentsModule/documentId.html">documentId</a></li>
+      <li><a href="w_attachments/AttachmentsModule/events.html">events</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/hashCode.html">hashCode</a></li>
+      <li><a href="w_attachments/AttachmentsModule/moduleActions.html">moduleActions</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/name.html">name</a></li>
+      <li><a href="w_attachments/AttachmentsModule/numRenderersFromBottomToTriggerLoading.html">numRenderersFromBottomToTriggerLoading</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/runtimeType.html">runtimeType</a></li>
+      <li><a href="w_attachments/AttachmentsModule/store.html">store</a></li>
+      <li><a href="w_attachments/AttachmentsModule/textMeasuringElement.html">textMeasuringElement</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/willLoad.html">willLoad</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/willLoadChildModule.html">willLoadChildModule</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/willUnload.html">willUnload</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/willUnloadChildModule.html">willUnloadChildModule</a></li>
+    
+      <li class="section-title inherited"><a href="w_attachments/AttachmentsModule-class.html#operators">Operators</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/operator_equals.html">operator ==</a></li>
+    
+      <li class="section-title"><a href="w_attachments/AttachmentsModule-class.html#instance-methods">Methods</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/load.html">load</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/loadChildModule.html">loadChildModule</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/noSuchMethod.html">noSuchMethod</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/onDidLoadChildModule.html">onDidLoadChildModule</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/onDidUnloadChildModule.html">onDidUnloadChildModule</a></li>
+      <li><a href="w_attachments/AttachmentsModule/onLoad.html">onLoad</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/onShouldUnload.html">onShouldUnload</a></li>
+      <li><a href="w_attachments/AttachmentsModule/onUnload.html">onUnload</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/onWillLoadChildModule.html">onWillLoadChildModule</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/onWillUnloadChildModule.html">onWillUnloadChildModule</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/shouldUnload.html">shouldUnload</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/toString.html">toString</a></li>
+      <li class="inherited"><a href="w_attachments/AttachmentsModule/unload.html">unload</a></li>
+    </ol>
+  </div><!--/.sidebar-offcanvas-->
+
+</div> <!-- row -->
+</div> <!-- container -->
+
+<footer>
+  <div class="container-fluid">
+    <div class="container">
+      <p class="text-center">
+        <span class="no-break">
+          w_attachments 0.0.1
+        </span>
+        &bull;
+        <span class="no-break">
+          <a href="https://www.dartlang.org">
+            <img src="static-assets/favicon.png" alt="Dart" title="Dart" width="16" height="16">
+          </a>
+        </span>
+        &bull;
+        <span class="copyright no-break">
+          <a href="http://creativecommons.org/licenses/by-sa/4.0/">cc license</a>
+        </span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="static-assets/typeahead.bundle.min.js"></script>
+<script src="static-assets/prettify.js"></script>
+<script src="static-assets/script.js"></script>
+<!-- Do not remove placeholder -->
+<!-- Footer Placeholder -->
+
+</body>
+
+</html>

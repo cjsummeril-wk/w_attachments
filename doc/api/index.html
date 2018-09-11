@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="made with love by dartdoc 0.9.2">
+  <meta name="description" content="w_attachments API docs, for the Dart programming language.">
+  <title>w_attachments - Dart API docs</title>
+
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Code+Pro|Roboto:500,400italic,300,400' type='text/css'>
+  <link rel="stylesheet" href="static-assets/prettify.css">
+  <link rel="stylesheet" href="static-assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static-assets/styles.css">
+  <link rel="icon" href="static-assets/favicon.png">
+
+  <!-- Do not remove placeholder -->
+  <!-- Header Placeholder -->
+</head>
+
+<body>
+
+<div id="overlay-under-drawer"></div>
+
+<header class="container-fluid" id="title">
+  <nav class="navbar navbar-fixed-top">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 contents">
+          <ol class="breadcrumbs gt-separated hidden-xs">
+            <li class="self-crumb">w_attachments</li>
+          </ol>
+          <div class="self-name">w_attachments</div>
+          <form class="search navbar-right" role="search">
+            <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+          </form>
+        </div> <!-- /col -->
+      </div> <!-- /row -->
+    </div> <!-- /container -->
+  </nav>
+
+  <div class="container masthead">
+    <div class="row">
+      <div class="col-sm-12 contents">
+        <ol class="breadcrumbs gt-separated visible-xs">
+        </ol>
+        <div class="title-description">
+          <h1 class="title">
+            <span class="kind">package</span> w_attachments
+          </h1>
+        </div>
+        <ul class="subnav">
+          <li><a href="index.html#libraries">Libraries</a></li>
+        </ul>
+      </div> <!-- /col -->
+    </div> <!-- /row -->
+  </div> <!-- /container -->
+
+</header>
+
+<div class="container body">
+  <div class="row">
+
+  <div class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <h5>w_attachments</h5>
+
+    <ol>
+      <li class="section-title"><a href="index.html#libraries">Libraries</a></li>
+      <li><a href="w_attachments/w_attachments-library.html">w_attachments</a></li>
+      <li><a href="w_attachments_service_api/w_attachments_service_api-library.html">w_attachments_service_api</a></li>
+    </ol>
+  </div>
+
+  <div class="col-xs-12 col-sm-9 col-md-8 main-content">
+
+      <section class="desc markdown">
+        <h1>w_attachments</h1>
+<p>A module that can render attachments inside a Virtual List.</p>
+<h3>Consuming</h3><ul><li>Add w_attachments to your pubspec.</li><li>Include the following stylesheets in your html:</li></ul>
+<pre class="bash prettyprint"><code>    &lt;link rel="stylesheet" href="packages/web_skin/dist/css/web-skin.min.css"&gt;
+    &lt;link rel="stylesheet" href="packages/web_skin/dist/css/peripherals/grid-v2.min.css"&gt;
+    &lt;link rel="stylesheet" href="packages/w_attachments/style/w_attachment.css"&gt;
+</code></pre><ul><li>Use w_module to contruct and load a <code>AttachmentsModule</code>.</li></ul>
+<pre class="markdown prettyprint"><code>class BaseModule extends Module {
+  AttachmentsModule module;
+  BaseModule() {
+    module = new AttachmentsModule();
+  }
+
+  @override
+  onLoad() async {
+    loadChildModule(module)
+  }
+}
+</code></pre><ul><li>
+<p>Render the module's content using react. The content must be rendered inside a
+<a href="https://api.atl.workiva.net/WebSkinDart/build/web/components/#flexbox">web_skin_dart Flexbox Grid</a> <code>VBlock</code>.</p></li></ul>
+<pre class="prettyprint lang-dart"><code>    import 'package:react/react_dom.dart' as react_dom;
+    ...
+    Element container;
+    ...
+
+    var attachmentsContent = (VBlock()..isNested = false)(module.components.content());
+    react_dom.render(attachmentsContent, container);
+</code></pre>
+<h3>Building</h3>
+<h4>Install the Dart SDK</h4>
+<pre class="bash prettyprint"><code>$ brew tap dart-lang/dart
+$ brew install dart --with-content-shell --with-dartium
+$ brew linkapps dart
+</code></pre>
+<h4>Install SASS (for compiling CSS)</h4>
+<pre class="bash prettyprint"><code>sudo gem install sass
+</code></pre>
+<h4>Installing / Updating Dart Dependencies</h4>
+<p>Run the following from the root w_attachments directory.</p>
+<pre class="bash prettyprint"><code>pub get
+</code></pre>
+<h4>Running</h4><ul><li>Run the example application inside the <code>example</code> directory to see a basic implementation of w_attachments</li></ul>
+<h4>Running tests</h4><ul><li>run <code>pub run dart_dev test</code> in the root or app directory to run all the tests at those levels</li><li>
+<p>run <code>pub run dart_dev test -n REGEX</code> to tests matching a specific REGEX. It's recommended to wrap all tests in a file with a
+corresponding top level group so that all tests in file can be run easily.
+- Ex. All tests in <code>attachments_module_test.dart</code> should be wrapped in a <code>AttachmentsModule</code> group so they can be run</p>
+<pre class="prettyprint lang-dart"><code>with `pub run dart_dev test -n AttachmentsModule` (or better yet: `pub run dart_dev test -n '^AttachmentsModule'`.
+Make sure to wrap your regex in quotes if you are using any special characters - if your terminal runs caret substitution
+or any other special zsh commands you may have unexpected results.)
+</code></pre></li></ul>
+<h4>Generating Tests</h4><ul><li>run <code>pub run dart_dev gen-test-runner</code> in the root directory.</li></ul>
+<h4>Generating CSS</h4><ul><li>run <code>./tool/build_css.sh</code> in the root directory after making changes to sass files.</li></ul>
+<h3>Contributing</h3><ul><li>Follow <a href="https://www.dartlang.org/effective-dart/">Effective Dart</a>.</li><li>Format code using <code>dartformat</code> with 100 characters: <code>pub run dart_dev format</code></li><li>Verify that the example app still works correctly</li></ul>
+<h3>Testing Signoff Template</h3>
+<pre class="markdown prettyprint"><code>Performing QA plus one...
+- [ ] Pulled master before testing  
+- [ ] Skynet passed on latest commit  
+- **Acceptance Criteria**
+    - [ ] *Description*
+- **Regression testing**
+    - [ ] *Description*
+- **Test Coverage**
+  - [ ] Unit Tests added
+</code></pre>
+<h3>Known Issues</h3><ul><li><em>2016-10-04 (ghmulli):</em> if the attachment name is long, the attachments container grows off the side of the panel instead of clipping the name text properly</li><li><em>2016-10-05 (ghmulli):</em> subcomponents are constantly re-rendering when they really don't need to. add checkRender override...</li><li><em>2016-10-10 (ghmulli):</em> loading the example page takes an average of 1.48e+12ms when new updates are transpiled. this is most likely because of the bloated import file. figure out why it jumped so high when it was so low during the jam...</li><li><em>2016-10-10 (ghmulli):</em> modify GroupPivot so that it more closely aligns with the current Selection back-end model</li><li><em>2016-10-13 (ghmulli):</em> on the Example page, if you select an attachment and then change to another region, you can't add a new attachment because the hidden attachment row is now selected...</li><li><em>2016-10-24 (ghmulli):</em> use a Makefile to generate the SASS files (see w_filing)</li><li><em>2016-10-25 (ghmulli):</em> on the Example page, clicking 'Display as Headerless?' for a region, deselecting it, and then reselecting it has the show headerless state set to true inside the context group, but does not display its group as headerless...</li><li><em>2016-10-26 (ghmulli):</em> need unit tests for: mixins</li></ul>
+<p>Please contact ATEAM via Hipchat if you have any questions</p>
+      </section>
+      
+    <section class="summary" id="libraries">
+      <h2>Libraries</h2>
+      <dl>
+          <dt id="w_attachments">
+            <span class="name"><a href="w_attachments/w_attachments-library.html">w_attachments</a></span>
+          </dt>
+          <dd>
+          </dd>
+          <dt id="w_attachments_service_api">
+            <span class="name"><a href="w_attachments_service_api/w_attachments_service_api-library.html">w_attachments_service_api</a></span>
+          </dt>
+          <dd>
+          </dd>
+      </dl>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+
+  </div><!--/.sidebar-offcanvas-right-->
+
+</div> <!-- row -->
+</div> <!-- container -->
+
+<footer>
+  <div class="container-fluid">
+    <div class="container">
+      <p class="text-center">
+        <span class="no-break">
+          w_attachments 0.0.1
+        </span>
+        &bull;
+        <span class="no-break">
+          <a href="https://www.dartlang.org">
+            <img src="static-assets/favicon.png" alt="Dart" title="Dart" width="16" height="16">
+          </a>
+        </span>
+        &bull;
+        <span class="copyright no-break">
+          <a href="http://creativecommons.org/licenses/by-sa/4.0/">cc license</a>
+        </span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="static-assets/typeahead.bundle.min.js"></script>
+<script src="static-assets/prettify.js"></script>
+<script src="static-assets/script.js"></script>
+<!-- Do not remove placeholder -->
+<!-- Footer Placeholder -->
+
+</body>
+
+</html>

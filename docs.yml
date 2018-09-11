@@ -1,0 +1,5 @@
+title: w_attachments_client
+base: github:Workiva/w_attachments_client/
+topics:
+    - title: Getting Started
+      src: README.md

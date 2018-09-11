@@ -1,0 +1,14 @@
+/.pub/
+/coverage/
+packages
+/.packages
+/pubspec.lock
+.dart_tool
+*.scssc
+*.css
+*.swp
+*.iml
+.idea
+.atom
+ssh-keys
+
