@@ -11,12 +11,7 @@ abstract class StatefulActionItem extends ActionItem {
   bool get isStateful => _isStateful;
 
   StatefulActionItem(
-      {@required ReactElement icon,
-      String testId,
-      String tooltip,
-      String label,
-      this.states,
-      bool isDisabled: false})
+      {@required ReactElement icon, String testId, String tooltip, String label, this.states, bool isDisabled: false})
       : super(icon: icon, testId: testId, tooltip: tooltip, label: label, isDisabled: isDisabled) {
     if (states?.isNotEmpty == true) {
       _isStateful = true;

@@ -5,8 +5,7 @@ class AttachmentsComponents extends ModuleComponents {
   final AttachmentsStore store;
   final ActionProvider actionProvider;
 
-  AttachmentsComponents(
-      {@required this.attachmentsActions, @required this.store, @required this.actionProvider});
+  AttachmentsComponents({@required this.attachmentsActions, @required this.store, @required this.actionProvider});
 
   @override
   content() => (AttachmentsContainer()

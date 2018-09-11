@@ -17,10 +17,9 @@ class Filter {
 
   @override
   int get hashCode => name.hashCode;
-  
+
   @override
-  bool operator ==(other) =>
-    other is Filter && other.name == name;
+  bool operator ==(other) => other is Filter && other.name == name;
 
   @override
   String toString() => '<name=$name, predicates=$predicates>';

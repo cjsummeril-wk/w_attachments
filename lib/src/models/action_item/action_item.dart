@@ -8,12 +8,7 @@ abstract class ActionItem {
   bool isDisabled;
   bool isDivider = false;
 
-  ActionItem(
-      {@required this.icon,
-      this.testId,
-      this.tooltip,
-      this.label,
-      this.isDisabled: false});
+  ActionItem({@required this.icon, this.testId, this.tooltip, this.label, this.isDisabled: false});
 
   Function get callbackFunction;
 

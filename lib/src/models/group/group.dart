@@ -7,10 +7,7 @@ abstract class Group {
   List<Group> childGroups = [];
   IconGlyph customIconGlyph;
 
-  Group(
-      {@required this.name,
-      this.childGroups,
-      this.customIconGlyph: IconGlyph.FOLDER_ATTACHMENTS_G2});
+  Group({@required this.name, this.childGroups, this.customIconGlyph: IconGlyph.FOLDER_ATTACHMENTS_G2});
 
   Set<Attachment> regroup(List<Attachment> newAttachments);
 
