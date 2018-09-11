@@ -8,9 +8,10 @@ import 'package:w_module/w_module.dart';
 import 'package:w_session/w_session.dart';
 
 import 'package:w_attachments_client/src/standard_action_provider.dart';
-import 'package:w_attachments_client/mocks.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_attachments_client/w_attachments_service_api.dart';
+
+import './mocks.dart';
 
 void mockServiceMethod(Function serviceMethod, dynamic returnValue) {
   when(serviceMethod()).thenAnswer((_) => returnValue);

@@ -6,46 +6,47 @@ import 'dart:html' hide Client, Selection;
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
 
-import 'package:w_attachments_client/mocks.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_attachments_client/w_attachments_service_api.dart';
 
+import './mocks.dart';
 import './test_utils.dart' as test_utils;
 
 void main() {
   group('AttachmentsService', () {
-    Map newSelectionJson = {
-      "annotation_type": null,
-      "document_id": "862c202e-9f87-40c7-9ab",
-      "draft_replaced_key": null,
-      "edge_name": null,
-      "is_attached": null,
-      "is_draft": null,
-      "last_modified": null,
-      "offset_x": null,
-      "offset_y": null,
-      "original_selection_key": null,
-      "region_end_offset": null,
-      "region_id": "862c202e-9f87-40c7-9ab",
-      "region_id_end": null,
-      "region_start_offset": null,
-      "replaced_by_key": null,
-      "resource_id": "862c202e-9f87-40c7-9ab",
-      "revision_end": null,
-      "revision_start": null,
-      "section_id": "862c202e-9f87-40c7-9ab",
-      "type": null
-    };
+//    Map newSelectionJson = {
+//      "annotation_type": null,
+//      "document_id": "862c202e-9f87-40c7-9ab",
+//      "draft_replaced_key": null,
+//      "edge_name": null,
+//      "is_attached": null,
+//      "is_draft": null,
+//      "last_modified": null,
+//      "offset_x": null,
+//      "offset_y": null,
+//      "original_selection_key": null,
+//      "region_end_offset": null,
+//      "region_id": "862c202e-9f87-40c7-9ab",
+//      "region_id_end": null,
+//      "region_start_offset": null,
+//      "replaced_by_key": null,
+//      "resource_id": "862c202e-9f87-40c7-9ab",
+//      "revision_end": null,
+//      "revision_start": null,
+//      "section_id": "862c202e-9f87-40c7-9ab",
+//      "type": null
+//    };
 
     AttachmentsServiceApi _serviceApi;
     AttachmentsService _attachmentsService;
     List<Attachment> testAttachments = [];
+    String selectionWurl = '';
 
     setUp(() async {
       testAttachments.clear();
       _attachmentsService = new AttachmentsTestService();
       _serviceApi = new AttachmentsServiceApiMock.fromService(service: _attachmentsService);
-      selection = new Selection.fromJson(newSelectionJson);
+      selectionWurl = new Selection.fromJson(newSelectionJson);
 
       Completer completer = createUploadCompleter(_serviceApi.uploadStatusStream, testAttachments, 1);
 
@@ -53,12 +54,12 @@ void main() {
       when(mockFile.type).thenReturn('application/pdf');
       when(mockFile.name).thenReturn('test_attachment.pdf');
       when(mockFile.size).thenReturn(10000);
-      await _serviceApi.uploadFiles(selection, [mockFile]);
+      await _serviceApi.getAttachment(selection, [mockFile]);
       await completer.future;
     });
 
     tearDown(() async {
-      for (Bundle attachment in testAttachments) {
+      for (Attachment attachment in testAttachments) {
         _serviceApi.cancelUpload(uploadToCancel: attachment);
       }
       testAttachments.clear();
@@ -66,38 +67,29 @@ void main() {
       await _attachmentsService.dispose();
     });
 
-    test('createBundles should return a list of bundles of length matching numFiles specified', () async {
-      List<Bundle> result = await _serviceApi.createBundles(testAttachments.first, 3);
-
-      expect(result.length, 3);
-      expect(result.first.selection.resourceId, '862c202e-9f87-40c7-9ab');
-      expect(result.last.selection.resourceId, '862c202e-9f87-40c7-9ab');
-    });
-
-    test('uploadFilesReturnedBundleHasData', () async {
+    test('uploadFilesReturnedAttachmentHasData', () async {
       // Wait for the uploadStatusStream event to propagate.
       await new Future(() {});
 
       expect(testAttachments.length, 1);
-      Bundle result = testAttachments[0];
+      Attachment result = testAttachments[0];
       expect(result.id, allOf([isNot(isEmpty), isNotNull]));
-      expect(result.annotation.filemime, 'application/pdf');
-      expect(result.annotation.filename, 'test_attachment.pdf');
-      expect(result.annotation.filesize, 10000);
-      expect(result.annotation.attachedDate, allOf([isNot(isEmpty), isNotNull]));
-      expect(result.annotation.attachmentId, allOf([isNot(isEmpty), isNotNull]));
-      expect(result.annotation.attachorId, 12345);
-      expect(result.annotation.creatorId, 12345);
-      expect(result.annotation.firstCreated, allOf([isNot(isEmpty), isNotNull]));
-      expect(result.annotation.key, allOf([isNot(isEmpty), isNotNull]));
-      expect(result.annotation.lastModified, allOf([isNot(isEmpty), isNotNull]));
-      expect(result.annotation.lastModifiedBy, 12345);
-      expect(result.selection.annotationKey, allOf([isNot(isEmpty), isNotNull]));
-      expect(result.selection.key, allOf([isNot(isEmpty), isNotNull]));
-      expect(result.selection.lastModified, allOf([isNot(isEmpty), isNotNull]));
+      expect(result.filemime, 'application/pdf');
+      expect(result.filename, 'test_attachment.pdf');
+      expect(result.filesize, 10000);
+      expect(result.attachedDate, allOf([isNot(isEmpty), isNotNull]));
+      expect(result.attachmentId, allOf([isNot(isEmpty), isNotNull]));
+      expect(result.attachorId, 12345);
+      expect(result.creatorId, 12345);
+      expect(result.firstCreated, allOf([isNot(isEmpty), isNotNull]));
+      expect(result.id, allOf([isNot(isEmpty), isNotNull]));
+      expect(result.lastModified, allOf([isNot(isEmpty), isNotNull]));
+      expect(result.lastModifiedBy, 12345);
+      expect(result.annotationKey, allOf([isNot(isEmpty), isNotNull]));
+      expect(result.lastModified, allOf([isNot(isEmpty), isNotNull]));
     });
 
-    test('uploadMultipleFilesReturnsMultipleBundles', () async {
+    test('uploadMultipleFilesReturnsMultipleAttachments', () async {
       File mockFile1 = new FileMock();
       when(mockFile1.type).thenReturn('application/pdf');
       when(mockFile1.name).thenReturn('test_pdf.pdf');
@@ -121,19 +113,19 @@ void main() {
       await completer.future;
 
       expect(testAttachments.length, 4);
-      Bundle result1 = testAttachments.firstWhere((bundle) => bundle.annotation.filename == 'test_pdf.pdf');
+      Attachment result1 = testAttachments.firstWhere((testAttachment) => testAttachment.annotation.filename == 'test_pdf.pdf');
       expect(result1.annotation.filemime, 'application/pdf');
       expect(result1.annotation.filesize, 10000);
 
-      Bundle result2 = testAttachments.firstWhere((bundle) => bundle.annotation.filename == 'test_spreadsheet.xlsx');
+      Attachment result2 = testAttachments.firstWhere((testAttachment) => testAttachment.annotation.filename == 'test_spreadsheet.xlsx');
       expect(result2.annotation.filemime, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       expect(result2.annotation.filesize, 20000);
 
-      Bundle result3 = testAttachments.firstWhere((bundle) => bundle.annotation.filename == 'test_document.docx');
+      Attachment result3 = testAttachments.firstWhere((testAttachment) => testAttachment.annotation.filename == 'test_document.docx');
       expect(result3.annotation.filemime, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       expect(result3.annotation.filesize, 30000);
 
-      // validate all bundles are copied from source, resourceId is just a convenience to that end
+      // validate all testAttachments are copied from source, resourceId is just a convenience to that end
       expect(result1.selection.resourceId,
           allOf([equals(result2.selection.resourceId), equals(result3.selection.resourceId)]));
     });
@@ -149,7 +141,7 @@ void main() {
       await _serviceApi.replaceAttachment(toReplace: testAttachments.first, replacementFile: mockFile1);
       await completer.future;
 
-      Bundle result = testAttachments.firstWhere((bundle) => bundle.annotation.filename == 'test_spreadsheet.xlsx');
+      Attachment result = testAttachments.firstWhere((testAttachment) => testAttachment.annotation.filename == 'test_spreadsheet.xlsx');
       expect(result.annotation.filemime, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       expect(result.annotation.filesize, 20000);
     });
@@ -175,13 +167,13 @@ void main() {
       Completer completer = createUploadCompleter(_serviceApi.uploadStatusStream, testAttachments, 3);
 
       await _serviceApi.uploadFiles(selection, [mockFile]);
-      Bundle toCancel = testAttachments.firstWhere((bundle) => bundle.uploadStatus != Status.Complete);
+      Attachment toCancel = testAttachments.firstWhere((testAttachment) => testAttachment.uploadStatus != Status.Complete);
       bool cancelResult = await _serviceApi.cancelUpload(uploadToCancel: toCancel);
       await completer.future;
 
       await new Future.delayed(Duration.ZERO);
       expect(cancelResult, isTrue);
-      expect(testAttachments.any((bundle) => bundle.uploadStatus == Status.Cancelled), isTrue);
+      expect(testAttachments.any((testAttachment) => testAttachment.uploadStatus == Status.Cancelled), isTrue);
     });
 
     test('cancelUploads should call a list of upload task in the thread pool to be cancelled', () async {
@@ -208,14 +200,14 @@ void main() {
       await completer.future;
       completer = createUploadCompleter(_serviceApi.uploadStatusStream, testAttachments, 2);
 
-      List<Bundle> toCancel = testAttachments.where((bundle) => bundle.uploadStatus != Status.Complete).toList();
+      List<Attachment> toCancel = testAttachments.where((testAttachment) => testAttachment.uploadStatus != Status.Complete).toList();
       bool cancelResult = await _serviceApi.cancelUploads(uploadsToCancel: toCancel);
       await completer.future;
 
       await new Future.delayed(Duration.ZERO);
       expect(cancelResult, isTrue);
-      expect(toCancel.every((bundle) => bundle.uploadStatus == Status.Cancelled), isTrue);
-      expect(testAttachments.any((bundle) => bundle.uploadStatus == Status.Cancelled), isTrue);
+      expect(toCancel.every((testAttachment) => testAttachment.uploadStatus == Status.Cancelled), isTrue);
+      expect(testAttachments.any((testAttachment) => testAttachment.uploadStatus == Status.Cancelled), isTrue);
     });
 
     test('downloadFile', test_utils.swallowPrints(() async {
@@ -246,48 +238,48 @@ void main() {
 
     test('updateFilename', test_utils.swallowPrints(() async {
       expect(testAttachments.length, 1);
-      Bundle bundle = testAttachments[0];
-      String oldFilename = bundle.annotation.filename;
+      Attachment testAttachment = testAttachments[0];
+      String oldFilename = testAttachment.annotation.filename;
       String newFilename = 'ThisIsANewFilename.pdf';
 
-      expect(bundle.annotation.filename == newFilename, isFalse);
+      expect(testAttachment.annotation.filename == newFilename, isFalse);
       expect(oldFilename == newFilename, isFalse);
 
-      bundle.annotation.filename = newFilename;
-      await _serviceApi.updateFilename(bundle: bundle);
+      testAttachment.annotation.filename = newFilename;
+      await _serviceApi.updateFilename(testAttachment: testAttachment);
 
-      expect(bundle.annotation.filename == newFilename, isTrue);
+      expect(testAttachment.annotation.filename == newFilename, isTrue);
     }));
 
     test('updateLabel', test_utils.swallowPrints(() async {
       expect(testAttachments.length, 1);
-      Bundle bundle = testAttachments[0];
-      String oldLabel = bundle.annotation.label;
+      Attachment testAttachment = testAttachments[0];
+      String oldLabel = testAttachment.annotation.label;
       String newLabel = 'Do you like my label?';
 
-      expect(bundle.annotation.label == newLabel, isFalse);
+      expect(testAttachment.annotation.label == newLabel, isFalse);
       expect(oldLabel == newLabel, isFalse);
 
-      bundle.annotation.label = newLabel;
-      await _serviceApi.updateLabel(bundle: bundle);
+      testAttachment.annotation.label = newLabel;
+      await _serviceApi.updateLabel(testAttachment: testAttachment);
 
-      expect(bundle.annotation.label == newLabel, isTrue);
+      expect(testAttachment.annotation.label == newLabel, isTrue);
     }));
   });
 }
 
-Completer createUploadCompleter(Stream stream, List<Bundle> bundleList, int count) {
+Completer createUploadCompleter(Stream stream, List<Attachment> testAttachmentList, int count) {
   StreamSubscription uploadListener;
   Completer completer = new Completer();
   int completeCount = 0;
   uploadListener = stream.listen((UploadStatus uploadStatus) {
     completeCount++;
-    Bundle bundle = bundleList.firstWhere((bundle) => bundle.id == uploadStatus.attachment.id, orElse: () => null);
-    if (bundle == null || bundle.uploadStatus != Status.Cancelled) {
-      bundleList.remove(bundle);
-      Bundle toAdd = uploadStatus.attachment;
+    Attachment testAttachment = testAttachmentList.firstWhere((testAttachment) => testAttachment.id == uploadStatus.attachment.id, orElse: () => null);
+    if (testAttachment == null || testAttachment.uploadStatus != Status.Cancelled) {
+      testAttachmentList.remove(testAttachment);
+      Attachment toAdd = uploadStatus.attachment;
       toAdd.uploadStatus = uploadStatus.status;
-      bundleList.add(toAdd);
+      testAttachmentList.add(toAdd);
     }
     if (!completer.isCompleted && completeCount == count) {
       completer.complete(true);

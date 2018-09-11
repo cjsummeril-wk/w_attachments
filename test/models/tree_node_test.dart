@@ -2,11 +2,11 @@ library w_attachments_client.test.models.tree_node;
 
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
-import 'package:w_attachments_client/mocks.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
-
 import 'package:w_attachments_client/src/attachments_store.dart';
+
+import '../mocks.dart';
 
 void main() {
   group('TreeNode', () {

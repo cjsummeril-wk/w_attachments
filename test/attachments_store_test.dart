@@ -6,12 +6,12 @@ import 'dart:html' hide Client, Selection;
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
-import 'package:w_attachments_client/mocks.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/attachments_store.dart';
 
+import './mocks.dart';
 import './test_utils.dart' as test_utils;
 
 void main() {

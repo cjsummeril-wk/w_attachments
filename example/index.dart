@@ -13,7 +13,6 @@ import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 import 'package:web_skin_dart/ui_components.dart';
 import 'package:web_skin_dart/ui_core.dart';
 import 'package:wuri_sdk/wuri_sdk.dart';
-import 'package:w_attachments_client/mocks.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_attachments_client/w_attachments_service_api.dart';
 import 'package:w_session/mock.dart';

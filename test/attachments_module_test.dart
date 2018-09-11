@@ -1,11 +1,12 @@
 library w_attachments_client.test.attachments_module_test;
 
 import 'package:test/test.dart';
-import 'package:w_attachments_client/mocks.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_session/mock.dart';
 import 'package:w_session/w_session.dart';
+
+import './mocks.dart';
 
 void main() {
   group('AttachmentsModule', () {

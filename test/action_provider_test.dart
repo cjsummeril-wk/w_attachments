@@ -4,12 +4,13 @@ import 'package:meta/meta.dart';
 import 'package:mockito/mirrors.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';
-import 'package:w_attachments_client/mocks.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 import 'package:web_skin_dart/ui_components.dart';
 
 import 'package:w_attachments_client/src/attachments_store.dart';
+
+import './mocks.dart';
 
 void main() {
   group('ActionProvider', () {

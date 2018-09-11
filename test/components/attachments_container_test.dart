@@ -7,10 +7,11 @@ import 'package:w_session/mock.dart';
 import 'package:w_session/w_session.dart';
 import 'package:web_skin_dart/ui_components.dart';
 
-import 'package:w_attachments_client/mocks.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_attachments_client/w_attachments_service_api.dart';
+
+import '../mocks.dart';
 
 import '../test_utils.dart' as test_utils;
 
