@@ -15,17 +15,19 @@ import './thread_pool/thread_pool_test.dart' as thread_pool_thread_pool_test;
 import 'package:test/test.dart';
 import 'package:react/react_client.dart' as react_client;
 import 'package:web_skin_dart/ui_core.dart';
+import 'package:w_transport/mock.dart';
 
 void main() {
   react_client.setClientConfiguration();
   enableTestMode();
+  configureWTransportForTest();
   action_provider_test.main();
-//  attachments_module_test.main();
-//  attachments_store_test.main();
-//  components_attachments_container_test.main();
-//  components_attachments_panel_toolbar_test.main();
-//  components_utils_test.main();
-//  models_group_test.main();
-//  models_tree_node_test.main();
-//  thread_pool_thread_pool_test.main();
+  attachments_module_test.main();
+  attachments_store_test.main();
+  components_attachments_container_test.main();
+  components_attachments_panel_toolbar_test.main();
+  components_utils_test.main();
+  models_group_test.main();
+  models_tree_node_test.main();
+  thread_pool_thread_pool_test.main();
 }

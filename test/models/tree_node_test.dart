@@ -162,16 +162,9 @@ void main() {
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
 
         ContextGroup veryGoodGroup = new ContextGroup(
-          name: 'veryGoodGroup',
-          pivots: [
-            new GroupPivot(
-              type: GroupPivotType.RESOURCE,
-              id: 'very_good_resource_id',
-              selection: validWurl
-            )
-          ],
-          uploadSelection: validWurl
-        );
+            name: 'veryGoodGroup',
+            pivots: [new GroupPivot(type: GroupPivotType.RESOURCE, id: 'very_good_resource_id', selection: validWurl)],
+            uploadSelection: validWurl);
 
         ContextGroup parentGroup = new ContextGroup(name: 'parentGroup', childGroups: [veryGoodGroup]);
         await _store.api.setGroups(groups: [parentGroup]);
