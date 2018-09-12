@@ -429,7 +429,7 @@ class _AttachmentsExampleApp extends react.Component {
 
     await _attachmentsModule.api.getAttachmentsByProducers(producerWurlsToLoad: observedRegionIds);
     List<String> regionWuris =
-        _extensionContext.observedRegionApi.regions.map((cef.ObservedRegion region) => region.wuri);
+        _extensionContext.observedRegionApi.regions.map((cef.ObservedRegion region) => region.wuri).toList();
     for (String wurl in observedRegionIds) {
       if (!regionWuris.contains(wurl)) {
         await _extensionContext.observedRegionApi.create(selection: new cef.Selection(scope: wurl, wuri: wurl));

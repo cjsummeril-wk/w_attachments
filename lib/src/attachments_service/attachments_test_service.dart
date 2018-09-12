@@ -185,36 +185,6 @@ class AttachmentsTestService extends AttachmentsService {
   /// Helper Methods
   ///
 
-//  List<FAttachment> _generateAttachments(FAttachment attachment, int numAttachments) {
-//    List<FAttachment> bundles = [];
-//    final dynamic uuid = new Uuid();
-//
-//    for (int ctr = 0; ctr < numAttachments; ctr++) {
-//      final dynamic annoKey = uuid.v4();
-//      final dynamic selectionKey = uuid.v4();
-//      final dynamic userId = 12345;
-//
-//      // these are values that get populated by the server
-//      attachment.annotation.attachedDate ??= new DateTime.now().toString();
-//      attachment.annotation.attachmentId ??= uuid.v4();
-//      attachment.annotation.attachorId ??= userId;
-//      attachment.annotation.creatorId ??= userId;
-//      attachment.annotation.firstCreated ??= new DateTime.now().toString();
-//      attachment.annotation.key = annoKey;
-//      attachment.annotation.lastModified = new DateTime.now().toString();
-//      attachment.annotation.lastModifiedBy = userId;
-//
-//      attachment.selection.annotationKey = annoKey;
-//      attachment.selection.key = selectionKey;
-//      attachment.selection.lastModified = new DateTime.now().toString();
-//
-//      _bundlesJsonCache[selectionKey] = attachment.getJsonParams();
-//      bundles.add(attachment.toJson(removeNullMapValues: true));
-//    }
-//
-//    return bundles;
-//  }
-
   List<FAttachment> _createFAttachments(List<String> ids) {
     final dynamic uuid = new Uuid();
     List<FAttachment> attachments = [];

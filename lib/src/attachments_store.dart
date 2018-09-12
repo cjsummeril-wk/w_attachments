@@ -139,7 +139,7 @@ class AttachmentsStore extends Store {
       new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
   List<AttachmentUsage> getAttachmentUsagesByAnchors(List<Anchor> anchors) {
     List<AttachmentUsage> attachmentUsagesToReturn = [];
-    List<String> attachmentUsagesToGet = anchors.map((Anchor anchor) => anchor.id);
+    List<String> attachmentUsagesToGet = new List<String>.from(anchors.map((Anchor anchor) => anchor.id));
     attachmentUsagesToReturn
         .addAll(_attachmentUsages.where((AttachmentUsage usage) => attachmentUsagesToGet.contains(usage.anchorId)));
     return attachmentUsagesToReturn;
@@ -147,7 +147,7 @@ class AttachmentsStore extends Store {
 
   List<Attachment> getAttachmentsFromUsages(List<AttachmentUsage> usages) {
     List<Attachment> attachmentsToReturn = [];
-    List<String> attachmentIdsToGet = usages.map((AttachmentUsage usage) => usage.attachmentId);
+    List<String> attachmentIdsToGet = new List<String>.from(usages.map((AttachmentUsage usage) => usage.attachmentId));
     attachmentsToReturn
         .addAll(_attachments.where((Attachment attachment) => attachmentIdsToGet.contains(attachment.id)));
     return attachmentsToReturn;

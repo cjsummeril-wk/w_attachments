@@ -338,7 +338,7 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
         await props.serviceApi.createAttachmentUsage(props.regionId, attachment.id);
 
         List<String> revisedKeys =
-            props.context.observedRegionApi.regions.map((cef.ObservedRegion region) => region.wuri);
+            props.context.observedRegionApi.regions.map((cef.ObservedRegion region) => region.wuri).toList();
         props.module.api.getAttachmentsByProducers(producerWurlsToLoad: revisedKeys);
       }
     }
