@@ -1,0 +1,331 @@
+@import 'package:web_skin/sass/core/api';
+
+.shell-panel {
+  .shell-panel-contents {
+    .shell-panel-body {
+      width: 100%;
+    }
+  }
+}
+
+.attachments-controls {
+  // temporary override shell panel header padding
+  margin: 1rem 0 -0.6rem -1.2rem;
+
+  .icon {
+    margin-right: 1.2rem;
+    cursor: pointer;
+  }
+}
+
+.attachments-container {
+  width: 100%;
+
+  .group-panel {
+    .group-panel__header {
+      .icon.icon-uploaded {
+        cursor: pointer;
+      }
+    }
+
+    .region__body {
+      position: relative;
+
+      .region__block:last-child {
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  // A drop target that is hidden
+  // by default, and covers the Region
+  // body on dragover
+  .region__drop-target {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    justify-content: center;
+    align-items: center;
+
+    &:not(.is-drop-target--dragover) {
+      display: none;
+    }
+  }
+
+  .card__header__actions .icon {
+    margin-right: 1.1rem;
+  }
+
+  .attachment-card {
+    width: 100%;
+  }
+
+  .attachment-card-header {
+    h4 {
+      font-weight: normal;
+    }
+
+    > .not-editing {
+      // height of text input, we match that height so when the text box shows the text location does not shift
+      height: 3.4rem;
+
+      &.selected {
+        font-weight: bold;
+      }
+    }
+
+    > .form-group {
+      > .editing {
+        padding-left: 0.5rem;
+        margin-left: -0.8rem;
+      }
+    }
+
+    .card-header-overflow {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+
+      > .icon-pencil {
+        margin-left: 0.5rem;
+        cursor: pointer;
+      }
+    }
+
+    .node-menu-item {
+      margin: .1rem 0;
+      padding-top: .1rem;
+    }
+
+    .attachment-label {
+      color: #595959;
+    }
+  }
+
+  .attachment-card-footer {
+    font-size: 1.1rem;
+  }
+
+  .attachment-date-header {
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: .7rem;
+    background-color: $white;
+    color: color('global.gray.darker');
+  }
+
+  .attachment-item-container {
+    // Account for scroll bar on the right
+    margin-right: 1.8rem;
+
+    .attachment-card-not-selected {
+      background-color: #f9f9f9;
+
+      &:hover {
+        background-color: #f3f3f3;
+        cursor: pointer;
+      }
+
+      .card__body {
+        // Manually hide the content when it is not selected
+        // Would like to use CardCollapse but that will take a larger refactor
+        display: none;
+      }
+
+      .card__header .card__header__title {
+        font-weight: normal;
+      }
+    }
+  }
+
+  // TreeNode css
+  .node-container {
+    cursor: pointer;
+    height: 3rem;
+    overflow: visible;
+    padding-right: 1.2rem;
+
+    &.hovered-node {
+      background: #ebf7ff;
+      color: #515151;
+    }
+
+    &.selected-node {
+      background: #d6eeff;
+      color: #484848;
+    }
+
+    &.drag-target-node {
+      background: #d6eeff;
+      color: #484848;
+    }
+  }
+
+  .node-container:active {
+    background: #e0f2ff;
+    color: #4c4c4c;
+  }
+
+  .node-depth-padding-item {
+    padding: 0;
+  }
+
+  .node-depth-padding {
+    width: 1.7rem; // element must have same width as the expand-node-item element
+  }
+
+  .node-item-container {
+    padding: 0;
+  }
+
+  .node-action-item {
+    margin-right: 1rem;
+  }
+
+  .node-menu-item {
+    margin-top: .3rem;
+    padding-top: .1rem;
+  }
+
+  .expand-node-item {
+    max-width: 2.0rem;
+    padding: .3rem .5rem; // element must have same width as the node-depth-padding element
+  }
+
+  .caret {
+    vertical-align: middle;
+    margin-top: -4px;
+
+    -moz-transition: all .25s ease;
+    -webkit-transition: all .25s ease;
+    -o-transition: all .25s ease;
+    transition: all .25s ease;
+  }
+
+  .caret.collapsed {
+    -webkit-transform: rotate(-90deg); // Safari and Chrome
+    -moz-transform: rotate(-90deg); // Firefox
+    -ms-transform: rotate(-90deg); // IE 9
+    -o-transform: rotate(-90deg); // Opera
+    transform: rotate(-90deg);
+
+    -moz-transition: all .25s ease;
+    -webkit-transition: all .25s ease;
+    -o-transition: all .25s ease;
+    transition: all .25s ease;
+  }
+
+  .content-item {
+    margin: 0.5rem -.2rem 0 -.6rem;
+    overflow: hidden;
+    padding: 0 1.8rem;
+    vertical-align: middle;
+
+    > div:first-child {
+      background-color: inherit;
+      border: 0;
+      padding: 0;
+      [class*="form-control"] {
+        max-height: 3rem;
+      }
+    }
+  }
+
+  .content-glyph-item + .content-item {
+    margin-left: 0;
+  }
+
+  .content-glyph-item {
+    height: auto;
+    padding: 0.5rem 0;
+    width: 1.8rem;
+    text-align: center;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    overflow: hidden;
+  }
+
+  .content-glyph-spinner {
+    padding-top: 0.6rem;
+    padding-bottom: 0;
+  }
+
+  .content-glyph-item.no-children {
+    margin-left: 4px;
+  }
+
+  div.node-content-input {
+    border: none !important;
+    margin-left: .1rem;
+  }
+
+  .node-content-input {
+    color: #7d7d7d !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: unset;
+    padding: 0 0.25rem;
+    margin: 0.3rem 0;
+    line-height: 1.8rem;
+  }
+
+  .selected-node .node-content-input {
+    line-height: 1.8rem;
+  }
+
+  input.node-content-input {
+    border-radius: .2rem;
+  }
+
+  .attachment-card-header.no-attachments, .node-container.is-empty .content-item {
+    font-style: italic;
+    color: lighten(color('global.gray.lighter'), 20%);
+  }
+
+  .attachment-label {
+    color: #7d7d7d;
+    padding: 0.2rem 0 0.2rem 0.2rem;
+    max-height: 2.4rem !important;
+    border-radius: 0.3rem;
+  }
+
+  .cte-edit-btn {
+    border: none !important;
+    padding: 0 !important;
+    width: 0 !important;
+  }
+
+  .cte-group.js-hover:not(.has-success):not(.has-warning):not(.has-error) .form-control-static,
+  .cte-group:hover:not(.has-success):not(.has-warning):not(.has-error) .form-control-static {
+    border-color: transparent !important;
+  }
+
+  .cte-group.is-selected.cte-group--can-be-edited:not(.has-success):not(.has-warning):not(.has-error) .form-control-static {
+    border-color: transparent !important;
+  }
+}
+
+// dragged object css
+.dragged-attachment {
+  height: 3.4rem;
+  min-width: 20rem;
+  max-width: 38.4rem;
+  padding: 0.6rem;
+
+  .dragged-attachment-text {
+    max-width: 35.8rem;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dragged-attachment-icon {
+    margin: 0.2rem 1.2rem 0 0.2rem;
+  }
+}
