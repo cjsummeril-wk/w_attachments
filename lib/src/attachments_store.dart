@@ -89,7 +89,6 @@ class AttachmentsStore extends Store {
     triggerOnActionV2(attachmentsActions.dropFiles, _dropFiles);
     triggerOnActionV2(attachmentsActions.deselectAttachments, _deselectAttachments);
     triggerOnActionV2(attachmentsActions.selectAttachments, _selectAttachments);
-//    triggerOnActionV2(attachmentsActions.uploadFiles, _selectAndUploadFiles);
 
     [
       attachmentsActions.hoverOverAttachmentNode.listen(_hoverOverAttachmentNodes),
@@ -267,18 +266,6 @@ class AttachmentsStore extends Store {
 //      _uploadFiles(request.selection, request.files);
     }
   }
-
-//  _downloadAllAttachmentsAsZip(DownloadAllAsZipPayload request) async {
-//    // Remove keys where the attachments are not isUploadComplete
-//    List<String> keys = new List<String>.from(request.keysToDownload);
-//    keys.removeWhere((String key) =>
-//        _attachments
-//            .firstWhere((Attachment attachment) => (attachment?.key == key), orElse: () => null)
-//            ?.isUploadComplete ==
-//        false);
-//
-//    await attachmentsService.downloadFilesAsZip(keys: keys, label: request.label, zipSelection: request.zipSelection);
-//  }
 
   _getAttachmentsByProducers(GetAttachmentsByProducersPayload request) async {
     if (!request.maintainAttachments) {
