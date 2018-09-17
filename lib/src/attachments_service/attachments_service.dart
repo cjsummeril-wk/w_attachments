@@ -1,17 +1,18 @@
 part of w_attachments_client.service;
 
 class AttachmentsService extends Disposable {
-  AppIntelligence _appIntelligence;
   Window serviceWindow = window;
+
+  AppIntelligence _appIntelligence;
   msg.NatsMessagingClient _msgClient;
   ModalManager _modalManager;
-  final Logger _logger = new Logger('w_attachments_client.attachments_service');
+  UploadManager _uploadManager;
 
   StreamController<UploadStatus> _uploadStatusStreamController;
   Stream<UploadStatus> get uploadStatusStream => _uploadStatusStreamController?.stream;
 
-  UploadManager _uploadManager;
   final msg.ThriftProtocol _protocol = msg.ThriftProtocol.BINARY;
+  final Logger _logger = new Logger('w_attachments_client.attachments_service');
 
 // The default NATS subject used for integrating with w-annotations-service.
   static const String W_ANNOTATIONS_SERVICE = "w-annotations-service-v1";
@@ -31,8 +32,6 @@ class AttachmentsService extends Disposable {
   static const resourcePath = '/api/v0.1/annotation/service/';
   static const result = 'result';
   static const selectionKeys = 'selection_keys';
-
-  frugal.FContext get context => _msgClient.createFContext();
 
   AttachmentsService(
       {@required msg.NatsMessagingClient messagingClient, AppIntelligence appIntelligence, ModalManager modalManager})
