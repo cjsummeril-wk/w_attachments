@@ -129,7 +129,6 @@ class _AttachmentsExampleApp extends react.Component {
       config: _config,
       session: session,
       extensionContext: _extensionContext,
-      attachmentsService: _attachmentsService,
       actionProviderFactory: SampleReaderPermissionsActionProvider.actionProviderFactory,
     )..load();
 
@@ -542,7 +541,6 @@ class _AttachmentsExampleApp extends react.Component {
           config: config,
           session: session,
           extensionContext: _extensionContext,
-          attachmentsService: _attachmentsService,
           actionProviderFactory: SampleReaderPermissionsActionProvider.actionProviderFactory);
 
       await _attachmentsModule.load();

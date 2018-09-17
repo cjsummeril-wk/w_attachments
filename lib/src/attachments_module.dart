@@ -26,28 +26,27 @@ class AttachmentsModule extends Module {
   AttachmentsEvents _events;
   AttachmentsComponents _components;
   AttachmentsStore _store;
+  AttachmentsService _attachmentsService;
 
-  AttachmentsModule(
-      {@required cef.ExtensionContext extensionContext,
-      @required Session session,
-      AppIntelligence appIntelligence,
-      AttachmentsService attachmentsService,
-      ActionProviderFactory actionProviderFactory,
-      List<Attachment> initialAttachments,
-      List<ContextGroup> initialGroups,
-      List<Filter> initialFilters,
-      AttachmentsConfig config,
-      StaticAssetLoader staticAssetLoader,
-      msg.NatsMessagingClient messagingClient}) {
+  AttachmentsModule({
+    @required cef.ExtensionContext extensionContext,
+    @required Session session,
+    @required msg.NatsMessagingClient messagingClient,
+    AppIntelligence appIntelligence,
+    ActionProviderFactory actionProviderFactory,
+    List<Attachment> initialAttachments,
+    List<ContextGroup> initialGroups,
+    List<Filter> initialFilters,
+    AttachmentsConfig config,
+    StaticAssetLoader staticAssetLoader,
+  }) {
     // Default the config if one wasn't provided
     config ??= new AttachmentsConfig();
 
     attachmentsActions = manageAndReturnDisposable(new AttachmentsActions());
     _staticAssetLoader = staticAssetLoader ?? manageAndReturnDisposable(new StaticAssetLoader());
 
-    // attachmentsService should only be managed if it is created right here. Is there a cleaner way?
-    attachmentsService ??= manageAndReturnDisposable(
-        new AttachmentsService(appIntelligence: appIntelligence, messagingClient: messagingClient));
+    _attachmentsService = new AttachmentsService(appIntelligence: appIntelligence, messagingClient: messagingClient);
 
     _events = manageAndReturnDisposable(new AttachmentsEvents());
     _store = manageAndReturnDisposable(new AttachmentsStore(
@@ -55,7 +54,7 @@ class AttachmentsModule extends Module {
         attachmentsActions: attachmentsActions,
         attachmentsEvents: _events,
         dispatchKey: attachmentsModuleDispatchKey,
-        attachmentsService: attachmentsService,
+        attachmentsService: _attachmentsService,
         extensionContext: extensionContext,
         attachments: initialAttachments ?? [],
         groups: initialGroups ?? [],
@@ -76,6 +75,8 @@ class AttachmentsModule extends Module {
 
   @override
   onLoad() async {
+    // Frugal setup
+    await _attachmentsService.createAnnotationServiceClient();
     await _staticAssetLoader.loadAll([
       'packages/web_skin/dist/css/peripherals/icons-xbrl.min.css',
       'packages/web_skin/dist/css/peripherals/form-click-to-edit.min.css'

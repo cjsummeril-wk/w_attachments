@@ -20,8 +20,9 @@ void main() {
     Session _session;
     ExtensionContextMock _extensionContext;
     AttachmentsService _attachmentsService;
+    MockMessagingClient _msgClient;
 
-    dynamic renderedModule;
+    Object renderedModule;
 
     group('with no attachments /', () {
       setUp(() async {
@@ -30,12 +31,13 @@ void main() {
         _session = new Session();
         _extensionContext = new ExtensionContextMock();
         _attachmentsService = new AttachmentsTestService();
+        _msgClient = new MockMessagingClient();
 
         _module = new AttachmentsModule(
             config: new AttachmentsConfig(),
             session: _session,
+            messagingClient: _msgClient,
             extensionContext: _extensionContext,
-            attachmentsService: _attachmentsService,
             actionProviderFactory: StandardActionProvider.actionProviderFactory);
 
         await _module.load();
@@ -48,6 +50,7 @@ void main() {
         await _extensionContext.dispose();
         await _attachmentsService.dispose();
         await _module.unload();
+        await _msgClient.dispose();
 
         MockSession.uninstall();
       });
