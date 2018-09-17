@@ -9,7 +9,6 @@ A module that provides an interface to manage attachments in a side panel.
 ```bash
 $ brew tap dart-lang/dart
 $ brew install dart --with-content-shell --with-dartium
-$ brew linkapps dart
 ```
 
 #### Installing / Updating Dart Dependencies
@@ -45,16 +44,6 @@ corresponding top level group so that all tests in file can be run easily.
 
 ## Consuming
 
-### Attachments Module
-- Add w_attachments_client to your pubspec.
-- Include the following stylesheets in your html:
-
-```bash
-    <link rel="stylesheet" href="packages/web_skin/dist/css/web-skin.min.css">
-    <link rel="stylesheet" href="packages/web_skin/dist/css/peripherals/grid-v2.min.css">
-    <link rel="stylesheet" href="packages/w_attachments_client/style/w_attachment.css">
-```
-
 #### Rendering
 - Use w_module to construct and load an `AttachmentsModule`. The module requires that you provide it a [Session](https://github.com/Workiva/w_session/blob/master/lib/src/session.dart), an
   [ExtensionContext](https://github.com/Workiva/wdesk_sdk/blob/master/lib/src/content_extension_framework/extension_context.dart),
@@ -76,7 +65,7 @@ class BaseModule extends Module {
         session: session,
         extensionContext: extensionContext,
         attachmentsService: new AttachmentsService(
-            bigskyClient: session.createBigskyClient(),
+            messagingClient: [existing_natsMessagingClient_instance],
             appIntelligence: existing_appIntelligence_instance),
   }
 
