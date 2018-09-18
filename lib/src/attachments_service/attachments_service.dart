@@ -48,21 +48,24 @@ class AttachmentsService extends Disposable {
   }
 
 // // Middleware for Frugal clients.  Helps us get info from Sumo Logic
-  frugal.Middleware get logCorrelationIdMiddleware => (frugal.InvocationHandler next) =>
-      (String serviceName, String methodName, List<Object> args) async {
-        _logger.info("Starting $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+  frugal.Middleware get logCorrelationIdMiddleware =>
+      (frugal.InvocationHandler next) => (String serviceName, String methodName, List<Object> args) async {
+            _logger.info("Starting $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
         .correlationId})");
-        try {
-          final res = await next(serviceName, methodName, args);
-          _logger.info("Finished $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+            try {
+              final res = await next(serviceName, methodName, args);
+              _logger.info("Finished $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
         .correlationId})");
-          return res;
-        } catch (e) {
-          _logger.severe("Execption raised by $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
-        .correlationId})");
-          rethrow;
-        }
-      };
+              return res;
+            } catch (e, s) {
+              _logger.severe(
+                  "Execption raised by $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+        .correlationId})",
+                  e,
+                  s);
+              rethrow;
+            }
+          };
 
   Future<Null> initialize() async {
     var serviceDescriptor = msg.newServiceDescriptor(
