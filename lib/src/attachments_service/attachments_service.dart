@@ -51,16 +51,21 @@ class AttachmentsService extends Disposable {
   }
 
 // // Middleware for Frugal clients.  Helps us get info from Sumo Logic
-// frugal.Middleware get logCorrelationIdMiddleware =>
-//     (frugal.InvocationHandler next) => (String serviceName, String methodName, List<Object> args) async {
-//           logger.info("$serviceName.$methodName(correlation ID: ${(args.first as FContext)
-//         .correlationId})");
-//           try {
-//             return await next(serviceName, methodName, args);
-//           } catch (e) {
-//             rethrow;
-//           }
-//         };
+  frugal.Middleware get logCorrelationIdMiddleware => (frugal.InvocationHandler next) =>
+      (String serviceName, String methodName, List<Object> args) async {
+        _logger.info("Starting $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+        .correlationId})");
+        try {
+          final res = await next(serviceName, methodName, args);
+          _logger.info("Finished $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+        .correlationId})");
+          return res;
+        } catch (e) {
+          _logger.severe("Execption raised by $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+        .correlationId})");
+          rethrow;
+        }
+      };
 
   Future<Null> initialize() async {
     var serviceDescriptor = msg.newServiceDescriptor(natsSubject: W_ANNOTATIONS_SERVICE, frugalProtocol: _protocol);
@@ -75,7 +80,7 @@ class AttachmentsService extends Disposable {
       _transport = null;
     });
 
-    _fClient = new FWAnnotationsServiceClient(provider);
+    _fClient = new FWAnnotationsServiceClient(provider, [logCorrelationIdMiddleware]);
   }
 
   @mustCallSuper
