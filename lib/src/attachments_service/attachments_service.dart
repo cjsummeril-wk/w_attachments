@@ -16,9 +16,6 @@ class AttachmentsService extends Disposable {
   final msg.ThriftProtocol _protocol = msg.ThriftProtocol.BINARY;
   final Logger _logger = new Logger('w_attachments_client.attachments_service');
 
-// The default NATS subject used for integrating with w-annotations-service.
-  static const String W_ANNOTATIONS_SERVICE = "w-annotations-service-v1";
-
   static const analyticLabel = 'w_attachments_client';
   static const appIntelName = 'w_attachments_client';
   static const attachmentSystemType = 'AttachmentSystem';
@@ -68,7 +65,8 @@ class AttachmentsService extends Disposable {
       };
 
   Future<Null> initialize() async {
-    var serviceDescriptor = msg.newServiceDescriptor(natsSubject: W_ANNOTATIONS_SERVICE, frugalProtocol: _protocol);
+    var serviceDescriptor = msg.newServiceDescriptor(
+        natsSubject: AnnotationsApiV1Constants.W_ANNOTATIONS_SERVICE, frugalProtocol: _protocol);
 
     var provider = _msgClient.newClient(serviceDescriptor);
 
