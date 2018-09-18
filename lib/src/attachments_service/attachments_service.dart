@@ -138,8 +138,4 @@ class AttachmentsService extends Disposable {
     // Return a Future that will resolve with the list of selected files.
     return c.future;
   }
-
-  frugal.FContext _makeFContext(String correlationId) {
-    return _msgClient.createFContext(correlationId: correlationId);
-  }
 }
