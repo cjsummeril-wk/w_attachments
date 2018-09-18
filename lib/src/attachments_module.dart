@@ -46,7 +46,8 @@ class AttachmentsModule extends Module {
     attachmentsActions = manageAndReturnDisposable(new AttachmentsActions());
     _staticAssetLoader = staticAssetLoader ?? manageAndReturnDisposable(new StaticAssetLoader());
 
-    _attachmentsService = new AttachmentsService(appIntelligence: appIntelligence, messagingClient: messagingClient);
+    _attachmentsService = manageAndReturnDisposable(
+        new AttachmentsService(appIntelligence: appIntelligence, messagingClient: messagingClient));
 
     _events = manageAndReturnDisposable(new AttachmentsEvents());
     _store = manageAndReturnDisposable(new AttachmentsStore(
@@ -76,7 +77,7 @@ class AttachmentsModule extends Module {
   @override
   onLoad() async {
     // Frugal setup
-    await _attachmentsService.createAnnotationServiceClient();
+    await _attachmentsService.initialize();
     await _staticAssetLoader.loadAll([
       'packages/web_skin/dist/css/peripherals/icons-xbrl.min.css',
       'packages/web_skin/dist/css/peripherals/form-click-to-edit.min.css'

@@ -53,7 +53,6 @@ swallowPrints(testFunc()) => () {
 Future<AttachmentsModule> loadModule() async {
   AttachmentsModule attachmentsModule = new AttachmentsModule(
       config: new AttachmentsConfig(),
-      session: new Session(),
       extensionContext: new ExtensionContextMock(),
       messagingClient: new MockMessagingClient(),
       actionProviderFactory: StandardActionProvider.actionProviderFactory);

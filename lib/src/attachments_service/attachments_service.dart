@@ -1,6 +1,8 @@
 part of w_attachments_client.service;
 
 class AttachmentsService extends Disposable {
+  FWAnnotationsServiceClient _fClient;
+
   Window serviceWindow = window;
 
   AppIntelligence _appIntelligence;
@@ -60,13 +62,7 @@ class AttachmentsService extends Disposable {
 //           }
 //         };
 
-  Future<FWAnnotationsServiceClient> createAnnotationServiceClient() async {
-    var annoServiceProvider = await _initAnnoServiceTransport();
-
-    return new FWAnnotationsServiceClient(annoServiceProvider);
-  }
-
-  Future<frugal.FServiceProvider> _initAnnoServiceTransport() async {
+  Future<Null> initialize() async {
     var serviceDescriptor = msg.newServiceDescriptor(natsSubject: W_ANNOTATIONS_SERVICE, frugalProtocol: _protocol);
 
     var provider = _msgClient.newClient(serviceDescriptor);
@@ -78,7 +74,8 @@ class AttachmentsService extends Disposable {
       await _transport?.close();
       _transport = null;
     });
-    return provider;
+
+    _fClient = new FWAnnotationsServiceClient(provider);
   }
 
   @mustCallSuper
@@ -134,5 +131,9 @@ class AttachmentsService extends Disposable {
     fileUploadInput.click();
     // Return a Future that will resolve with the list of selected files.
     return c.future;
+  }
+
+  frugal.FContext _makeFContext(String correlationId) {
+    return _msgClient.createFContext(correlationId: correlationId);
   }
 }
