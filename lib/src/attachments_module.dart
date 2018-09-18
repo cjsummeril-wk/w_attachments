@@ -30,8 +30,9 @@ class AttachmentsModule extends Module {
 
   AttachmentsModule({
     @required cef.ExtensionContext extensionContext,
-    @required Session session,
     @required msg.NatsMessagingClient messagingClient,
+    // TODO: remove in RAM-647
+    Session session,
     AppIntelligence appIntelligence,
     ActionProviderFactory actionProviderFactory,
     List<Attachment> initialAttachments,
