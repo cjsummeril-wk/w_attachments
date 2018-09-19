@@ -31,7 +31,6 @@ NatsMessagingClient messagingClient;
 Session session;
 Future<int> rightPanelModelId;
 var _subs = [];
-const scopes = const ["w-annotations|r", "w-annotations|w"];
 const annoClientId = "anno";
 
 enum ViewModeSettings { Regions, Headerless, Tree }
@@ -55,10 +54,9 @@ Future main() async {
   MockSession.install();
   MockSession.sessionHost = sessionHost;
   MockSession.grantAuthorizationForClient(annoClientId);
-  MockSession.grantScopesForClient(annoClientId, scopes);
   MockTransports.install(fallThrough: true);
 
-  session = new Session(clientId: annoClientId, sessionHost: sessionHost, scope: scopes);
+  session = new Session(clientId: annoClientId, sessionHost: sessionHost);
 
   configureWTransportForBrowser();
 
