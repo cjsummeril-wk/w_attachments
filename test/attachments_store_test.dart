@@ -21,7 +21,7 @@ void main() {
     AttachmentsActions _attachmentsActions;
     AttachmentsEvents _attachmentsEvents;
     AttachmentsApi _api;
-    cef.ExtensionContext _extensionContext;
+    ExtensionContextMock _extensionContext;
     AttachmentsService _attachmentsService;
     Window mockWindow;
 
@@ -1343,6 +1343,91 @@ void main() {
         expect(_store.showFilenameAsLabel, config.showFilenameAsLabel);
         expect(_store.label, config.label);
         expect(_store.primarySelection, config.primarySelection);
+      });
+    });
+
+    group('handles onDidChangeSelection -', () {
+      setUp(() {
+        _attachmentsActions = new AttachmentsActions();
+        _attachmentsEvents = new AttachmentsEvents();
+        _extensionContext = new ExtensionContextMock();
+        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+        _store = spy(
+            new AttachmentsStoreMock(),
+            new AttachmentsStore(
+                actionProviderFactory: StandardActionProvider.actionProviderFactory,
+                attachmentsActions: _attachmentsActions,
+                attachmentsEvents: _attachmentsEvents,
+                attachmentsService: _attachmentsService,
+                extensionContext: _extensionContext,
+                dispatchKey: attachmentsModuleDispatchKey,
+                attachments: [],
+                groups: [],
+                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+        _api = _store.api;
+        mockWindow = spy(new WindowMock(), window);
+        _attachmentsService.serviceWindow = mockWindow;
+      });
+      tearDown(() async {
+        await _attachmentsService.dispose();
+        await _extensionContext.dispose();
+      });
+      test('updates isValidSelection and triggers correctly', () async {
+        // store should only trigger once.
+        // if it triggers twice completer raises an exception.
+        final onChange = new Completer();
+        _store.listen(onChange.complete);
+        // deafults to false
+        expect(_store.isValidSelection, false);
+        _extensionContext.selectionApi.didChangeSelectionsController.add([]);
+        await new Future(() {});
+        expect(_store.isValidSelection, false);
+        _extensionContext.selectionApi.didChangeSelectionsController
+            .add([new cef.Selection(wuri: "foo", scope: "bar")]);
+        await onChange.future;
+        expect(_store.isValidSelection, true);
+      });
+    });
+    group('createAttachmentUsage -', () {
+      setUp(() {
+        _attachmentsActions = new AttachmentsActions();
+        _attachmentsEvents = new AttachmentsEvents();
+        _extensionContext = new ExtensionContextMock();
+        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+        _store = spy(
+            new AttachmentsStoreMock(),
+            new AttachmentsStore(
+                actionProviderFactory: StandardActionProvider.actionProviderFactory,
+                attachmentsActions: _attachmentsActions,
+                attachmentsEvents: _attachmentsEvents,
+                attachmentsService: _attachmentsService,
+                extensionContext: _extensionContext,
+                dispatchKey: attachmentsModuleDispatchKey,
+                attachments: [],
+                groups: [],
+                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+        _api = _store.api;
+        mockWindow = spy(new WindowMock(), window);
+        _attachmentsService.serviceWindow = mockWindow;
+      });
+      tearDown(() async {
+        await _attachmentsService.dispose();
+        await _extensionContext.dispose();
+      });
+      test('does nothing if isValidSelection is false', () async {
+        await _attachmentsActions.createAttachmentUsage();
+        verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any, attachmentId: any));
+      });
+      test('calls createAttachmentUsage with valid selection', () async {
+        final testSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+        when(_extensionContext.selectionApi.getCurrentSelections()).thenReturn([testSelection]);
+        when(_extensionContext.observedRegionApi.create(selection: testSelection))
+            .thenReturn(new cef.ObservedRegion(wuri: "regionWuri", scope: "regionScope"));
+        // make sure isValidSelection is true
+        _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+        await new Future(() {});
+        await _attachmentsActions.createAttachmentUsage();
+        verify(_attachmentsService.createAttachmentUsage(producerWurl: "regionWuri"));
       });
     });
   });
