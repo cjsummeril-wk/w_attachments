@@ -1,4 +1,4 @@
-w_attachments_client_client
+w_attachments_client
 =========
 
 A module that provides an interface to manage attachments in a side panel.
