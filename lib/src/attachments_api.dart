@@ -30,8 +30,6 @@ class AttachmentsApi {
   /// attachmentKeys is the list of all selection keys for the [Attachment]s currently loaded into the store.
   List<String> get attachmentKeys => _attachmentsStore.attachmentKeys;
 
-  cef.ExtensionContext get extensionContext => _attachmentsStore.extensionContext;
-
   /// currentlyDisplayedSingle is the [ContextGroup] that is currently displayed in headless mode.
   ContextGroup get currentlyDisplayedSingle => _attachmentsStore.currentlyDisplayedSingle;
 
@@ -55,6 +53,8 @@ class AttachmentsApi {
 
   /// true if the attachments panel is displayed in headerless mode, false if not.
   bool get showingHeaderlessGroup => _attachmentsStore.showingHeaderlessGroup;
+
+  bool get isValidSelection => _attachmentsStore.isValidSelection;
 
   // Custom Getter methods
   /// getAnchorsByWurl is the list of all [Anchor]s whose ProducerWurl matches the provided one.
@@ -91,9 +91,8 @@ class AttachmentsApi {
       await _attachmentsActions.updateLabel(new UpdateLabelPayload(idToUpdate: idToUpdate, newLabel: newLabel));
 
   // Module Actions
-  Future<Null> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
-    await _attachmentsActions.createAttachmentUsage(
-        new CreateAttachmentUsagePayload(producerWurl: producerWurl, attachmentId: attachmentId));
+  Future<Null> createAttachmentUsage() async {
+    await _attachmentsActions.createAttachmentUsage();
   }
 
   /// Calls w-annotations-service endpoint to retrieve all attachments, attachment usages, and anchors for the

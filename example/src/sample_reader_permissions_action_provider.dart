@@ -44,9 +44,7 @@ class SampleReaderPermissionsActionProvider implements ActionProvider {
           testId: 'wa.AttachmentControls.Icon.UploadFile',
           isDisabled: readOnly,
           callback: ((StatefulActionItem action) {
-            final dynamic uuid = new Uuid();
-            var selection = _api.primarySelection ?? _api.currentlyDisplayedSingle.uploadSelection;
-            _api.createAttachmentUsage(producerWurl: selection, attachmentId: uuid.v4().toString().substring(0, 22));
+            _api.createAttachmentUsage();
           }));
       panelActions.add(uploadFile);
     }

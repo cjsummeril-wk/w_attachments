@@ -1,5 +1,6 @@
 library w_attachments_client.service;
 
+import 'dart:math';
 import 'dart:async';
 import 'dart:core';
 import 'dart:html' hide Client, Selection;

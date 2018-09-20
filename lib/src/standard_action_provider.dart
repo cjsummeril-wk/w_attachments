@@ -42,14 +42,13 @@ class StandardActionProvider implements ActionProvider {
 //    panelActions.add(downloadAsZip);
 //
     if (_api.showingHeaderlessGroup) {
-      List<Selection> selections = _api.extensionContext.selectionApi.getCurrentSelections() ?? [];
       ActionItem uploadFile = new PanelActionItem(
           icon: ActionItem.iconBuilder(icon: IconGlyph.UPLOADED),
           tooltip: 'Upload File',
           testId: 'wa.AttachmentControls.Icon.UploadFile',
-          isDisabled: readOnly && selections.isEmpty,
+          isDisabled: readOnly && _api.isValidSelection,
           callback: ((StatefulActionItem action) {
-            _api.createAttachmentUsage(producerWurl: 'wurl://sheets.v0/sheet:962DD25A85142FBBD7AC5AC84BAE9BD6');
+            _api.createAttachmentUsage();
           }));
       panelActions.add(uploadFile);
     }

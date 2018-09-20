@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
@@ -19,7 +21,7 @@ class AttachmentsStore extends Store {
   final AttachmentsActions attachmentsActions;
   final AttachmentsEvents attachmentsEvents;
   final AttachmentsService attachmentsService;
-  final cef.ExtensionContext extensionContext;
+  final cef.ExtensionContext _extensionContext;
 
   final Logger _logger = new Logger('w_attachments_client.attachments_store');
 
@@ -47,24 +49,29 @@ class AttachmentsStore extends Store {
   AttachmentsTreeNode _rootNode;
   Map<dynamic, List<AttachmentsTreeNode>> _treeNodes = {};
 
+  // content extension framework properties
+  bool _isValidSelection = false;
+  Iterable<String> _currentScopes = [];
+  Set<int> _currentlySelectedAttachments = new Set<int>();
+
   AttachmentsStore(
       {@required this.actionProviderFactory,
       @required this.attachmentsActions,
       @required this.attachmentsEvents,
       @required this.attachmentsService,
       @required this.dispatchKey,
-      @required this.extensionContext,
+      @required extensionContext,
       AttachmentsConfig moduleConfig,
       List<Attachment> attachments,
       List<ContextGroup> groups,
       List<Filter> initialFilters})
       : _attachments = attachments,
+        _extensionContext = extensionContext,
         _groups = groups,
         this._moduleConfig = moduleConfig ?? new AttachmentsConfig() {
     _regroup();
     _api = new AttachmentsApi(attachmentsActions, this);
-    _getAttachmentsByProducers(new GetAttachmentsByProducersPayload(
-        producerWurls: ['wurl://sheets.v0/sheet:962DD25A85142FBBD7AC5AC84BAE9BD6'])); // made up junk
+
     _actionProvider = actionProviderFactory != null
         ? actionProviderFactory(_api)
         : StandardActionProvider.actionProviderFactory(_api);
@@ -81,7 +88,6 @@ class AttachmentsStore extends Store {
 
     // Module Action Listeners
     triggerOnActionV2(attachmentsActions.createAttachmentUsage, _createAttachmentUsage);
-    triggerOnActionV2(attachmentsActions.getAttachmentsByProducers, _getAttachmentsByProducers);
     triggerOnActionV2(attachmentsActions.setActionItemState, _setActionItemState);
     triggerOnActionV2(attachmentsActions.setGroups, _setGroups);
     triggerOnActionV2(attachmentsActions.setFilters, _setFilters);
@@ -106,6 +112,10 @@ class AttachmentsStore extends Store {
 
     // Event Listeners
     listenToStream(attachmentsEvents.attachmentRemoved, _handleAttachmentRemoved);
+
+    // CEF Listensers
+    listenToStream(_extensionContext.observedRegionApi.didChangeScopes, _onDidChangeScopes);
+    listenToStream(_extensionContext.selectionApi.didChangeSelections, _onDidChangeSelection);
   }
 
   AttachmentsConfig get moduleConfig => _moduleConfig;
@@ -127,6 +137,12 @@ class AttachmentsStore extends Store {
   bool get showFilenameAsLabel => _moduleConfig.showFilenameAsLabel;
 
   bool get showingHeaderlessGroup => _showingHeaderlessGroup;
+
+  /// isValidSelection returns true if there is a valid selection in the content
+  bool get isValidSelection => _isValidSelection;
+
+  /// currentScopes returns the list of scopes that we have loaded attachments for
+  Iterable<String> get currentScopes => _currentScopes;
 
   // zip download properties
   String get label => _moduleConfig.label;
@@ -270,33 +286,40 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _createAttachmentUsage(CreateAttachmentUsagePayload request) async {
-    AttachmentUsageCreatedPayload usagePayload = await attachmentsService.createAttachmentUsage(
-        producerWurl: request.producerWurl, attachmentId: request.attachmentId);
-    if (usagePayload != null) {
-      _anchors[request.producerWurl] ??= [];
-      _anchors[request.producerWurl].add(usagePayload.anchor);
-      AttachmentUsage foundAttachmentUsage = _attachmentUsages
-          .firstWhere((AttachmentUsage usage) => (usage?.id == usagePayload.attachmentUsage?.id), orElse: () => null);
-      if (foundAttachmentUsage == null) {
-        _attachmentUsages.add(usagePayload.attachmentUsage);
-      }
-      Attachment foundAttachment = _attachments
-          .firstWhere((Attachment existing) => (existing?.id == usagePayload.attachment?.id), orElse: () => null);
-      if (foundAttachment == null) {
-        _attachments.add(usagePayload.attachment);
-      }
+  _createAttachmentUsage(Null _) async {
+    if (!_isValidSelection) {
+      _logger.warning('_createAttachmentUsage without valid selection');
+      return;
     }
+
+    final currentSelection = _extensionContext.selectionApi.getCurrentSelections().firstWhere((s) => !s.isEmpty);
+
+    final region = await _extensionContext.observedRegionApi.create(selection: currentSelection);
+
+    AttachmentUsageCreatedPayload resp = await attachmentsService.createAttachmentUsage(producerWurl: region.wuri);
+
+    if (resp == null) return;
+
+    _anchors[resp.anchor.producerWurl] ??= [];
+    _anchors[resp.anchor.producerWurl].add(resp.anchor);
+    AttachmentUsage foundAttachmentUsage = _attachmentUsages
+        .firstWhere((AttachmentUsage usage) => (usage?.id == resp.attachmentUsage?.id), orElse: () => null);
+    if (foundAttachmentUsage == null) {
+      _attachmentUsages.add(resp.attachmentUsage);
+    }
+    Attachment foundAttachment =
+        _attachments.firstWhere((Attachment existing) => (existing?.id == resp.attachment?.id), orElse: () => null);
+    if (foundAttachment == null) {
+      _attachments.add(resp.attachment);
+    }
+
     _regroup();
   }
 
-  _getAttachmentsByProducers(GetAttachmentsByProducersPayload request) async {
-    if (!request.maintainAttachments) {
-      _attachments.removeWhere((Attachment attachment) => attachment.isUploadComplete || attachment.isUploadFailed);
-    }
+  _getAttachmentsByProducers(Set<String> producerWurls) async {
     AttachmentsByProducersPayload newAttachments =
-        await attachmentsService.getAttachmentsByProducers(producerWurls: request.producerWurls);
-    for (String wurl in request.producerWurls) {
+        await attachmentsService.getAttachmentsByProducers(producerWurls: producerWurls.toList());
+    for (String wurl in producerWurls) {
       _anchors[wurl] = newAttachments.anchors.where((Anchor anchor) => anchor.producerWurl == wurl);
     }
     for (AttachmentUsage attachmentUsage in newAttachments.attachmentUsages) {
@@ -423,6 +446,30 @@ class AttachmentsStore extends Store {
   void _handleRefreshPanelToolbar(_) {
     // when handleRefreshPanelToolbar is dispatched, trigger will occur.
     // Trigger will cause the Panel Toolbar to re-render, with new actionItems based on other changes.
+    trigger();
+  }
+
+  void _onDidChangeSelection(List<cef.Selection> currentSelections) {
+    final valid =
+        (currentSelections != null && currentSelections.isNotEmpty && currentSelections.any((s) => !s.isEmpty));
+    // only fire the action if the value of isValidSelection changed to avoid many many useless actions
+    if (valid != _isValidSelection) {
+      _isValidSelection = valid;
+      trigger();
+    }
+  }
+
+  void _onDidChangeScopes(Null _) {
+    var allScopes = _extensionContext.observedRegionApi.getScopes();
+    var currentScopes = _currentScopes.toSet();
+    // create a set of the scopes we need to subscribe to
+    final Set<String> scopesToObtain = allScopes.difference(currentScopes);
+    _getAttachmentsByProducers(scopesToObtain);
+    // create a set of the scopes we need to unsubscribe from
+    // TODO: remove old attachments we no longer need to show
+    // final Set<String> scopesToRemove = currentScopes.difference(allScopes);
+    // set _currentScopes to the new list of scopes
+    _currentScopes = allScopes;
     trigger();
   }
 }
