@@ -64,7 +64,7 @@ class AttachmentsStore extends Store {
     _regroup();
     _api = new AttachmentsApi(attachmentsActions, this);
     _getAttachmentsByProducers(new GetAttachmentsByProducersPayload(
-      producerWurls: ['wurl://sheets.v0/sheet:962DD25A85142FBBD7AC5AC84BAE9BD6'])); // made up junk
+        producerWurls: ['wurl://sheets.v0/sheet:962DD25A85142FBBD7AC5AC84BAE9BD6'])); // made up junk
     _actionProvider = actionProviderFactory != null
         ? actionProviderFactory(_api)
         : StandardActionProvider.actionProviderFactory(_api);
@@ -272,19 +272,17 @@ class AttachmentsStore extends Store {
 
   _createAttachmentUsage(CreateAttachmentUsagePayload request) async {
     AttachmentUsageCreatedPayload usagePayload = await attachmentsService.createAttachmentUsage(
-      producerWurl: request.producerWurl, attachmentId: request.attachmentId);
+        producerWurl: request.producerWurl, attachmentId: request.attachmentId);
     if (usagePayload != null) {
       _anchors[request.producerWurl] ??= [];
       _anchors[request.producerWurl].add(usagePayload.anchor);
-      AttachmentUsage foundAttachmentUsage =
-      _attachmentUsages.firstWhere((AttachmentUsage usage) => (usage?.id == usagePayload.attachmentUsage?.id),
-        orElse: () => null);
+      AttachmentUsage foundAttachmentUsage = _attachmentUsages
+          .firstWhere((AttachmentUsage usage) => (usage?.id == usagePayload.attachmentUsage?.id), orElse: () => null);
       if (foundAttachmentUsage == null) {
         _attachmentUsages.add(usagePayload.attachmentUsage);
       }
-      Attachment foundAttachment =
-      _attachments.firstWhere((Attachment existing) => (existing?.id == usagePayload.attachment?.id),
-        orElse: () => null);
+      Attachment foundAttachment = _attachments
+          .firstWhere((Attachment existing) => (existing?.id == usagePayload.attachment?.id), orElse: () => null);
       if (foundAttachment == null) {
         _attachments.add(usagePayload.attachment);
       }
@@ -302,8 +300,8 @@ class AttachmentsStore extends Store {
       _anchors[wurl] = newAttachments.anchors.where((Anchor anchor) => anchor.producerWurl == wurl);
     }
     for (AttachmentUsage attachmentUsage in newAttachments.attachmentUsages) {
-      AttachmentUsage foundAttachmentUsage =
-          _attachmentUsages.firstWhere((AttachmentUsage usage) => (usage?.id == attachmentUsage?.id), orElse: () => null);
+      AttachmentUsage foundAttachmentUsage = _attachmentUsages
+          .firstWhere((AttachmentUsage usage) => (usage?.id == attachmentUsage?.id), orElse: () => null);
       if (foundAttachmentUsage == null) {
         _attachmentUsages.add(attachmentUsage);
       }
@@ -375,7 +373,7 @@ class AttachmentsStore extends Store {
       for (int id in attachmentIds) {
         if (currentlySelected.add(id)) {
           attachmentsEvents.attachmentSelected(
-            new AttachmentSelectedEventPayload(selectedAttachmentId: id), dispatchKey);
+              new AttachmentSelectedEventPayload(selectedAttachmentId: id), dispatchKey);
           _treeNodes[id]?.forEach((node) => node.trigger());
         }
       }
@@ -389,7 +387,7 @@ class AttachmentsStore extends Store {
         if (currentlySelected.remove(id)) {
           _treeNodes[id]?.forEach((node) => node.trigger());
           attachmentsEvents.attachmentDeselected(
-            new AttachmentDeselectedEventPayload(deselectedAttachmentId: id), dispatchKey);
+              new AttachmentDeselectedEventPayload(deselectedAttachmentId: id), dispatchKey);
         }
       }
     }

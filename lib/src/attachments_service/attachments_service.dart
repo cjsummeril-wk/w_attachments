@@ -93,21 +93,18 @@ class AttachmentsService extends Disposable {
     super.onDispose();
   }
 
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage(
-      {@required String producerWurl, int attachmentId}) async {
+  Future<AttachmentUsageCreatedPayload> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
     AttachmentUsageCreatedPayload result;
     try {
       FCreateAttachmentUsageRequest request = new FCreateAttachmentUsageRequest()
         ..producerWurl = producerWurl
         ..attachmentId = attachmentId;
-      FCreateAttachmentUsageResponse response = await _fClient.createAttachmentUsage(
-        context, request);
+      FCreateAttachmentUsageResponse response = await _fClient.createAttachmentUsage(context, request);
       result = new AttachmentUsageCreatedPayload(
-        attachment: new Attachment.fromFAttachment(response.attachment),
-        attachmentUsage: new AttachmentUsage.fromFAttachmentUsage(response.attachmentUsage),
-        anchor: new Anchor.fromFAnchor(response.anchor));
-    }
-    catch (e, stacktrace) {
+          attachment: new Attachment.fromFAttachment(response.attachment),
+          attachmentUsage: new AttachmentUsage.fromFAttachmentUsage(response.attachmentUsage),
+          anchor: new Anchor.fromFAnchor(response.anchor));
+    } catch (e, stacktrace) {
       _logger.warning(e, stacktrace);
     }
     return result;
@@ -122,33 +119,27 @@ class AttachmentsService extends Disposable {
   }
 
   Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
-    FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()
-      ..producerWurls = producerWurls;
+    FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()..producerWurls = producerWurls;
     AttachmentsByProducersPayload result;
     try {
-      FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(
-        context, request);
+      FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(context, request);
       List<Attachment> returnAttachments = [];
       if (response.attachments?.isNotEmpty == true) {
-        response.attachments.forEach((FAttachment attachment) =>
-          returnAttachments.add(new Attachment.fromFAttachment(attachment)));
+        response.attachments
+            .forEach((FAttachment attachment) => returnAttachments.add(new Attachment.fromFAttachment(attachment)));
       }
       List<AttachmentUsage> returnAttachmentUsages = [];
       if (response.attachmentUsages?.isNotEmpty == true) {
         response.attachmentUsages.forEach((FAttachmentUsage attachmentUsage) =>
-          returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(attachmentUsage)));
+            returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(attachmentUsage)));
       }
       List<Anchor> returnAnchors = [];
       if (response.anchors?.isNotEmpty == true) {
-        response.anchors.forEach((FAnchor anchor) =>
-          returnAnchors.add(new Anchor.fromFAnchor(anchor)));
+        response.anchors.forEach((FAnchor anchor) => returnAnchors.add(new Anchor.fromFAnchor(anchor)));
       }
       result = new AttachmentsByProducersPayload(
-        attachments: returnAttachments,
-        attachmentUsages: returnAttachmentUsages,
-        anchors: returnAnchors);
-    }
-    catch (e, stacktrace) {
+          attachments: returnAttachments, attachmentUsages: returnAttachmentUsages, anchors: returnAnchors);
+    } catch (e, stacktrace) {
       _logger.warning(e, stacktrace);
     }
     return result;
