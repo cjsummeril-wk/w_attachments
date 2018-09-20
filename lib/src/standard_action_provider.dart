@@ -47,11 +47,9 @@ class StandardActionProvider implements ActionProvider {
           icon: ActionItem.iconBuilder(icon: IconGlyph.UPLOADED),
           tooltip: 'Upload File',
           testId: 'wa.AttachmentControls.Icon.UploadFile',
-          isDisabled: readOnly && selections.isNotEmpty,
+          isDisabled: readOnly && selections.isEmpty,
           callback: ((StatefulActionItem action) {
-            for (Selection selection in selections) {
-              _api.createAttachmentUsage(producerWurl: selection.toString());
-            }
+            _api.createAttachmentUsage(producerWurl: 'wurl://sheets.v0/sheet:962DD25A85142FBBD7AC5AC84BAE9BD6');
           }));
       panelActions.add(uploadFile);
     }

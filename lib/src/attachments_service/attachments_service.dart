@@ -94,7 +94,7 @@ class AttachmentsService extends Disposable {
   }
 
   Future<AttachmentUsageCreatedPayload> createAttachmentUsage(
-      {@required String producerWurl, @required int attachmentId}) async {
+      {@required String producerWurl, int attachmentId}) async {
     AttachmentUsageCreatedPayload result;
     try {
       FCreateAttachmentUsageRequest request = new FCreateAttachmentUsageRequest()
