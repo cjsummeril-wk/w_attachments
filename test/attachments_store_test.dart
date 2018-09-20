@@ -1025,10 +1025,10 @@ void main() {
         expect(_api.currentlySelectedAttachments, isEmpty);
 
         await _attachmentsActions.selectAttachments(
-            new SelectAttachmentsPayload(selectionKeys: [attachment.id.toString()], maintainSelections: false));
+            new SelectAttachmentsPayload(attachmentIds: [attachment.id.toString()], maintainSelections: false));
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentKey, attachment.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment.id.toString());
         expect(_api.currentlySelectedAttachments, contains(attachment.id.toString()));
       });
 
@@ -1051,7 +1051,7 @@ void main() {
         await _api.selectAttachmentsByIds(attachmentIds: [attachment.id.toString()], maintainSelections: false);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentKey, attachment.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment.id.toString());
         expect(_api.currentlySelectedAttachments, contains(attachment.id.toString()));
       });
 
@@ -1104,7 +1104,7 @@ void main() {
         await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id.toString()], maintainSelections: false);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentKey, attachment1.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment1.id.toString());
         expect(_api.currentlySelectedAttachments, isNotEmpty);
         expect(_api.currentlySelectedAttachments, contains(attachment1.id.toString()));
 
@@ -1112,7 +1112,7 @@ void main() {
         await _api.selectAttachmentsByIds(attachmentIds: [attachment2.id.toString()], maintainSelections: true);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentKey, attachment2.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment2.id.toString());
         expect(_api.currentlySelectedAttachments.length, 2);
         expect(_api.currentlySelectedAttachments, contains(attachment1.id.toString()));
         expect(_api.currentlySelectedAttachments, contains(attachment2.id.toString()));
@@ -1143,7 +1143,7 @@ void main() {
         await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id.toString()], maintainSelections: false);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentKey, attachment1.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment1.id.toString());
         expect(_api.currentlySelectedAttachments, isNotEmpty);
         expect(_api.currentlySelectedAttachments, contains(attachment1.id.toString()));
 
@@ -1151,7 +1151,7 @@ void main() {
         await _api.selectAttachmentsByIds(attachmentIds: [attachment2.id.toString()], maintainSelections: false);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentKey, attachment2.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment2.id.toString());
         expect(_api.currentlySelectedAttachments.length, 1);
         expect(_api.currentlySelectedAttachments, contains(attachment2.id.toString()));
       });
@@ -1173,13 +1173,13 @@ void main() {
         expect(_api.currentlySelectedAttachments, isEmpty);
 
         await _attachmentsActions.selectAttachments(
-            new SelectAttachmentsPayload(selectionKeys: [attachment.id.toString()], maintainSelections: false));
+            new SelectAttachmentsPayload(attachmentIds: [attachment.id.toString()], maintainSelections: false));
         expect(_api.currentlySelectedAttachments, contains(attachment.id.toString()));
 
         await _api.deselectAttachmentsByIds(attachmentIds: [attachment.id.toString()]);
         await eventCompleter.future;
 
-        expect(deselectEventResult.deselectedAttachmentKey, attachment.id.toString());
+        expect(deselectEventResult.deselectedAttachmentId, attachment.id.toString());
         expect(_api.currentlySelectedAttachments, isEmpty);
       });
 

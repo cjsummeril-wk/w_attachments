@@ -139,10 +139,10 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
   _toggleSelectAttachment() async {
     if (node is AttachmentTreeNode) {
       if (selected) {
-        node.actions.deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: [node.key]));
+        node.actions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: [node.key]));
       } else {
         node.actions
-            .selectAttachments(new SelectAttachmentsPayload(selectionKeys: [node.key], maintainSelections: false));
+            .selectAttachments(new SelectAttachmentsPayload(attachmentIds: [node.key], maintainSelections: false));
       }
     }
     node.trigger();

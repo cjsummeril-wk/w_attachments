@@ -35,7 +35,7 @@ class AttachmentsStore extends Store {
   ContextGroup currentlyDisplayedSingle;
   bool _showingHeaderlessGroup = false;
 
-  Set<String> _currentlySelected = new Set<String>();
+  Set<int> _currentlySelected = new Set<int>();
 
   // group and filter properties
   List<Filter> _filtersVar = [];
@@ -45,7 +45,7 @@ class AttachmentsStore extends Store {
   // nested tree properties
   AttachmentsTreeNode _hoveredNode;
   AttachmentsTreeNode _rootNode;
-  Map<String, List<AttachmentsTreeNode>> _treeNodes = {};
+  Map<dynamic, List<AttachmentsTreeNode>> _treeNodes = {};
 
   AttachmentsStore(
       {@required this.actionProviderFactory,
@@ -63,6 +63,8 @@ class AttachmentsStore extends Store {
         this._moduleConfig = moduleConfig ?? new AttachmentsConfig() {
     _regroup();
     _api = new AttachmentsApi(attachmentsActions, this);
+    _getAttachmentsByProducers(new GetAttachmentsByProducersPayload(
+      producerWurls: ['wurl://sheets.v0/sheet:962DD25A85142FBBD7AC5AC84BAE9BD6'])); // made up junk
     _actionProvider = actionProviderFactory != null
         ? actionProviderFactory(_api)
         : StandardActionProvider.actionProviderFactory(_api);
@@ -78,6 +80,7 @@ class AttachmentsStore extends Store {
         attachmentsActions);
 
     // Module Action Listeners
+    triggerOnActionV2(attachmentsActions.createAttachmentUsage, _createAttachmentUsage);
     triggerOnActionV2(attachmentsActions.getAttachmentsByProducers, _getAttachmentsByProducers);
     triggerOnActionV2(attachmentsActions.setActionItemState, _setActionItemState);
     triggerOnActionV2(attachmentsActions.setGroups, _setGroups);
@@ -115,7 +118,7 @@ class AttachmentsStore extends Store {
 
   String get primarySelection => _moduleConfig.primarySelection;
 
-  Set<String> get currentlySelected => _currentlySelected;
+  Set<int> get currentlySelected => _currentlySelected;
 
   bool get enableClickToSelect => _moduleConfig.enableClickToSelect;
 
@@ -135,11 +138,11 @@ class AttachmentsStore extends Store {
   List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
   List<Anchor> getAnchorsByWurl(String wurl) =>
       _anchors[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchors[wurl]);
-  List<AttachmentUsage> getAttachmentUsagesByAnchorId(String anchorId) =>
+  List<AttachmentUsage> getAttachmentUsagesByAnchorId(int anchorId) =>
       new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
   List<AttachmentUsage> getAttachmentUsagesByAnchors(List<Anchor> anchors) {
     List<AttachmentUsage> attachmentUsagesToReturn = [];
-    List<String> attachmentUsagesToGet = new List<String>.from(anchors.map((Anchor anchor) => anchor.id));
+    List<int> attachmentUsagesToGet = new List<int>.from(anchors.map((Anchor anchor) => anchor.id));
     attachmentUsagesToReturn
         .addAll(_attachmentUsages.where((AttachmentUsage usage) => attachmentUsagesToGet.contains(usage.anchorId)));
     return attachmentUsagesToReturn;
@@ -163,7 +166,7 @@ class AttachmentsStore extends Store {
   // nested tree getters/setters
   AttachmentsTreeNode get rootNode => _rootNode;
   AttachmentsTreeNode get hoveredNode => _hoveredNode;
-  Map<String, List<AttachmentsTreeNode>> get treeNodes => _treeNodes;
+  Map<dynamic, List<AttachmentsTreeNode>> get treeNodes => _treeNodes;
 
   // group and filter getters/setters
   List<Group> get groups => new List<Group>.from(_groups);
@@ -252,12 +255,12 @@ class AttachmentsStore extends Store {
     return nodes;
   }
 
-  _removeAttachmentFromClientCache(String key) {
-    Attachment attachmentToRemove = _getAttachmentByKey(key);
+  _removeAttachmentFromClientCache(int id) {
+    Attachment attachmentToRemove = _getAttachmentById(id);
     if (attachmentToRemove != null && _attachments.contains(attachmentToRemove)) {
       _attachments.remove(attachmentToRemove);
       _regroup();
-      attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: [attachmentToRemove?.id]));
+      attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: [attachmentToRemove?.id]));
     }
   }
 
@@ -265,6 +268,28 @@ class AttachmentsStore extends Store {
     if (request?.selection != null && request?.files?.isNotEmpty == true) {
 //      _uploadFiles(request.selection, request.files);
     }
+  }
+
+  _createAttachmentUsage(CreateAttachmentUsagePayload request) async {
+    AttachmentUsageCreatedPayload usagePayload = await attachmentsService.createAttachmentUsage(
+      producerWurl: request.producerWurl, attachmentId: request.attachmentId);
+    if (usagePayload != null) {
+      _anchors[request.producerWurl] ??= [];
+      _anchors[request.producerWurl].add(usagePayload.anchor);
+      AttachmentUsage foundAttachmentUsage =
+      _attachmentUsages.firstWhere((AttachmentUsage usage) => (usage?.id == usagePayload.attachmentUsage?.id),
+        orElse: () => null);
+      if (foundAttachmentUsage == null) {
+        _attachmentUsages.add(usagePayload.attachmentUsage);
+      }
+      Attachment foundAttachment =
+      _attachments.firstWhere((Attachment existing) => (existing?.id == usagePayload.attachment?.id),
+        orElse: () => null);
+      if (foundAttachment == null) {
+        _attachments.add(usagePayload.attachment);
+      }
+    }
+    _regroup();
   }
 
   _getAttachmentsByProducers(GetAttachmentsByProducersPayload request) async {
@@ -278,7 +303,7 @@ class AttachmentsStore extends Store {
     }
     for (AttachmentUsage attachmentUsage in newAttachments.attachmentUsages) {
       AttachmentUsage foundAttachmentUsage =
-          _attachmentUsages.firstWhere((AttachmentUsage usage) => (usage?.id == usage?.id), orElse: () => null);
+          _attachmentUsages.firstWhere((AttachmentUsage usage) => (usage?.id == attachmentUsage?.id), orElse: () => null);
       if (foundAttachmentUsage == null) {
         _attachmentUsages.add(attachmentUsage);
       }
@@ -340,36 +365,42 @@ class AttachmentsStore extends Store {
 
   _selectAttachments(SelectAttachmentsPayload request) {
     if (!request.maintainSelections && currentlySelected.isNotEmpty) {
-      _deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: currentlySelected.toList()));
+      _deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: currentlySelected.toList()));
       for (var key in currentlySelected) {
         _treeNodes[key]?.forEach((node) => node.trigger());
       }
     }
-    request?.selectionKeys?.forEach((String key) {
-      if (currentlySelected.add(key)) {
-        attachmentsEvents.attachmentSelected(
-            new AttachmentSelectedEventPayload(selectedAttachmentKey: key), dispatchKey);
-        _treeNodes[key]?.forEach((node) => node.trigger());
+    List<int> attachmentIds = request?.attachmentIds;
+    if (attachmentIds != null) {
+      for (int id in attachmentIds) {
+        if (currentlySelected.add(id)) {
+          attachmentsEvents.attachmentSelected(
+            new AttachmentSelectedEventPayload(selectedAttachmentId: id), dispatchKey);
+          _treeNodes[id]?.forEach((node) => node.trigger());
+        }
       }
-    });
+    }
   }
 
   _deselectAttachments(DeselectAttachmentsPayload request) {
-    request?.selectionKeys?.forEach((String key) {
-      if (currentlySelected.remove(key)) {
-        _treeNodes[key]?.forEach((node) => node.trigger());
-        attachmentsEvents.attachmentDeselected(
-            new AttachmentDeselectedEventPayload(deselectedAttachmentKey: key), dispatchKey);
+    List<int> attachmentIds = request?.attachmentIds;
+    if (attachmentIds != null) {
+      for (int id in attachmentIds) {
+        if (currentlySelected.remove(id)) {
+          _treeNodes[id]?.forEach((node) => node.trigger());
+          attachmentsEvents.attachmentDeselected(
+            new AttachmentDeselectedEventPayload(deselectedAttachmentId: id), dispatchKey);
+        }
       }
-    });
+    }
   }
 
-  Attachment _getAttachmentByKey(String key) =>
-      _attachments.firstWhere((attachment) => attachment.id == key, orElse: () => null);
+  Attachment _getAttachmentById(int id) =>
+      _attachments.firstWhere((attachment) => attachment.id == id, orElse: () => null);
 
   _handleAttachmentRemoved(AttachmentRemovedEventPayload removeEvent) {
     if (removeEvent.responseStatus) {
-      _removeAttachmentFromClientCache(removeEvent.removedSelectionKey);
+      _removeAttachmentFromClientCache(removeEvent.removedSelectionId);
     }
   }
 

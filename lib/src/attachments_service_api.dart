@@ -40,7 +40,7 @@ class AttachmentsServiceApi extends Disposable {
     _attachmentsService = service;
   }
 
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage(String producerWurl, String attachmentId) async {
+  Future<AttachmentUsageCreatedPayload> createAttachmentUsage(String producerWurl, int attachmentId) async {
     return _attachmentsService.createAttachmentUsage(producerWurl: producerWurl, attachmentId: attachmentId);
   }
 

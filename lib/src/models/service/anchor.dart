@@ -3,7 +3,7 @@ part of w_attachments_client.models.service;
 class Anchor {
   String accountResourceId;
   bool disconnected;
-  String id;
+  int id;
   String producerWurl;
 
   Anchor.fromFAnchor(FAnchor fAnchor)

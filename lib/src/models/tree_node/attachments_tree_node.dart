@@ -13,7 +13,7 @@ abstract class AttachmentsTreeNode<T> extends TreeNode<dynamic> {
       : super(content, isCollapsed: isCollapsed, children: children, size: size);
 
   String get label => content.name;
-  String get key => content.id;
+  dynamic get key => content.id;
 
   ActionProvider get actionProvider => _actionProvider;
   AttachmentsActions get actions => _actions;

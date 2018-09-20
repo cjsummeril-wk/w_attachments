@@ -78,7 +78,7 @@ dependencies:
       hosted:
         name: w_annotations_api
         url: https://pub.workiva.org
-      version: ^0.3.1
+      version: ^0.4.0
 
 dev_dependencies:
   abide:

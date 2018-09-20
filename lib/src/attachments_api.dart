@@ -64,7 +64,7 @@ class AttachmentsApi {
   List<Attachment> getAttachmentsByProducerWurl(String wurl) => _attachmentsStore.getAttachmentsByProducerWurl(wurl);
 
   /// getAttachmentUsagesByAnchorId is the list of all [AttachmentUsage]s whose AnchorId matches the provided one.
-  List<AttachmentUsage> getAttachmentUsagesByAnchorId(String anchorId) =>
+  List<AttachmentUsage> getAttachmentUsagesByAnchorId(int anchorId) =>
       _attachmentsStore.getAttachmentUsagesByAnchorId(anchorId);
 
   /// getAttachmentUsagesByAnchors is the list of all [AttachmentUsage]s whose AnchorId matches an ID of one of the anchors provided.
@@ -79,19 +79,19 @@ class AttachmentsApi {
   /// deselectAttachmentsByIds deselects attachment cards based on the passed in [attachmentIds]
   ///
   ///   [attachmentIds] is a list of [Attachment] keys
-  Future<Null> deselectAttachmentsByIds({@required List<String> attachmentIds}) async =>
-      await _attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: attachmentIds));
+  Future<Null> deselectAttachmentsByIds({@required List<int> attachmentIds}) async =>
+      await _attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: attachmentIds));
 
   /// Updates the label on the [Attachment] of the [Selection] key [keyToUpdate] with the [newLabel]
   /// then calls Request.PUT on the [Attachment] to persist the data to the object
   ///
   ///   [keyToUpdate] is the [Selection] key on which the label is being changed.
   ///   [newLabel] is the new label the bundle should get
-  Future<Null> updateLabel({@required String keyToUpdate, @required String newLabel}) async =>
-      await _attachmentsActions.updateLabel(new UpdateLabelPayload(keyToUpdate: keyToUpdate, newLabel: newLabel));
+  Future<Null> updateLabel({@required int idToUpdate, @required String newLabel}) async =>
+      await _attachmentsActions.updateLabel(new UpdateLabelPayload(idToUpdate: idToUpdate, newLabel: newLabel));
 
   // Module Actions
-  Future<Null> createAttachmentUsage({@required String producerWurl, @required String attachmentId}) async {
+  Future<Null> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
     await _attachmentsActions.createAttachmentUsage(
         new CreateAttachmentUsagePayload(producerWurl: producerWurl, attachmentId: attachmentId));
   }
@@ -112,9 +112,9 @@ class AttachmentsApi {
   ///   [attachmentIds] is a list of [Attachment] ids
   ///   [maintainSelections] allows the current selections to be preserved while appending new selections,
   ///   otherwise current selections will have deselect called on them first
-  Future<Null> selectAttachmentsByIds({@required List<String> attachmentIds, bool maintainSelections: false}) async =>
+  Future<Null> selectAttachmentsByIds({@required List<int> attachmentIds, bool maintainSelections: false}) async =>
       await _attachmentsActions.selectAttachments(
-          new SelectAttachmentsPayload(selectionKeys: attachmentIds, maintainSelections: maintainSelections));
+          new SelectAttachmentsPayload(attachmentIds: attachmentIds, maintainSelections: maintainSelections));
 
   /// setActionState sets the state of a StatefulActionItem to a new state
   ///

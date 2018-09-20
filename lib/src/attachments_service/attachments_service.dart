@@ -14,6 +14,7 @@ class AttachmentsService extends Disposable {
   Stream<UploadStatus> get uploadStatusStream => _uploadStatusStreamController?.stream;
 
   final msg.ThriftProtocol _protocol = msg.ThriftProtocol.BINARY;
+  FContext get context => _msgClient.createFContext();
   final Logger _logger = new Logger('w_attachments_client.attachments_service');
 
   static const analyticLabel = 'w_attachments_client';
@@ -93,8 +94,23 @@ class AttachmentsService extends Disposable {
   }
 
   Future<AttachmentUsageCreatedPayload> createAttachmentUsage(
-      {@required String producerWurl, @required String attachmentId}) async {
-    return null;
+      {@required String producerWurl, @required int attachmentId}) async {
+    AttachmentUsageCreatedPayload result;
+    try {
+      FCreateAttachmentUsageRequest request = new FCreateAttachmentUsageRequest()
+        ..producerWurl = producerWurl
+        ..attachmentId = attachmentId;
+      FCreateAttachmentUsageResponse response = await _fClient.createAttachmentUsage(
+        context, request);
+      result = new AttachmentUsageCreatedPayload(
+        attachment: new Attachment.fromFAttachment(response.attachment),
+        attachmentUsage: new AttachmentUsage.fromFAttachmentUsage(response.attachmentUsage),
+        anchor: new Anchor.fromFAnchor(response.anchor));
+    }
+    catch (e, stacktrace) {
+      _logger.warning(e, stacktrace);
+    }
+    return result;
   }
 
   Future<Iterable<Attachment>> getAttachmentsByIds({@required List<String> idsToLoad}) async {
@@ -106,7 +122,36 @@ class AttachmentsService extends Disposable {
   }
 
   Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
-    return null;
+    FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()
+      ..producerWurls = producerWurls;
+    AttachmentsByProducersPayload result;
+    try {
+      FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(
+        context, request);
+      List<Attachment> returnAttachments = [];
+      if (response.attachments?.isNotEmpty == true) {
+        response.attachments.forEach((FAttachment attachment) =>
+          returnAttachments.add(new Attachment.fromFAttachment(attachment)));
+      }
+      List<AttachmentUsage> returnAttachmentUsages = [];
+      if (response.attachmentUsages?.isNotEmpty == true) {
+        response.attachmentUsages.forEach((FAttachmentUsage attachmentUsage) =>
+          returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(attachmentUsage)));
+      }
+      List<Anchor> returnAnchors = [];
+      if (response.anchors?.isNotEmpty == true) {
+        response.anchors.forEach((FAnchor anchor) =>
+          returnAnchors.add(new Anchor.fromFAnchor(anchor)));
+      }
+      result = new AttachmentsByProducersPayload(
+        attachments: returnAttachments,
+        attachmentUsages: returnAttachmentUsages,
+        anchors: returnAnchors);
+    }
+    catch (e, stacktrace) {
+      _logger.warning(e, stacktrace);
+    }
+    return result;
   }
 
   Future<Iterable<File>> selectFiles({bool allowMultiple: true}) async {

@@ -470,12 +470,12 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
   }
 
   _handleSelectAttachment(AttachmentSelectedEventPayload result) {
-    _currentlySelected.add(result.selectedAttachmentKey);
+    _currentlySelected.add(result.selectedAttachmentId);
     updateSelectedFilesDisplay();
   }
 
   _handleUnselectAttachment(AttachmentDeselectedEventPayload result) {
-    _currentlySelected.remove(result.deselectedAttachmentKey);
+    _currentlySelected.remove(result.deselectedAttachmentId);
     updateSelectedFilesDisplay();
   }
 
