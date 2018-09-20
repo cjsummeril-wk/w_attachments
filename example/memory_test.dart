@@ -39,8 +39,7 @@ void _createAndDisposeSubject() {
         primarySelection: primarySelection,
       ),
       session: session,
-      extensionContext: extensionContext,
-      attachmentsService: attachmentsService)
+      extensionContext: extensionContext)
     ..load();
 
   attachmentsService.dispose();

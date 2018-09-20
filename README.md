@@ -3,17 +3,46 @@ w_attachments_client
 
 A module that provides an interface to manage attachments in a side panel.
 
-## Consuming
-
-### Attachments Module
-- Add w_attachments_client to your pubspec.
-- Include the following stylesheets in your html:
+### Building
+#### Install the Dart SDK
 
 ```bash
-    <link rel="stylesheet" href="packages/web_skin/dist/css/web-skin.min.css">
-    <link rel="stylesheet" href="packages/web_skin/dist/css/peripherals/grid-v2.min.css">
-    <link rel="stylesheet" href="packages/w_attachments_client/style/w_attachment.css">
+$ brew tap dart-lang/dart
+$ brew install dart --with-content-shell --with-dartium
 ```
+
+#### Installing / Updating Dart Dependencies
+
+Run the following from the root w_attachments_client directory.
+```bash
+pub get
+```
+
+#### Running
+
+  - Run the example application inside the `example` directory to see a basic implementation of w_attachments_client
+  - `pub run dart_dev examples` in the root, with dartium running.
+
+
+#### Running tests
+
+- run `pub run dart_dev test` in the root or app directory to run all the tests at those levels
+- run `pub run dart_dev test -n REGEX` to tests matching a specific REGEX. It's recommended to wrap all tests in a file with a
+corresponding top level group so that all tests in file can be run easily.
+    - Ex. All tests in `attachments_module_test.dart` should be wrapped in a `AttachmentsModule` group so they can be run
+        with `pub run dart_dev test -n AttachmentsModule` (or better yet: `pub run dart_dev test -n '^AttachmentsModule'`.
+        Make sure to wrap your regex in quotes if you are using any special characters - if your terminal runs caret substitution
+        or any other special zsh commands you may have unexpected results.)
+
+#### Generating Tests
+- run `pub run dart_dev gen-test-runner` in the root directory.
+
+### Contributing
+- Follow [Effective Dart](https://www.dartlang.org/effective-dart/).
+- Format code using `dartformat` with 120 characters: `pub run dart_dev format`
+- Verify that the example app still works correctly
+
+## Consuming
 
 #### Rendering
 - Use w_module to construct and load an `AttachmentsModule`. The module requires that you provide it a [Session](https://github.com/Workiva/w_session/blob/master/lib/src/session.dart), an
@@ -36,7 +65,7 @@ class BaseModule extends Module {
         session: session,
         extensionContext: extensionContext,
         attachmentsService: new AttachmentsService(
-            bigskyClient: session.createBigskyClient(),
+            messagingClient: [existing_natsMessagingClient_instance],
             appIntelligence: existing_appIntelligence_instance),
   }
 
@@ -288,49 +317,6 @@ _serviceApi = new AttachmentsServiceApi(
     appIntelligence: existing_appIntelligence_instance);
 _serviceApi.uploadStatusStream.listen(_someHandler);
 ```
-
-### Building
-#### Install the Dart SDK
-
-```bash
-$ brew tap dart-lang/dart
-$ brew install dart --with-content-shell --with-dartium
-$ brew linkapps dart
-```
-
-#### Installing / Updating Dart Dependencies
-
-Run the following from the root w_attachments_client directory.
-```bash
-pub get
-```
-
-#### Running
-
-  - Run the example application inside the `example` directory to see a basic implementation of w_attachments_client
-  - `pub run dart_dev examples` in the root, with dartium running.
-
-
-#### Running tests
-
-- run `pub run dart_dev test` in the root or app directory to run all the tests at those levels
-- run `pub run dart_dev test -n REGEX` to tests matching a specific REGEX. It's recommended to wrap all tests in a file with a
-corresponding top level group so that all tests in file can be run easily.
-    - Ex. All tests in `attachments_module_test.dart` should be wrapped in a `AttachmentsModule` group so they can be run
-        with `pub run dart_dev test -n AttachmentsModule` (or better yet: `pub run dart_dev test -n '^AttachmentsModule'`.
-        Make sure to wrap your regex in quotes if you are using any special characters - if your terminal runs caret substitution
-        or any other special zsh commands you may have unexpected results.)
-
-#### Generating Tests
-- run `pub run dart_dev gen-test-runner` in the root directory.
-
-### Contributing
-- Follow [Effective Dart](https://www.dartlang.org/effective-dart/).
-- Format code using `dartformat` with 120 characters: `pub run dart_dev format`
-- Verify that the example app still works correctly
-
-### Testing in a local sox/bigsky context
-Follow the instructions [here](../docs/BIGSKY_LOCAL.md) to test w_attachments_client against a local bigsky/sox app
 
 ### Testing Signoff Template
 ```markdown

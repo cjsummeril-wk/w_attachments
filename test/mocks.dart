@@ -2,8 +2,10 @@ library w_attachments_client.test.mocks;
 
 import 'dart:html' show File, Window;
 
+import 'package:frugal/frugal.dart' as frugal;
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
+import 'package:messaging_sdk/messaging_sdk.dart';
 import 'package:w_transport/w_transport.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
@@ -21,5 +23,6 @@ part './mocks/attachments_service_stub.dart';
 part './mocks/attachments_store_mock.dart';
 part './mocks/client_mock.dart';
 part './mocks/extension_context_mock.dart';
+part './mocks/frugal_mock.dart';
 part './mocks/file_mock.dart';
 part './mocks/window_mock.dart';

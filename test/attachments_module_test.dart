@@ -12,7 +12,7 @@ void main() {
   group('AttachmentsModule', () {
     AttachmentsModule _module;
     ExtensionContextMock _extensionContext;
-    AttachmentsService _attachmentsService;
+    MockMessagingClient _msgClient;
     Session _session;
 
     setUp(() async {
@@ -23,6 +23,7 @@ void main() {
       MockSession.sessionHost = sessionHost;
 
       _session = new Session(sessionHost: sessionHost);
+      _msgClient = new MockMessagingClient();
     });
 
     tearDown(() async {
@@ -36,7 +37,7 @@ void main() {
           config: new AttachmentsConfig(),
           session: _session,
           extensionContext: _extensionContext,
-          attachmentsService: _attachmentsService,
+          messagingClient: _msgClient,
           actionProviderFactory: StandardActionProvider.actionProviderFactory);
       await _module.load();
 

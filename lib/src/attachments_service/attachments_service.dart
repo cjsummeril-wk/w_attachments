@@ -1,20 +1,23 @@
 part of w_attachments_client.service;
 
 class AttachmentsService extends Disposable {
-  AppIntelligence _appIntelligence;
+  FWAnnotationsServiceClient _fClient;
+
   Window serviceWindow = window;
+
+  AppIntelligence _appIntelligence;
   msg.NatsMessagingClient _msgClient;
-//  attachments_service.FAttachmentServiceClient _attachmentsServiceClient;
   ModalManager _modalManager;
-  final Logger _logger = new Logger('w_attachments_client.attachments_service');
+  UploadManager _uploadManager;
 
   StreamController<UploadStatus> _uploadStatusStreamController;
   Stream<UploadStatus> get uploadStatusStream => _uploadStatusStreamController?.stream;
 
-  UploadManager _uploadManager;
+  final msg.ThriftProtocol _protocol = msg.ThriftProtocol.BINARY;
+  final Logger _logger = new Logger('w_attachments_client.attachments_service');
 
-  static const analyticLabel = 'wattachments';
-  static const appIntelName = 'wattachments';
+  static const analyticLabel = 'w_attachments_client';
+  static const appIntelName = 'w_attachments_client';
   static const attachmentSystemType = 'AttachmentSystem';
   static const attachmentType = 'Attachment';
   static const attachments = 'attachments';
@@ -29,10 +32,8 @@ class AttachmentsService extends Disposable {
   static const result = 'result';
   static const selectionKeys = 'selection_keys';
 
-  FContext get context => _msgClient.createFContext();
-
   AttachmentsService(
-      {msg.NatsMessagingClient messagingClient, AppIntelligence appIntelligence, ModalManager modalManager})
+      {@required msg.NatsMessagingClient messagingClient, AppIntelligence appIntelligence, ModalManager modalManager})
       : _uploadStatusStreamController = new StreamController<UploadStatus>.broadcast() {
     _appIntelligence = (appIntelligence != null)
         ? appIntelligence.clone(appIntelName)
@@ -44,6 +45,43 @@ class AttachmentsService extends Disposable {
     _modalManager = modalManager;
     manageStreamController(_uploadStatusStreamController);
     manageDisposable(_appIntelligence);
+  }
+
+// // Middleware for Frugal clients.  Helps us get info from Sumo Logic
+  frugal.Middleware get logCorrelationIdMiddleware =>
+      (frugal.InvocationHandler next) => (String serviceName, String methodName, List<Object> args) async {
+            _logger.info("Starting $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+        .correlationId})");
+            try {
+              final res = await next(serviceName, methodName, args);
+              _logger.info("Finished $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+        .correlationId})");
+              return res;
+            } catch (e, s) {
+              _logger.severe(
+                  "Execption raised by $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
+        .correlationId})",
+                  e,
+                  s);
+              rethrow;
+            }
+          };
+
+  Future<Null> initialize() async {
+    var serviceDescriptor = msg.newServiceDescriptor(
+        natsSubject: AnnotationsApiV1Constants.W_ANNOTATIONS_SERVICE, frugalProtocol: _protocol);
+
+    var provider = _msgClient.newClient(serviceDescriptor);
+
+    var _transport = provider.transport;
+    await _transport.open();
+
+    getManagedDisposer(() async {
+      await _transport?.close();
+      _transport = null;
+    });
+
+    _fClient = new FWAnnotationsServiceClient(provider, [logCorrelationIdMiddleware]);
   }
 
   @mustCallSuper

@@ -17,6 +17,9 @@ import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_attachments_client/w_attachments_service_api.dart';
 import 'package:w_session/mock.dart';
 import 'package:w_session/w_session.dart';
+import 'package:messaging_sdk/messaging_sdk.dart';
+import 'package:w_transport/browser.dart';
+import 'package:w_transport/mock.dart';
 
 import './src/components/context_list.dart';
 import './src/example_content_extension_framework.dart' as example_cef;
@@ -24,9 +27,11 @@ import './src/sample_reader_permissions_action_provider.dart';
 import './src/utils.dart';
 
 RichAppShell shell;
+NatsMessagingClient messagingClient;
 Session session;
 Future<int> rightPanelModelId;
 var _subs = [];
+const annoClientId = "anno";
 
 enum ViewModeSettings { Regions, Headerless, Tree }
 
@@ -48,10 +53,19 @@ Future main() async {
   // mock out the session.
   MockSession.install();
   MockSession.sessionHost = sessionHost;
+  MockSession.grantAuthorizationForClient(annoClientId);
+  MockTransports.install(fallThrough: true);
 
-  session = new Session(sessionHost: sessionHost);
+  session = new Session(clientId: annoClientId, sessionHost: sessionHost);
+
+  configureWTransportForBrowser();
+
   shell = new RichAppShell(session: session);
   await shell.load();
+
+  final frontendConfig = new FrontendConfig('http://localhost:8100');
+  messagingClient = new NatsMessagingClient(session, frontendConfig);
+  await messagingClient.open();
 
   // Render the shell
   react_dom.render(shell.components.content(), querySelector('#shell-container'));
@@ -127,9 +141,9 @@ class _AttachmentsExampleApp extends react.Component {
 
     _attachmentsModule = new AttachmentsModule(
       config: _config,
+      messagingClient: messagingClient,
       session: session,
       extensionContext: _extensionContext,
-      attachmentsService: _attachmentsService,
       actionProviderFactory: SampleReaderPermissionsActionProvider.actionProviderFactory,
     )..load();
 
@@ -542,7 +556,6 @@ class _AttachmentsExampleApp extends react.Component {
           config: config,
           session: session,
           extensionContext: _extensionContext,
-          attachmentsService: _attachmentsService,
           actionProviderFactory: SampleReaderPermissionsActionProvider.actionProviderFactory);
 
       await _attachmentsModule.load();

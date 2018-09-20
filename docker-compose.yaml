@@ -1,0 +1,66 @@
+version: '2.2'
+services:
+  annotations-service:
+    image: drydock.workiva.net/workiva/w-annotations-service:1443138
+    depends_on:
+      - nats
+    ports:
+      - "8082:8082"
+    environment:
+      DEPLOYMENT: local
+      HTTP_PORT: 8082
+      IAM_UNSAFE: "true"
+      MSG_URL: "nats://nats:4222"
+      STREAMS_ENABLED: "false"
+      EVA_URI: "http://eva-client-service:8080"
+
+  messaging-frontend:
+    image: drydock.workiva.net/workiva/messaging-frontend:latest-release
+    environment:
+      IAM_UNSAFE: 'true'
+    command:
+      - -level=debug
+      - -nats=nats://nats:4222
+      - -server-port=8100
+      - -dev-mode=true
+    depends_on:
+      nats:
+        condition: service_started
+    healthcheck:
+      test: curl --fail -s http://messaging-frontend:8100/health || exit 1
+      interval: 5s
+      timeout: 4s
+      retries: 15
+    ports:
+    - '8100:8100'
+
+  nats:
+    image: nats:latest
+    command:
+      - -m=8222
+      - -D
+    ports:
+      - '8222:8222'
+      - '4222:4222'
+
+  mock-fsha:
+    image: drydock.workiva.net/workiva/mock-fsha:latest-release
+    depends_on:
+      nats:
+        condition: service_started
+    environment:
+      IAM_UNSAFE: 'true'
+      MSG_URL: 'nats://nats:4222'
+      DEFAULT_HTTP_ADDRESS: ':8083'
+    ports:
+      - '8083:8080'
+
+  eva-client-service:
+    image: drydock.workiva.net/workiva/eva-client-service:0.2.0
+    environment:
+      CATALOG_URL: 'LOCAL'
+      LOGBACK_APPENDER: 'STDOUT'
+      IAM_UNSAFE: 'true'
+      SANITIZE_EXCEPTIONS: 'false'
+    ports:
+    - '8085:8080'

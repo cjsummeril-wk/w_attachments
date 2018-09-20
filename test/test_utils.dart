@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:messaging_sdk/messaging_sdk.dart';
 import 'package:mockito/mockito.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';
@@ -9,7 +10,6 @@ import 'package:w_session/w_session.dart';
 
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
-import 'package:w_attachments_client/w_attachments_service_api.dart';
 
 import './mocks.dart';
 
@@ -51,13 +51,10 @@ swallowPrints(testFunc()) => () {
     };
 
 Future<AttachmentsModule> loadModule() async {
-  AttachmentsService _attachmentsService = new AttachmentsTestService();
-
   AttachmentsModule attachmentsModule = new AttachmentsModule(
       config: new AttachmentsConfig(),
-      session: new Session(),
       extensionContext: new ExtensionContextMock(),
-      attachmentsService: _attachmentsService,
+      messagingClient: new MockMessagingClient(),
       actionProviderFactory: StandardActionProvider.actionProviderFactory);
   await attachmentsModule.load();
 
