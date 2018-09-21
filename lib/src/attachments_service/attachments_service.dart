@@ -120,9 +120,11 @@ class AttachmentsService extends Disposable {
 
   Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
     FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()..producerWurls = producerWurls;
+
     AttachmentsByProducersPayload result;
     try {
       FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(context, request);
+      print("warn $response");
       List<Attachment> returnAttachments = [];
       if (response.attachments?.isNotEmpty == true) {
         response.attachments
@@ -140,6 +142,7 @@ class AttachmentsService extends Disposable {
       result = new AttachmentsByProducersPayload(
           attachments: returnAttachments, attachmentUsages: returnAttachmentUsages, anchors: returnAnchors);
     } catch (e, stacktrace) {
+      print("warn $e");
       _logger.warning(e, stacktrace);
     }
     return result;

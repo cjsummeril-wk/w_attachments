@@ -12,7 +12,7 @@ class Anchor {
         producerWurl = fAnchor.producerWurl,
         disconnected = fAnchor.disconnected;
 
-  FAnchor toFAnchor(Anchor anchor) => new FAnchor()
+  FAnchor toFAnchor() => new FAnchor()
     ..id = id
     ..accountResourceId = accountResourceId
     ..disconnected = disconnected

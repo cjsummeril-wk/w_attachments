@@ -319,9 +319,11 @@ class AttachmentsStore extends Store {
   _getAttachmentsByProducers(Set<String> producerWurls) async {
     AttachmentsByProducersPayload newAttachments =
         await attachmentsService.getAttachmentsByProducers(producerWurls: producerWurls.toList());
+
     for (String wurl in producerWurls) {
-      _anchors[wurl] = newAttachments.anchors.where((Anchor anchor) => anchor.producerWurl == wurl);
+      _anchors[wurl] = newAttachments.anchors.where((Anchor anchor) => anchor.producerWurl.startsWith(wurl));
     }
+
     for (AttachmentUsage attachmentUsage in newAttachments.attachmentUsages) {
       AttachmentUsage foundAttachmentUsage = _attachmentUsages
           .firstWhere((AttachmentUsage usage) => (usage?.id == attachmentUsage?.id), orElse: () => null);
