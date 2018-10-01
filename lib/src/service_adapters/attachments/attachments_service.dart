@@ -13,7 +13,7 @@ class AttachmentsService extends Disposable {
   StreamController<UploadStatus> _uploadStatusStreamController;
   Stream<UploadStatus> get uploadStatusStream => _uploadStatusStreamController?.stream;
 
-  FContext get requestContext => _msgClient.createFContext()..timeout = new Duration(seconds: 30);
+  frugal.FContext get requestContext => _msgClient.createFContext()..timeout = new Duration(seconds: 30);
 
   final msg.ThriftProtocol _protocol = msg.ThriftProtocol.BINARY;
   frugal.FContext get context => _msgClient.createFContext();
@@ -148,10 +148,11 @@ class AttachmentsService extends Disposable {
     return result;
   }
 
-  Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<String> idsToLoad}) async {
+  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<String> usageIdsToLoad}) async {
     /*
     try {
-      FGetAttachmentUsagesByIdsRequest request = new FGetAttachmentUsagesByIdsRequest()..attachmentUsageIds = idsToLoad;
+      FGetAttachmentUsagesByIdsRequest request = new FGetAttachmentUsagesByIdsRequest()
+        ..attachmentUsageIds = usageIdsToLoad;
       FGetAttachmentUsagesByIdsResponse response = await _fClient.getAttachmentUsagesByIds(requestContext, request);
       return response;
     } catch (e) {

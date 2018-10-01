@@ -21,7 +21,7 @@ main(List<String> args) async {
     ..exclude = ['test/generated_runner_test.dart']
     ..lineLength = 120;
   config.test
-    ..platforms = ['dartium']
+    ..platforms = ['content-shell', 'vm']
     ..unitTests = ['test/generated_runner_test.dart']
     ..pubServe = true;
 
@@ -33,6 +33,8 @@ main(List<String> args) async {
 class UnitTestRunnerConfig extends TestRunnerConfig {
   UnitTestRunnerConfig() {
     genHtml = true;
+    env:
+    Environment.browser;
     filename = 'generated_runner_test';
     dartHeaders = [
       "import 'package:react/react_client.dart' as react_client;",

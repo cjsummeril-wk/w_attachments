@@ -61,6 +61,7 @@ void main() {
                 groups: [],
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
         _api = _store.api;
+      });
 
       tearDown(() {
         _attachmentsServiceMock.dispose();
@@ -224,6 +225,51 @@ void main() {
         await _api.setGroups(groups: [veryGoodGroup]);
         expect(_api.groups[0].attachments, isNotEmpty);
         expect(_api.groups[0].attachments.any((attach) => attach == attachment), isTrue);
+      });
+    });
+
+    group('attachment service client handler', () {
+      setUp(() {
+        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+        _store = spy(
+            new AttachmentsStoreMock(),
+            new AttachmentsStore(
+                actionProviderFactory: StandardActionProvider.actionProviderFactory,
+                attachmentsActions: _attachmentsActions,
+                attachmentsEvents: _attachmentsEvents,
+                attachmentsService: _attachmentsService,
+                extensionContext: _extensionContext,
+                dispatchKey: attachmentsModuleDispatchKey,
+                attachments: [],
+                groups: [],
+                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+      });
+
+      tearDown(() {
+        _attachmentsService.dispose();
+      });
+
+      test('_getAttachmentUsagesById should convert FAttachmentUsage to AttachmentUsage', () async {
+        List<String> usageIds = ["valid id"];
+        AttachmentUsage attachmentUsage =
+            new AttachmentUsage.fromFAttachmentUsage(MockFAttachmentsService.mockValidResponse.attachmentUsages.first);
+        List<AttachmentUsage> attachmentUsages = [attachmentUsage];
+
+        Completer getAttachmentUsagesByIdsCompleter =
+            test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
+
+        when(_attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: any))
+            .thenReturn(MockFAttachmentsService.mockValidResponse);
+
+        await _store.attachmentsActions.getAttachmentUsagesByIds(usageIds);
+
+        expect(getAttachmentUsagesByIdsCompleter.future, completes,
+            reason: "getAttachmentUsagesByIds did not complete");
+        verify(_attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
+        expect(_store.attachmentUsages, isNotEmpty);
+        expect(_store.attachmentUsages.first.id, equals(attachmentUsages.first.id),
+            reason:
+                "Returned attachment usage ${_store.attachmentUsages.first.id} did not match expected value ${attachmentUsages.first.id}");
       });
     });
 

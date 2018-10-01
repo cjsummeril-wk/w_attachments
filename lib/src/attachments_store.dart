@@ -353,7 +353,7 @@ class AttachmentsStore extends Store {
     }
     for (Attachment attachment in response.attachments) {
       Attachment foundAttachment =
-      _attachments.firstWhere((Attachment existing) => (existing?.id == attachment?.id), orElse: () => null);
+          _attachments.firstWhere((Attachment existing) => (existing?.id == attachment?.id), orElse: () => null);
       if (foundAttachment == null) {
         _attachments.add(attachment);
       }
@@ -365,7 +365,7 @@ class AttachmentsStore extends Store {
     /*
     if (usageIds != null && usageIds.isNotEmpty) {
       FGetAttachmentUsagesByIdsResponse response =
-          await attachmentsService.getAttachmentUsagesByIds(idsToLoad: usageIds);
+          await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: usageIds);
       if (response != null) {
         for (FAttachmentUsage fAttachmentUsage in response.attachmentUsages) {
           _attachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(fAttachmentUsage));
@@ -540,7 +540,8 @@ class AttachmentsStore extends Store {
     var currentScopes = _currentScopes.toSet();
     // create a set of the scopes we need to subscribe to
     final List<String> scopesToObtain = allScopes.difference(currentScopes).toList();
-    final GetAttachmentsByProducersPayload payload = new GetAttachmentsByProducersPayload(producerWurls: scopesToObtain);
+    final GetAttachmentsByProducersPayload payload =
+        new GetAttachmentsByProducersPayload(producerWurls: scopesToObtain);
     _getAttachmentsByProducers(payload);
     // create a set of the scopes we need to unsubscribe from
     // TODO: remove old attachments we no longer need to show

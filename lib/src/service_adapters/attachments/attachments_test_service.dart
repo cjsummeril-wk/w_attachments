@@ -96,26 +96,25 @@ class AttachmentsTestService extends AttachmentsService {
 //  }
 
   @override
-  Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<String> idsToLoad}) async {
+  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<String> usageIdsToLoad}) async {
     List<AttachmentUsage> attachmentUsages = [];
-    List<int> keysForWhichToCreateAttachmentUsages = new List.from(idsToLoad);
+    List<String> keysForWhichToCreateAttachmentUsages = new List.from(idsToLoad);
 
-    for (String id in idsToLoad) {
+    for (String id in usageIdsToLoad) {
       if (_usagesCache.keys.contains(id)) {
         attachmentUsages.add(_usagesCache[id]);
         keysForWhichToCreateAttachmentUsages.remove(id);
       }
     }
     List<FAttachmentUsage> fAttachmentUsages = _createFAttachmentUsages(keysForWhichToCreateAttachmentUsages);
-    for (FAttachmentUsage attach in fAttachmentUsages) {
-      attachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(attach));
-    }
 
     if (_cfg[fetchAttachmentsError] && !_hasEncounteredError) {
       _hasEncounteredError = true;
       throw new FAnnotationError();
     }
-    return new Future.value(attachmentUsages);
+    FGetAttachmentUsagesByIdsResponse response = new FGetAttachmentUsagesByIdsResponse()
+      ..attachmentUsages = fAttachmentUsages;
+    return new Future.value(response);
   }
 
   @override
