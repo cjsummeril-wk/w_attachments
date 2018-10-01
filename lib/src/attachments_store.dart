@@ -367,8 +367,8 @@ class AttachmentsStore extends Store {
       FGetAttachmentUsagesByIdsResponse response =
           await attachmentsService.getAttachmentUsagesByIds(idsToLoad: usageIds);
       if (response != null) {
-        for (FAttachmentUsage fAttachment in response.attachmentUsages) {
-          _attachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(fAttachment));
+        for (FAttachmentUsage fAttachmentUsage in response.attachmentUsages) {
+          _attachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(fAttachmentUsage));
         }
         return _attachmentUsages;
       } else {

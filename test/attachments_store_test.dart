@@ -13,6 +13,7 @@ import 'package:w_attachments_client/src/attachments_store.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 
 import './mocks/mocks_library.dart';
+import 'test_utils.dart' as test_utils;
 
 void main() {
   group('AttachmentsStore', () {
@@ -61,6 +62,32 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
         _api = _store.api;
 
+      tearDown(() {
+        _attachmentsServiceMock.dispose();
+      });
+
+      test('should convert FAttachmentUsage to AttachmentUsage in _getAttachmentUsagesByIds', () async {
+        _store = new AttachmentsStore(
+            actionProviderFactory: StandardActionProvider.actionProviderFactory,
+            attachmentsActions: _attachmentsActions,
+            attachmentsEvents: _attachmentsEvents,
+            attachmentsService: _attachmentsServiceMock,
+            extensionContext: _extensionContext,
+            dispatchKey: attachmentsModuleDispatchKey,
+            attachments: [],
+            groups: []);
+
+        Completer getAttachmentUsagesByIdsCompleter =
+            test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
+
+        when(_attachmentsServiceMock.getAttachmentUsagesByIds(idsToLoad: any))
+            .thenReturn(MockFAttachmentsService.mockValidResponse);
+
+        expect(getAttachmentUsagesByIdsCompleter.future, completes,
+            reason: "getAttachmentUsagesByIds did not complete");
+      });
+
+      test('should have default true enableDraggable, and can be set to false', () {
         expect(_store.enableDraggable, isTrue);
         expect(_store.enableUploadDropzones, isTrue);
         expect(_store.enableClickToSelect, isTrue);
@@ -1543,5 +1570,6 @@ void main() {
         verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: "regionWuri"));
       });
     });
+  });
   });
 }

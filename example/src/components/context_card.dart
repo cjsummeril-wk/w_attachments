@@ -94,6 +94,7 @@ class ContextCardComponent extends UiStatefulComponent<ContextCardProps, Context
     if (currentSelections.isNotEmpty) {
       return currentSelections.first?.wuri == props.regionId;
     }
+    return false;
   }
 
   bool get isSingleHighlight => props.context.highlightApi.selectedHighlights?.length == 1;

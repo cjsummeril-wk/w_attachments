@@ -7,7 +7,6 @@ import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:w_module/w_module.dart';
-import 'package:w_session/w_session.dart';
 
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
