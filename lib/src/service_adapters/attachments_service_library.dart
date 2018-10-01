@@ -7,6 +7,7 @@ import 'dart:math';
 
 import 'package:app_intelligence/app_intelligence_browser.dart';
 import 'package:frugal/frugal.dart' as frugal;
+import 'package:frugal/frugal.dart';
 import 'package:logging/logging.dart';
 import 'package:messaging_sdk/messaging_sdk.dart' as msg;
 import 'package:meta/meta.dart';

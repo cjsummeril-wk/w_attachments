@@ -24,6 +24,7 @@ part 'action_payloads/hover_over_node_payload.dart';
 part 'action_payloads/hover_out_node_payload.dart';
 part 'action_payloads/get_attachments_by_id_payload.dart';
 part 'action_payloads/get_attachments_by_producers_payload.dart';
+part 'action_payloads/get_attachment_usages_by_ids_payload.dart';
 part 'action_payloads/remove_attachment_payload.dart';
 part 'action_payloads/replace_attachment_payload.dart';
 part 'action_payloads/select_attachments_payload.dart';
