@@ -8,6 +8,8 @@ class AttachmentUsage {
   String label;
   int parentId;
 
+  AttachmentUsage();
+
   AttachmentUsage.fromFAttachmentUsage(FAttachmentUsage fAttachmentUsage)
       : id = fAttachmentUsage.id,
         label = fAttachmentUsage.label,

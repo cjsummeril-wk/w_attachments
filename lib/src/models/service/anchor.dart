@@ -6,6 +6,8 @@ class Anchor {
   int id;
   String producerWurl;
 
+  Anchor();
+
   Anchor.fromFAnchor(FAnchor fAnchor)
       : id = fAnchor.id,
         accountResourceId = fAnchor.accountResourceId,
