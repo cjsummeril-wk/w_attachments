@@ -157,7 +157,7 @@ class AttachmentsTestService extends AttachmentsService {
       attachmentUsages.add(newUsage);
     }
 
-    List<String> idsForWhichToCreateAttachments =
+    List<int> idsForWhichToCreateAttachments =
         new List.from(attachmentUsages.map((AttachmentUsage usage) => usage.attachmentId));
     for (final id in attachmentUsages.map((AttachmentUsage usage) => usage.attachmentId)) {
       if (_attachmentsCache.keys.contains(id)) {
@@ -202,11 +202,11 @@ class AttachmentsTestService extends AttachmentsService {
     List<FAttachmentUsage> attachmentUsages = [];
     for (final id in anchorIds) {
       attachmentUsages.add(new FAttachmentUsage()
-        ..id = (new Random()).nextInt(984759347859)
+        ..id = (new Random()).nextInt(9847593)
         ..label = 'randomly generated label'
         ..accountResourceId = 'accountResourceId'
         ..anchorId = id
-        ..attachmentId = (new Random()).nextInt(984759347859));
+        ..attachmentId = (new Random()).nextInt(9847593));
     }
     return attachmentUsages;
   }
@@ -215,7 +215,7 @@ class AttachmentsTestService extends AttachmentsService {
     List<FAnchor> fAnchors = [];
     for (String wurl in wurls) {
       fAnchors.add(new FAnchor()
-        ..id = (new Random()).nextInt(984759347859)
+        ..id = (new Random()).nextInt(9847593)
         ..producerWurl = wurl
         ..accountResourceId = 'accountResourceId'
         ..disconnected = false);

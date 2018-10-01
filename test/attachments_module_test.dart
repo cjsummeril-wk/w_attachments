@@ -24,6 +24,7 @@ void main() {
 
       _session = new Session(sessionHost: sessionHost);
       _msgClient = new MockMessagingClient();
+      _extensionContext = new ExtensionContextMock();
     });
 
     tearDown(() async {

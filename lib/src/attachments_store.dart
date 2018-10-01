@@ -152,11 +152,11 @@ class AttachmentsStore extends Store {
   List<Attachment> get attachments => new List<Attachment>.unmodifiable(_attachments);
   List<String> get attachmentKeys => new List<String>.unmodifiable(_attachments.map((attachment) => attachment?.id));
   List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
-  List<Anchor> getAnchorsByWurl(String wurl) =>
+  List<Anchor> anchorsByWurl(String wurl) =>
       _anchors[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchors[wurl]);
-  List<AttachmentUsage> getAttachmentUsagesByAnchorId(int anchorId) =>
+  List<AttachmentUsage> attachmentUsagesByAnchorId(int anchorId) =>
       new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
-  List<AttachmentUsage> getAttachmentUsagesByAnchors(List<Anchor> anchors) {
+  List<AttachmentUsage> attachmentUsagesByAnchors(List<Anchor> anchors) {
     List<AttachmentUsage> attachmentUsagesToReturn = [];
     List<int> attachmentUsagesToGet = new List<int>.from(anchors.map((Anchor anchor) => anchor.id));
     attachmentUsagesToReturn
@@ -164,7 +164,7 @@ class AttachmentsStore extends Store {
     return attachmentUsagesToReturn;
   }
 
-  List<Attachment> getAttachmentsFromUsages(List<AttachmentUsage> usages) {
+  List<Attachment> attachmentsOfUsages(List<AttachmentUsage> usages) {
     List<Attachment> attachmentsToReturn = [];
     List<String> attachmentIdsToGet = new List<String>.from(usages.map((AttachmentUsage usage) => usage.attachmentId));
     attachmentsToReturn
@@ -172,11 +172,11 @@ class AttachmentsStore extends Store {
     return attachmentsToReturn;
   }
 
-  List<AttachmentUsage> getUsagesFromAttachment(Attachment attachment) =>
+  List<AttachmentUsage> usagesOfAttachment(Attachment attachment) =>
       _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachment.id);
-  List<Attachment> getAttachmentsByProducerWurl(String producerWurl) {
-    List<AttachmentUsage> usages = getAttachmentUsagesByAnchors(getAnchorsByWurl(producerWurl));
-    return getAttachmentsFromUsages(usages);
+  List<Attachment> attachmentsForProducerWurl(String producerWurl) {
+    List<AttachmentUsage> usages = attachmentUsagesByAnchors(anchorsByWurl(producerWurl));
+    return attachmentsOfUsages(usages);
   }
 
   // nested tree getters/setters

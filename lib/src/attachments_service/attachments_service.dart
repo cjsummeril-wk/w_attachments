@@ -48,7 +48,7 @@ class AttachmentsService extends Disposable {
     manageDisposable(_appIntelligence);
   }
 
-// // Middleware for Frugal clients.  Helps us get info from Sumo Logic
+  // Middleware for Frugal clients.  Helps us get info from Sumo Logic
   frugal.Middleware get logCorrelationIdMiddleware =>
       (frugal.InvocationHandler next) => (String serviceName, String methodName, List<Object> args) async {
             _logger.info("Starting $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)

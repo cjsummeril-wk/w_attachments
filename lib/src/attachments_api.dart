@@ -34,7 +34,7 @@ class AttachmentsApi {
   ContextGroup get currentlyDisplayedSingle => _attachmentsStore.currentlyDisplayedSingle;
 
   /// currentlySelectedAttachments is the set of keys for the [Attachment]s that are 'selected'.
-  Set<String> get currentlySelectedAttachments => new Set<String>.from(_attachmentsStore.currentlySelected);
+  Set<int> get currentlySelectedAttachments => new Set<int>.from(_attachmentsStore.currentlySelected);
 
   /// filtersByName is a map to allow direct fetching of currently applied [Filter]s on a particular selection.
   Map<String, Filter> get filtersByName => _attachmentsStore.filtersByName;
@@ -58,22 +58,22 @@ class AttachmentsApi {
 
   // Custom Getter methods
   /// getAnchorsByWurl is the list of all [Anchor]s whose ProducerWurl matches the provided one.
-  List<Anchor> getAnchorsByWurl(String wurl) => _attachmentsStore.getAnchorsByWurl(wurl);
+  List<Anchor> getAnchorsByWurl(String wurl) => _attachmentsStore.anchorsByWurl(wurl);
 
   /// getAttachmentsByProducerWurl is the list of all [Attachments]s whose AttachmentUsage maps to the provided wurl.
-  List<Attachment> getAttachmentsByProducerWurl(String wurl) => _attachmentsStore.getAttachmentsByProducerWurl(wurl);
+  List<Attachment> getAttachmentsByProducerWurl(String wurl) => _attachmentsStore.attachmentsForProducerWurl(wurl);
 
   /// getAttachmentUsagesByAnchorId is the list of all [AttachmentUsage]s whose AnchorId matches the provided one.
   List<AttachmentUsage> getAttachmentUsagesByAnchorId(int anchorId) =>
-      _attachmentsStore.getAttachmentUsagesByAnchorId(anchorId);
+      _attachmentsStore.attachmentUsagesByAnchorId(anchorId);
 
   /// getAttachmentUsagesByAnchors is the list of all [AttachmentUsage]s whose AnchorId matches an ID of one of the anchors provided.
   List<AttachmentUsage> getAttachmentUsagesByAnchors(List<Anchor> anchors) =>
-      _attachmentsStore.getAttachmentUsagesByAnchors(anchors);
+      _attachmentsStore.attachmentUsagesByAnchors(anchors);
 
   /// getAttachmentsFromUsages is the list of all [Attachment]s whose AttachmentId is defined in one of the provided AttachmentUsages.
   List<Attachment> getAttachmentsFromUsages(List<AttachmentUsage> usages) =>
-      _attachmentsStore.getAttachmentsFromUsages(usages);
+      _attachmentsStore.attachmentsOfUsages(usages);
 
   // Attachment Actions
   /// deselectAttachmentsByIds deselects attachment cards based on the passed in [attachmentIds]

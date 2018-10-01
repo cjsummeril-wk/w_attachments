@@ -2,6 +2,7 @@ library w_attachments_client.test.attachments_store_test;
 
 import 'dart:async';
 import 'dart:html' hide Client, Selection;
+import 'dart:math';
 
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
@@ -36,30 +37,40 @@ void main() {
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsService,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: [],
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
-        _api = _store.api;
+
         mockWindow = spy(new WindowMock(), window);
         _attachmentsService.serviceWindow = mockWindow;
       });
 
       tearDown(() {
+        _extensionContext.dispose();
+        _store.dispose();
         _attachmentsService.dispose();
       });
+      
+      test('should have proper default values', () {
+        _store = spy(
+          new AttachmentsStoreMock(),
+          new AttachmentsStore(
+            actionProviderFactory: StandardActionProvider.actionProviderFactory,
+            attachmentsActions: _attachmentsActions,
+            attachmentsEvents: _attachmentsEvents,
+            attachmentsService: _attachmentsService,
+            extensionContext: _extensionContext,
+            dispatchKey: attachmentsModuleDispatchKey,
+            attachments: [],
+            groups: [],
+            moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+        _api = _store.api;
 
-      test('should have default true enableDraggable, and can be set to false', () {
         expect(_store.enableDraggable, isTrue);
+        expect(_store.enableUploadDropzones, isTrue);
+        expect(_store.enableClickToSelect, isTrue);
+        expect(_api.primarySelection, isNull);
+        expect(_store.actionProvider, isNotNull);
+      });
 
+      test('should have enableDraggableset to false when specified', () {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _attachmentsActions,
@@ -74,9 +85,7 @@ void main() {
         expect(_store.enableDraggable, isFalse);
       });
 
-      test('should have default true enableUploadDropzones, and can be set to false', () {
-        expect(_store.enableUploadDropzones, isTrue);
-
+      test('should have enableUploadDropzones set to false when specified', () {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             moduleConfig: new AttachmentsConfig(enableUploadDropzones: false, label: 'AttachmentPackage'),
@@ -91,9 +100,7 @@ void main() {
         expect(_store.enableUploadDropzones, isFalse);
       });
 
-      test('should have default true enableClickToSelect, and can be set to false', () {
-        expect(_store.enableClickToSelect, isTrue);
-
+      test('should have enableClickToSelect set to false when specified', () {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             moduleConfig: new AttachmentsConfig(enableClickToSelect: false, label: 'AttachmentPackage'),
@@ -109,8 +116,6 @@ void main() {
       });
 
       test('should set a primarySelection when it is provided', () {
-        expect(_api.primarySelection, isNull);
-
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _attachmentsActions,
@@ -127,9 +132,7 @@ void main() {
         expect(_api.primarySelection, validWurl);
       });
 
-      test('should have default StandardActionProvider when an actionProvider is not specified', () {
-        expect(_store.actionProvider, isNotNull);
-
+      test('should have a non-null StandardActionProvider when an actionProvider is not specified', () {
         _store = new AttachmentsStore(
             actionProviderFactory: null,
             moduleConfig: new AttachmentsConfig(enableDraggable: false, label: 'AttachmentPackage'),
@@ -192,7 +195,7 @@ void main() {
 
       test('should filter attachments based on ALL type group pivot', () async {
         Attachment attachment = new Attachment()
-          ..id = new Uuid().v4()
+          ..id = 1
           ..filename = 'very_good_file.docx'
           ..userName = testUsername;
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
@@ -233,9 +236,9 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes when given a nested directory structure', () async {
-//        String someKey = new Uuid().v4();
+//        String someKey = 1;
 //        Attachment toAdd = new Attachment()
-//          ..id = new Uuid().v4()
+//          ..id = 1
 //          ..filename = 'very_good_file.docx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
@@ -265,14 +268,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, context as parent to context and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'very_good_file.docx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -310,14 +313,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, predicate as parent to context and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'very_good_file.docx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -353,14 +356,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, predicate as parent to predicate and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'very_good_file.docx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -395,14 +398,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, context as parent to predicate and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'some_other_doc_name.xlsx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -440,14 +443,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, context as parent to predicate, context and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'some_other_doc_name.xlsx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -495,14 +498,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, context as parent to predicate, predicate and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'some_other_doc_name.xlsx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -552,14 +555,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, context as parent to context, context and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'some_other_doc_name.xlsx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -610,14 +613,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, predicate as parent to predicate, predicate and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'some_other_doc_name.xlsx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -667,14 +670,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, predicate as parent to predicate, context and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'some_other_doc_name.xlsx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -725,14 +728,14 @@ void main() {
 //      });
 //
 //      test('should generate nested tree nodes, predicate as parent to context, context and attachment', () async {
-//        String firstKey = new Uuid().v4();
+//        String firstKey = 1;
 //        Attachment firstAttachment = new Attachment()
 //          ..id = firstKey
 //          ..filename = 'some_other_doc_name.xlsx'
 //          ..userName = testUsername;
 //        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: firstAttachment));
 //
-//        String secondKey = new Uuid().v4();
+//        String secondKey = 1;
 //        Attachment secondAttachment = new Attachment()
 //          ..id = secondKey
 //          ..filename = 'very_good_file.docx'
@@ -813,6 +816,9 @@ void main() {
       test('default with 12 items', () async {
         var uuid = new Uuid();
         var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
+//        when(_store.api.getAttachmentsByProducers(producerWurlsToLoad: any)).thenReturn(
+//          new List.generate(12, (int index) => new
+//          );
 
         expect(_api.attachments.length, 0);
         await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys);
@@ -957,7 +963,7 @@ void main() {
       test('addAttachment should add an attachment to the stored list of attachments', () async {
         Attachment attachment = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
@@ -972,7 +978,7 @@ void main() {
       test('updateAttachment should modify an existent attachment in the list', () async {
         Attachment attachment = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
@@ -989,7 +995,7 @@ void main() {
 //      test('upsertAttachment should update if bundle exists, add if doesn\'t exist', () async {
 //        Attachment attachment = new Attachment()
 //          ..filename = 'very_good_file.docx'
-//          ..id = new Uuid().v4()
+//          ..id = 1
 //          ..userName = testUsername;
 //        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 //
@@ -1018,18 +1024,18 @@ void main() {
 
         Attachment attachment = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
         expect(_api.currentlySelectedAttachments, isEmpty);
 
         await _attachmentsActions.selectAttachments(
-            new SelectAttachmentsPayload(attachmentIds: [attachment.id.toString()], maintainSelections: false));
+            new SelectAttachmentsPayload(attachmentIds: [attachment.id], maintainSelections: false));
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentId, attachment.id.toString());
-        expect(_api.currentlySelectedAttachments, contains(attachment.id.toString()));
+        expect(selectEventResult.selectedAttachmentId, attachment.id);
+        expect(_api.currentlySelectedAttachments, contains(attachment.id));
       });
 
       test('should be able to select a bundle by selectionKey through api', () async {
@@ -1042,43 +1048,43 @@ void main() {
 
         Attachment attachment = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
         expect(_api.currentlySelectedAttachments, isEmpty);
 
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment.id.toString()], maintainSelections: false);
+        await _api.selectAttachmentsByIds(attachmentIds: [attachment.id], maintainSelections: false);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentId, attachment.id.toString());
-        expect(_api.currentlySelectedAttachments, contains(attachment.id.toString()));
+        expect(selectEventResult.selectedAttachmentId, attachment.id);
+        expect(_api.currentlySelectedAttachments, contains(attachment.id));
       });
 
-      test('should be able to select multiple bundles by selectionKeys through api in single call', () async {
+      test('should be able to select multiple attachments by selectionKeys through api in single call', () async {
         Attachment attachment1 = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment1));
 
         Attachment attachment2 = new Attachment()
           ..filename = 'very_good_file.pptx'
-          ..id = new Uuid().v4()
+          ..id = 2
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment2));
 
         expect(_api.currentlySelectedAttachments, isEmpty);
 
         await _api.selectAttachmentsByIds(
-            attachmentIds: [attachment1.id.toString(), attachment2.id.toString()], maintainSelections: false);
+            attachmentIds: [attachment1.id, attachment2.id], maintainSelections: false);
 
         expect(_api.currentlySelectedAttachments.length, 2);
-        expect(_api.currentlySelectedAttachments, contains(attachment1.id.toString()));
-        expect(_api.currentlySelectedAttachments, contains(attachment2.id.toString()));
+        expect(_api.currentlySelectedAttachments, contains(attachment1.id));
+        expect(_api.currentlySelectedAttachments, contains(attachment2.id));
       });
 
-      test('should be able to select multiple bundles by selectionKey through api one at a time maintaining selections',
+      test('should be able to select multiple attachments by selectionKey through api one at a time maintaining selections',
           () async {
         Completer completer = new Completer();
         AttachmentSelectedEventPayload selectEventResult;
@@ -1089,36 +1095,36 @@ void main() {
 
         Attachment attachment1 = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment1));
 
         Attachment attachment2 = new Attachment()
           ..filename = 'very_good_file.pptx'
-          ..id = new Uuid().v4()
+          ..id = 2
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment2));
 
         expect(_api.currentlySelectedAttachments, isEmpty);
 
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id.toString()], maintainSelections: false);
+        await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id], maintainSelections: false);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentId, attachment1.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment1.id);
         expect(_api.currentlySelectedAttachments, isNotEmpty);
-        expect(_api.currentlySelectedAttachments, contains(attachment1.id.toString()));
+        expect(_api.currentlySelectedAttachments, contains(attachment1.id));
 
         completer = new Completer();
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment2.id.toString()], maintainSelections: true);
+        await _api.selectAttachmentsByIds(attachmentIds: [attachment2.id], maintainSelections: true);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentId, attachment2.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment2.id);
         expect(_api.currentlySelectedAttachments.length, 2);
-        expect(_api.currentlySelectedAttachments, contains(attachment1.id.toString()));
-        expect(_api.currentlySelectedAttachments, contains(attachment2.id.toString()));
+        expect(_api.currentlySelectedAttachments, contains(attachment1.id));
+        expect(_api.currentlySelectedAttachments, contains(attachment2.id));
       });
 
-      test('should be able to select a bundle by selectionKey through api and clear the list', () async {
+      test('should be able to select an attachment by selectionKey through api and clear the list', () async {
         Completer completer = new Completer();
         AttachmentSelectedEventPayload selectEventResult;
         _attachmentsEvents.attachmentSelected.listen((selectEvent) {
@@ -1128,35 +1134,35 @@ void main() {
 
         Attachment attachment1 = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment1));
 
         Attachment attachment2 = new Attachment()
           ..filename = 'very_good_file.pptx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment2));
 
         expect(_api.currentlySelectedAttachments, isEmpty);
 
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id.toString()], maintainSelections: false);
+        await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id], maintainSelections: false);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentId, attachment1.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment1.id);
         expect(_api.currentlySelectedAttachments, isNotEmpty);
-        expect(_api.currentlySelectedAttachments, contains(attachment1.id.toString()));
+        expect(_api.currentlySelectedAttachments, contains(attachment1.id));
 
         completer = new Completer();
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment2.id.toString()], maintainSelections: false);
+        await _api.selectAttachmentsByIds(attachmentIds: [attachment2.id], maintainSelections: false);
         await completer.future;
 
-        expect(selectEventResult.selectedAttachmentId, attachment2.id.toString());
+        expect(selectEventResult.selectedAttachmentId, attachment2.id);
         expect(_api.currentlySelectedAttachments.length, 1);
-        expect(_api.currentlySelectedAttachments, contains(attachment2.id.toString()));
+        expect(_api.currentlySelectedAttachments, contains(attachment2.id));
       });
 
-      test('should be able to deselect a bundle by selectionKey through api', () async {
+      test('should be able to deselect an attachment by id through api', () async {
         Completer eventCompleter = new Completer();
         AttachmentDeselectedEventPayload deselectEventResult;
         _attachmentsEvents.attachmentDeselected.listen((selectEvent) {
@@ -1166,28 +1172,27 @@ void main() {
 
         Attachment attachment = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = new Uuid().v4()
+          ..id = 1
           ..userName = testUsername;
         await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
         expect(_api.currentlySelectedAttachments, isEmpty);
 
         await _attachmentsActions.selectAttachments(
-            new SelectAttachmentsPayload(attachmentIds: [attachment.id.toString()], maintainSelections: false));
-        expect(_api.currentlySelectedAttachments, contains(attachment.id.toString()));
+            new SelectAttachmentsPayload(attachmentIds: [attachment.id], maintainSelections: false));
+        expect(_api.currentlySelectedAttachments, contains(attachment.id));
 
-        await _api.deselectAttachmentsByIds(attachmentIds: [attachment.id.toString()]);
+        await _api.deselectAttachmentsByIds(attachmentIds: [attachment.id]);
         await eventCompleter.future;
 
-        expect(deselectEventResult.deselectedAttachmentId, attachment.id.toString());
+        expect(deselectEventResult.deselectedAttachmentId, attachment.id);
         expect(_api.currentlySelectedAttachments, isEmpty);
       });
 
       test('hoverOverAttachmentNodes should set a specified AttachmentTreeNode as hovered', () async {
-        String someKey = new Uuid().v4();
         Attachment toAdd = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = someKey
+          ..id = 1
           ..userName = testUsername;
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
 
@@ -1207,7 +1212,7 @@ void main() {
       });
 
 //      test('hoverOverAttachmentNodes should set a specified GroupTreeNode as hovered', () async {
-//        String someKey = new Uuid().v4();
+//        String someKey = 1;
 //        Attachment toAdd = new Attachment()
 //          ..filename = 'very_good_file.docx'
 //          ..id = someKey
@@ -1230,7 +1235,7 @@ void main() {
 //      });
 
 //      test('hoverOutAttachmentNodes should set a specified AttachmentsTreeNode as not hovered', () async {
-//        String someKey = new Uuid().v4();
+//        String someKey = 1;
 //        Attachment toAdd = new Attachment()
 //          ..filename = 'very_good_file.docx'
 //          ..id = someKey

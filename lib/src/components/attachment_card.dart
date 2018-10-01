@@ -65,7 +65,7 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
       ..onMouseLeave = _handleMouseLeave
       ..selectedEdgeColor = CardEdgeColor.GRAY_LIGHT
       ..skin = _selected ? CardSkin.DEFAULT : CardSkin.WHITE
-      ..ref = ((ref) => _avatarAnchorComponent = ref))('insert body here');
+      ..ref = ((ref) => _avatarAnchorComponent = ref))('Attachment metadata to go here');
   }
 
   _renderHeader() {
