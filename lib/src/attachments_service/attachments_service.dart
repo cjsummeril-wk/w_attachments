@@ -14,7 +14,7 @@ class AttachmentsService extends Disposable {
   Stream<UploadStatus> get uploadStatusStream => _uploadStatusStreamController?.stream;
 
   final msg.ThriftProtocol _protocol = msg.ThriftProtocol.BINARY;
-  FContext get context => _msgClient.createFContext();
+  frugal.FContext get context => _msgClient.createFContext();
   final Logger _logger = new Logger('w_attachments_client.attachments_service');
 
   static const analyticLabel = 'w_attachments_client';
