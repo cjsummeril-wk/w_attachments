@@ -114,8 +114,27 @@ class AttachmentsService extends Disposable {
     }
   }
 
-  Future<Iterable<Attachment>> getAttachmentsByIds({@required List<String> idsToLoad}) async {
-    return null;
+  Future<Iterable<Attachment>> getAttachmentsByIds({@required List<int> idsToLoad, int revisionId}) async {
+    List<Attachment> result;
+    FGetAttachmentsByIdsResponse response;
+    try {
+      FGetAttachmentsByIdsRequest request = new FGetAttachmentsByIdsRequest()
+        ..attachmentIds = idsToLoad
+        ..revisionId = revisionId;
+      response = await _fClient.getAttachmentsByIds(context, request);
+
+      result = [];
+      for (FAttachment fAttach in response.attachments) {
+        Attachment clientAttach = new Attachment.fromFAttachment(fAttach);
+        result.add(clientAttach);
+      }
+    } on FAnnotationError catch (annoError) {
+      _logger.warning('Annotation Service Error: ${annoError.errorMessage}');
+    } on Exception catch (e) {
+      _logger.severe('Unexpected Service Error: ${e}');
+    }
+
+    return result;
   }
 
   Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<String> idsToLoad}) async {
