@@ -43,7 +43,7 @@ class AttachmentTreeNode extends AttachmentsTreeNode<Attachment> {
       ..actionProvider = actionProvider
       ..attachment = content
       ..isHovered = store.hoveredNode == this
-      ..isSelected = store.currentlySelected?.contains(key) == true
+      ..isSelected = store.currentlySelectedAttachments?.contains(key) == true
       ..addedClassName = 'node-action-item node-menu-item')();
   }
 }

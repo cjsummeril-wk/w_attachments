@@ -2,7 +2,7 @@ part of w_attachments_client.models.service;
 
 class Attachment {
   String accountResourceId;
-  String id;
+  int id;
   String fsResourceId;
   String fsResourceType;
   String filename;

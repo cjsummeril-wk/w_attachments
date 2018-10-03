@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:html' hide Selection;
 
+import 'package:mockito/mirrors.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';
@@ -21,7 +23,7 @@ void main() {
     AttachmentsStore _store;
     AttachmentsActions _attachmentsActions;
     AttachmentsEvents _attachmentsEvents;
-    cef.ExtensionContext _extensionContext;
+    ExtensionContextMock _extensionContext;
     AttachmentsService _attachmentsService;
 
     Element mockShellBodyElement;
@@ -95,6 +97,10 @@ void main() {
     });
 
     test('renders upload button with correct props', () async {
+      // make sure isValidSelection is true
+      final testSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+      _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+
       ContextGroup headerlessGroup = new ContextGroup(name: 'headerlessGroup', displayAsHeaderless: true);
       await _store.api.setGroups(groups: [headerlessGroup]);
 
@@ -107,6 +113,10 @@ void main() {
     });
 
     test('renders upload button as disabled ', () async {
+      // make sure isValidSelection is true
+      final testSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+      _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+
       ContextGroup headerlessGroup = new ContextGroup(name: 'headerlessGroup', displayAsHeaderless: true);
       await _store.api.setGroups(groups: [headerlessGroup]);
 
@@ -122,6 +132,7 @@ void main() {
       // new actions with read only will be loaded in and rendered in the attachmentsPanel.
 
       StandardActionProvider.readOnly = true;
+      await new Future(() {});
       await _store.api.refreshPanelToolbar();
 
       mountAndRenderDefaultToolbar();

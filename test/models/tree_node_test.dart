@@ -36,10 +36,9 @@ void main() {
             attachments: [],
             groups: []);
 
-        String someKey = new Uuid().v4();
         Attachment toAdd = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = someKey
+          ..id = 1
           ..userName = 'Ron Swanson';
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
 
@@ -154,10 +153,9 @@ void main() {
             attachments: [],
             groups: []);
 
-        String someKey = new Uuid().v4();
         Attachment toAdd = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = someKey
+          ..id = 1
           ..userName = 'Ron Swanson';
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
 
@@ -204,10 +202,9 @@ void main() {
 
       test('should have null GroupTreeNode as dropTarget when a parent node does not contain a valid uploadSelection',
           () async {
-        String someKey = new Uuid().v4();
         Attachment toAdd = new Attachment()
           ..filename = 'very_good_file.docx'
-          ..id = someKey
+          ..id = 1
           ..userName = 'Ron Swanson';
         _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: toAdd));
 

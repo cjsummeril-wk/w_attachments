@@ -40,7 +40,7 @@ class AttachmentsServiceApi extends Disposable {
     _attachmentsService = service;
   }
 
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage(String producerWurl, String attachmentId) async {
+  Future<CreateAttachmentUsageResponse> createAttachmentUsage(String producerWurl, int attachmentId) async {
     return _attachmentsService.createAttachmentUsage(producerWurl: producerWurl, attachmentId: attachmentId);
   }
 
@@ -52,7 +52,7 @@ class AttachmentsServiceApi extends Disposable {
     return _attachmentsService.getAttachmentUsagesByIds(idsToLoad: idsToLoad);
   }
 
-  Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
+  Future<GetAttachmentsByProducersResponse> getAttachmentsByProducers({@required List<String> producerWurls}) async {
     return _attachmentsService.getAttachmentsByProducers(producerWurls: producerWurls);
   }
 

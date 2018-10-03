@@ -75,9 +75,9 @@ class AttachmentActionRendererComponent extends FluxUiComponent<AttachmentAction
     event.stopPropagation();
     event.preventDefault();
 
-    if (props.store.enableClickToSelect && !props.store.currentlySelected.contains(props.attachment?.id)) {
+    if (props.store.enableClickToSelect && !props.store.currentlySelectedAttachments.contains(props.attachment?.id)) {
       props.actions.selectAttachments(
-          new SelectAttachmentsPayload(selectionKeys: [props.attachment?.id], maintainSelections: false));
+          new SelectAttachmentsPayload(attachmentIds: [props.attachment?.id], maintainSelections: false));
     }
   }
 }

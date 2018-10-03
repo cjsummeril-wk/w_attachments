@@ -1,7 +1,7 @@
 part of w_attachments_client.event_payloads;
 
 class AttachmentSelectedEventPayload {
-  final String selectedAttachmentKey;
+  final int selectedAttachmentId;
 
-  const AttachmentSelectedEventPayload({@required this.selectedAttachmentKey});
+  const AttachmentSelectedEventPayload({@required this.selectedAttachmentId});
 }

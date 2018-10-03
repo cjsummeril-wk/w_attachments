@@ -17,7 +17,7 @@ class PredicateGroup extends Group {
             name: name, childGroups: childGroups, customIconGlyph: customIconGlyph ?? IconGlyph.FOLDER_ATTACHMENTS_G2);
 
   @override
-  Set<Attachment> regroup(List<Attachment> newAttachments) {
+  Set<Attachment> rebuildAndRedrawGroup(List<Attachment> newAttachments) {
     // filter the given attachments to match this context group
     // all attachments for this group and its child groups will initially be in this list
     Set<Attachment> filteredAttachments = new Set<Attachment>();
@@ -28,7 +28,7 @@ class PredicateGroup extends Group {
     Set<Attachment> claimedAttachments = new Set<Attachment>();
     if (childGroups?.isNotEmpty == true) {
       claimedAttachments = childGroups.fold([], (result, group) {
-        result.addAll(group.regroup(filteredAttachments.toList()));
+        result.addAll(group.rebuildAndRedrawGroup(filteredAttachments.toList()));
         return result;
       }).toSet();
     }

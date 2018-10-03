@@ -29,9 +29,9 @@ class AttachmentsTestService extends AttachmentsService {
   // Cache of anchors keyed by the producerWurl
   Map<String, Anchor> _anchorsCache = {};
   // Cache of attachment usages keyed by their anchor ids
-  Map<String, AttachmentUsage> _usagesCache = {};
+  Map<int, AttachmentUsage> _usagesCache = {};
   // Cache of attachments keyed by their ids
-  Map<String, Attachment> _attachmentsCache = {};
+  Map<int, Attachment> _attachmentsCache = {};
 
   bool _hasEncounteredError = false;
   static const pollingInterval = const Duration(seconds: 1);
@@ -59,15 +59,14 @@ class AttachmentsTestService extends AttachmentsService {
   }
 
   @override
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage(
-      {@required String producerWurl, @required String attachmentId}) async {
+  Future<CreateAttachmentUsageResponse> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
     Anchor anchor = new Anchor.fromFAnchor(_createFAnchors([producerWurl]).first);
     AttachmentUsage usage = new AttachmentUsage.fromFAttachmentUsage(_createFAttachmentUsages([anchor.id]).first);
     Attachment attachment = _attachmentsCache[usage.attachmentId];
-    if (attachmentId?.isNotEmpty == true) {
+    if (attachmentId != null) {
       attachment = new Attachment.fromFAttachment(_createFAttachments([usage.attachmentId]).first);
     }
-    return new AttachmentUsageCreatedPayload(anchor: anchor, attachmentUsage: usage, attachment: attachment);
+    return new CreateAttachmentUsageResponse(anchor: anchor, attachmentUsage: usage, attachment: attachment);
   }
 
   @override
@@ -76,7 +75,7 @@ class AttachmentsTestService extends AttachmentsService {
       _attachmentsCache.clear();
     }
     List<Attachment> attachments = [];
-    List<String> keysForWhichToCreateAttachments = new List.from(idsToLoad);
+    List<int> keysForWhichToCreateAttachments = new List.from(idsToLoad);
 
     for (String id in idsToLoad) {
       if (_attachmentsCache.keys.contains(id)) {
@@ -99,7 +98,7 @@ class AttachmentsTestService extends AttachmentsService {
   @override
   Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<String> idsToLoad}) async {
     List<AttachmentUsage> attachmentUsages = [];
-    List<String> keysForWhichToCreateAttachmentUsages = new List.from(idsToLoad);
+    List<int> keysForWhichToCreateAttachmentUsages = new List.from(idsToLoad);
 
     for (String id in idsToLoad) {
       if (_usagesCache.keys.contains(id)) {
@@ -120,7 +119,7 @@ class AttachmentsTestService extends AttachmentsService {
   }
 
   @override
-  Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
+  Future<GetAttachmentsByProducersResponse> getAttachmentsByProducers({@required List<String> producerWurls}) async {
     if (_cfg[purgeCache]) {
       _anchorsCache.clear();
       _usagesCache.clear();
@@ -144,8 +143,8 @@ class AttachmentsTestService extends AttachmentsService {
       anchors.add(newAnchor);
     }
 
-    List<String> anchorIdsForWhichToCreateUsages = new List.from(anchors.map((Anchor a) => a.id));
-    for (String anchorId in anchors.map((Anchor a) => a.id)) {
+    List<int> anchorIdsForWhichToCreateUsages = new List.from(anchors.map((Anchor a) => a.id));
+    for (final anchorId in anchors.map((Anchor a) => a.id)) {
       if (_usagesCache.keys.contains(anchorId)) {
         attachmentUsages.add(_usagesCache[anchorId]);
         anchorIdsForWhichToCreateUsages.remove(anchorId);
@@ -158,9 +157,9 @@ class AttachmentsTestService extends AttachmentsService {
       attachmentUsages.add(newUsage);
     }
 
-    List<String> idsForWhichToCreateAttachments =
+    List<int> idsForWhichToCreateAttachments =
         new List.from(attachmentUsages.map((AttachmentUsage usage) => usage.attachmentId));
-    for (String id in attachmentUsages.map((AttachmentUsage usage) => usage.attachmentId)) {
+    for (final id in attachmentUsages.map((AttachmentUsage usage) => usage.attachmentId)) {
       if (_attachmentsCache.keys.contains(id)) {
         attachments.add(_attachmentsCache[id]);
         idsForWhichToCreateAttachments.remove(id);
@@ -177,7 +176,7 @@ class AttachmentsTestService extends AttachmentsService {
       _hasEncounteredError = true;
       throw new FAnnotationError();
     }
-    return new Future.value(new AttachmentsByProducersPayload(
+    return new Future.value(new GetAttachmentsByProducersResponse(
         attachments: attachments, attachmentUsages: attachmentUsages, anchors: anchors));
   }
 
@@ -185,10 +184,10 @@ class AttachmentsTestService extends AttachmentsService {
   /// Helper Methods
   ///
 
-  List<FAttachment> _createFAttachments(List<String> ids) {
+  List<FAttachment> _createFAttachments(List<int> ids) {
     final dynamic uuid = new Uuid();
     List<FAttachment> attachments = [];
-    for (String id in ids) {
+    for (final id in ids) {
       attachments.add(new FAttachment()
         ..id = id
         ..accountResourceId = 'accountResourceId'
@@ -199,27 +198,24 @@ class AttachmentsTestService extends AttachmentsService {
     return attachments;
   }
 
-  List<FAttachmentUsage> _createFAttachmentUsages(List<String> anchorIds) {
-    final dynamic uuid = new Uuid();
+  List<FAttachmentUsage> _createFAttachmentUsages(List<int> anchorIds) {
     List<FAttachmentUsage> attachmentUsages = [];
-    for (String id in anchorIds) {
+    for (final id in anchorIds) {
       attachmentUsages.add(new FAttachmentUsage()
-        ..id = uuid.v4().toString().substring(0, 22)
+        ..id = (new Random()).nextInt(9847593)
         ..label = 'randomly generated label'
         ..accountResourceId = 'accountResourceId'
         ..anchorId = id
-        ..parentId = ''
-        ..attachmentId = uuid.v4().toString().substring(0, 22));
+        ..attachmentId = (new Random()).nextInt(9847593));
     }
     return attachmentUsages;
   }
 
   List<FAnchor> _createFAnchors(List<String> wurls) {
-    final dynamic uuid = new Uuid();
     List<FAnchor> fAnchors = [];
     for (String wurl in wurls) {
       fAnchors.add(new FAnchor()
-        ..id = uuid.v4().toString().substring(0, 22)
+        ..id = (new Random()).nextInt(9847593)
         ..producerWurl = wurl
         ..accountResourceId = 'accountResourceId'
         ..disconnected = false);

@@ -10,7 +10,7 @@ main(List<String> args) async {
 
   // Available task configurations:
   config.analyze
-    ..entryPoints = ['example/', 'lib/', 'test/generated_runner_test.dart', 'tool/']
+    ..entryPoints = ['lib/', 'test/generated_runner_test.dart', 'tool/']
     ..strong = true;
   // config.copyLicense
   config.coverage..pubServe = true;

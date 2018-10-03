@@ -58,7 +58,7 @@ class AttachmentFileLabelComponent extends FluxUiComponent<AttachmentFileLabelPr
 //      }
     } else {
       props.store.attachmentsActions
-          .updateLabel(new UpdateLabelPayload(keyToUpdate: props.attachment.id, newLabel: newValue));
+          .updateLabel(new UpdateLabelPayload(idToUpdate: props.attachment.id, newLabel: newValue));
     }
   }
 

@@ -30,13 +30,11 @@ class AttachmentsApi {
   /// attachmentKeys is the list of all selection keys for the [Attachment]s currently loaded into the store.
   List<String> get attachmentKeys => _attachmentsStore.attachmentKeys;
 
-  cef.ExtensionContext get extensionContext => _attachmentsStore.extensionContext;
-
   /// currentlyDisplayedSingle is the [ContextGroup] that is currently displayed in headless mode.
   ContextGroup get currentlyDisplayedSingle => _attachmentsStore.currentlyDisplayedSingle;
 
   /// currentlySelectedAttachments is the set of keys for the [Attachment]s that are 'selected'.
-  Set<String> get currentlySelectedAttachments => new Set<String>.from(_attachmentsStore.currentlySelected);
+  Set<int> get currentlySelectedAttachments => new Set<int>.from(_attachmentsStore.currentlySelectedAttachments);
 
   /// filtersByName is a map to allow direct fetching of currently applied [Filter]s on a particular selection.
   Map<String, Filter> get filtersByName => _attachmentsStore.filtersByName;
@@ -56,44 +54,47 @@ class AttachmentsApi {
   /// true if the attachments panel is displayed in headerless mode, false if not.
   bool get showingHeaderlessGroup => _attachmentsStore.showingHeaderlessGroup;
 
+  bool get isValidSelection => _attachmentsStore.isValidSelection;
+
+  cef.Selection get currentSelection => _attachmentsStore.currentSelection;
+
   // Custom Getter methods
   /// getAnchorsByWurl is the list of all [Anchor]s whose ProducerWurl matches the provided one.
-  List<Anchor> getAnchorsByWurl(String wurl) => _attachmentsStore.getAnchorsByWurl(wurl);
+  List<Anchor> getAnchorsByWurl(String wurl) => _attachmentsStore.anchorsByWurl(wurl);
 
   /// getAttachmentsByProducerWurl is the list of all [Attachments]s whose AttachmentUsage maps to the provided wurl.
-  List<Attachment> getAttachmentsByProducerWurl(String wurl) => _attachmentsStore.getAttachmentsByProducerWurl(wurl);
+  List<Attachment> getAttachmentsByProducerWurl(String wurl) => _attachmentsStore.attachmentsForProducerWurl(wurl);
 
   /// getAttachmentUsagesByAnchorId is the list of all [AttachmentUsage]s whose AnchorId matches the provided one.
-  List<AttachmentUsage> getAttachmentUsagesByAnchorId(String anchorId) =>
-      _attachmentsStore.getAttachmentUsagesByAnchorId(anchorId);
+  List<AttachmentUsage> getAttachmentUsagesByAnchorId(int anchorId) =>
+      _attachmentsStore.attachmentUsagesByAnchorId(anchorId);
 
   /// getAttachmentUsagesByAnchors is the list of all [AttachmentUsage]s whose AnchorId matches an ID of one of the anchors provided.
   List<AttachmentUsage> getAttachmentUsagesByAnchors(List<Anchor> anchors) =>
-      _attachmentsStore.getAttachmentUsagesByAnchors(anchors);
+      _attachmentsStore.attachmentUsagesByAnchors(anchors);
 
   /// getAttachmentsFromUsages is the list of all [Attachment]s whose AttachmentId is defined in one of the provided AttachmentUsages.
   List<Attachment> getAttachmentsFromUsages(List<AttachmentUsage> usages) =>
-      _attachmentsStore.getAttachmentsFromUsages(usages);
+      _attachmentsStore.attachmentsOfUsages(usages);
 
   // Attachment Actions
   /// deselectAttachmentsByIds deselects attachment cards based on the passed in [attachmentIds]
   ///
   ///   [attachmentIds] is a list of [Attachment] keys
-  Future<Null> deselectAttachmentsByIds({@required List<String> attachmentIds}) async =>
-      await _attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: attachmentIds));
+  Future<Null> deselectAttachmentsByIds({@required List<int> attachmentIds}) async =>
+      await _attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: attachmentIds));
 
   /// Updates the label on the [Attachment] of the [Selection] key [keyToUpdate] with the [newLabel]
   /// then calls Request.PUT on the [Attachment] to persist the data to the object
   ///
   ///   [keyToUpdate] is the [Selection] key on which the label is being changed.
   ///   [newLabel] is the new label the bundle should get
-  Future<Null> updateLabel({@required String keyToUpdate, @required String newLabel}) async =>
-      await _attachmentsActions.updateLabel(new UpdateLabelPayload(keyToUpdate: keyToUpdate, newLabel: newLabel));
+  Future<Null> updateLabel({@required int idToUpdate, @required String newLabel}) async =>
+      await _attachmentsActions.updateLabel(new UpdateLabelPayload(idToUpdate: idToUpdate, newLabel: newLabel));
 
   // Module Actions
-  Future<Null> createAttachmentUsage({@required String producerWurl, @required String attachmentId}) async {
-    await _attachmentsActions.createAttachmentUsage(
-        new CreateAttachmentUsagePayload(producerWurl: producerWurl, attachmentId: attachmentId));
+  Future<Null> createAttachmentUsage({cef.Selection selection}) async {
+    await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: selection));
   }
 
   /// Calls w-annotations-service endpoint to retrieve all attachments, attachment usages, and anchors for the
@@ -112,9 +113,9 @@ class AttachmentsApi {
   ///   [attachmentIds] is a list of [Attachment] ids
   ///   [maintainSelections] allows the current selections to be preserved while appending new selections,
   ///   otherwise current selections will have deselect called on them first
-  Future<Null> selectAttachmentsByIds({@required List<String> attachmentIds, bool maintainSelections: false}) async =>
+  Future<Null> selectAttachmentsByIds({@required List<int> attachmentIds, bool maintainSelections: false}) async =>
       await _attachmentsActions.selectAttachments(
-          new SelectAttachmentsPayload(selectionKeys: attachmentIds, maintainSelections: maintainSelections));
+          new SelectAttachmentsPayload(attachmentIds: attachmentIds, maintainSelections: maintainSelections));
 
   /// setActionState sets the state of a StatefulActionItem to a new state
   ///

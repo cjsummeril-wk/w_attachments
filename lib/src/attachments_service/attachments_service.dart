@@ -14,6 +14,7 @@ class AttachmentsService extends Disposable {
   Stream<UploadStatus> get uploadStatusStream => _uploadStatusStreamController?.stream;
 
   final msg.ThriftProtocol _protocol = msg.ThriftProtocol.BINARY;
+  frugal.FContext get context => _msgClient.createFContext();
   final Logger _logger = new Logger('w_attachments_client.attachments_service');
 
   static const analyticLabel = 'w_attachments_client';
@@ -47,7 +48,7 @@ class AttachmentsService extends Disposable {
     manageDisposable(_appIntelligence);
   }
 
-// // Middleware for Frugal clients.  Helps us get info from Sumo Logic
+  // Middleware for Frugal clients.  Helps us get info from Sumo Logic
   frugal.Middleware get logCorrelationIdMiddleware =>
       (frugal.InvocationHandler next) => (String serviceName, String methodName, List<Object> args) async {
             _logger.info("Starting $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
@@ -92,9 +93,25 @@ class AttachmentsService extends Disposable {
     super.onDispose();
   }
 
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage(
-      {@required String producerWurl, @required String attachmentId}) async {
-    return null;
+  // TODO RAM-668 clean this up to work properly, catch FAnnotationError, etc.
+  Future<CreateAttachmentUsageResponse> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
+    try {
+      FCreateAttachmentUsageRequest request = new FCreateAttachmentUsageRequest()..producerWurl = producerWurl;
+      if (attachmentId != null) {
+        request.attachmentId = attachmentId;
+      }
+      FCreateAttachmentUsageResponse response = await _fClient.createAttachmentUsage(context, request);
+      return new CreateAttachmentUsageResponse(
+          attachment: new Attachment.fromFAttachment(response.attachment),
+          attachmentUsage: new AttachmentUsage.fromFAttachmentUsage(response.attachmentUsage),
+          anchor: new Anchor.fromFAnchor(response.anchor));
+    } on FAnnotationError catch (e, stacktrace) {
+      _logger.warning(e, stacktrace);
+      rethrow;
+    } catch (e, stacktrace) {
+      _logger.severe(e, stacktrace);
+      rethrow;
+    }
   }
 
   Future<Iterable<Attachment>> getAttachmentsByIds({@required List<String> idsToLoad}) async {
@@ -105,8 +122,34 @@ class AttachmentsService extends Disposable {
     return null;
   }
 
-  Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
-    return null;
+  // TODO RAM-667 clean this up to work properly and all that, however it needs to be
+  Future<GetAttachmentsByProducersResponse> getAttachmentsByProducers({@required List<String> producerWurls}) async {
+    FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()..producerWurls = producerWurls;
+    try {
+      FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(context, request);
+      List<Attachment> returnAttachments = [];
+      if (response.attachments?.isNotEmpty == true) {
+        response.attachments
+            .forEach((FAttachment attachment) => returnAttachments.add(new Attachment.fromFAttachment(attachment)));
+      }
+      List<AttachmentUsage> returnAttachmentUsages = [];
+      if (response.attachmentUsages?.isNotEmpty == true) {
+        response.attachmentUsages.forEach((FAttachmentUsage attachmentUsage) =>
+            returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(attachmentUsage)));
+      }
+      List<Anchor> returnAnchors = [];
+      if (response.anchors?.isNotEmpty == true) {
+        response.anchors.forEach((FAnchor anchor) => returnAnchors.add(new Anchor.fromFAnchor(anchor)));
+      }
+      return new GetAttachmentsByProducersResponse(
+          attachments: returnAttachments, attachmentUsages: returnAttachmentUsages, anchors: returnAnchors);
+    } on FAnnotationError catch (e, stacktrace) {
+      _logger.warning(e, stacktrace);
+      rethrow;
+    } catch (e, stacktrace) {
+      _logger.severe(e, stacktrace);
+      rethrow;
+    }
   }
 
   Future<Iterable<File>> selectFiles({bool allowMultiple: true}) async {

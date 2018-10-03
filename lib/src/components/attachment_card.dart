@@ -45,7 +45,7 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
   }
 
   bool get _selected =>
-      (props.attachment?.id?.isNotEmpty == true && props.store.currentlySelected.contains(props.attachment.id));
+      (props.attachment?.id != null && props.store.currentlySelectedAttachments.contains(props.attachment.id));
 
   @override
   render() {
@@ -66,7 +66,7 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
       ..onMouseLeave = _handleMouseLeave
       ..selectedEdgeColor = CardEdgeColor.GRAY_LIGHT
       ..skin = _selected ? CardSkin.DEFAULT : CardSkin.WHITE
-      ..ref = ((ref) => _avatarAnchorComponent = ref))('insert body here');
+      ..ref = ((ref) => _avatarAnchorComponent = ref))('Attachment metadata to go here');
   }
 
   _renderHeader() {
@@ -96,10 +96,10 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
   _handleClick(e) {
     if (props.store.enableClickToSelect) {
       if (_selected) {
-        props.actions.deselectAttachments(new DeselectAttachmentsPayload(selectionKeys: [props.attachment?.id]));
+        props.actions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: [props.attachment?.id]));
       } else {
         props.actions.selectAttachments(
-            new SelectAttachmentsPayload(selectionKeys: [props.attachment?.id], maintainSelections: false));
+            new SelectAttachmentsPayload(attachmentIds: [props.attachment?.id], maintainSelections: false));
       }
     }
   }

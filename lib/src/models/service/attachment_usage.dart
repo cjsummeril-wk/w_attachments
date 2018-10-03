@@ -2,11 +2,13 @@ part of w_attachments_client.models.service;
 
 class AttachmentUsage {
   String accountResourceId;
-  String anchorId;
-  String attachmentId;
-  String id;
+  int anchorId;
+  int attachmentId;
+  int id;
   String label;
-  String parentId;
+  int parentId;
+
+  AttachmentUsage();
 
   AttachmentUsage.fromFAttachmentUsage(FAttachmentUsage fAttachmentUsage)
       : id = fAttachmentUsage.id,

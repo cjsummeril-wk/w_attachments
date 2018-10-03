@@ -3,8 +3,10 @@ part of w_attachments_client.models.service;
 class Anchor {
   String accountResourceId;
   bool disconnected;
-  String id;
+  int id;
   String producerWurl;
+
+  Anchor();
 
   Anchor.fromFAnchor(FAnchor fAnchor)
       : id = fAnchor.id,
@@ -12,7 +14,7 @@ class Anchor {
         producerWurl = fAnchor.producerWurl,
         disconnected = fAnchor.disconnected;
 
-  FAnchor toFAnchor(Anchor anchor) => new FAnchor()
+  FAnchor toFAnchor() => new FAnchor()
     ..id = id
     ..accountResourceId = accountResourceId
     ..disconnected = disconnected

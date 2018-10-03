@@ -1,5 +1,6 @@
 library w_attachments_client.test.mocks;
 
+import 'dart:async';
 import 'dart:html' show File, Window;
 
 import 'package:frugal/frugal.dart' as frugal;

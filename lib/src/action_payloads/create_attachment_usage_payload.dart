@@ -1,8 +1,8 @@
 part of w_attachments_client.action_payloads;
 
 class CreateAttachmentUsagePayload {
-  final String producerWurl;
-  final String attachmentId;
+  final cef.Selection producerSelection;
+  final int attachmentId;
 
-  CreateAttachmentUsagePayload({@required this.producerWurl, @required this.attachmentId});
+  CreateAttachmentUsagePayload({@required this.producerSelection, this.attachmentId});
 }
