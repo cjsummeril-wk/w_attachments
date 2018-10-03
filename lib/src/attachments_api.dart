@@ -34,7 +34,7 @@ class AttachmentsApi {
   ContextGroup get currentlyDisplayedSingle => _attachmentsStore.currentlyDisplayedSingle;
 
   /// currentlySelectedAttachments is the set of keys for the [Attachment]s that are 'selected'.
-  Set<int> get currentlySelectedAttachments => new Set<int>.from(_attachmentsStore.currentlySelected);
+  Set<int> get currentlySelectedAttachments => new Set<int>.from(_attachmentsStore.currentlySelectedAttachments);
 
   /// filtersByName is a map to allow direct fetching of currently applied [Filter]s on a particular selection.
   Map<String, Filter> get filtersByName => _attachmentsStore.filtersByName;
@@ -55,6 +55,8 @@ class AttachmentsApi {
   bool get showingHeaderlessGroup => _attachmentsStore.showingHeaderlessGroup;
 
   bool get isValidSelection => _attachmentsStore.isValidSelection;
+
+  cef.Selection get currentSelection => _attachmentsStore.currentSelection;
 
   // Custom Getter methods
   /// getAnchorsByWurl is the list of all [Anchor]s whose ProducerWurl matches the provided one.
@@ -91,8 +93,8 @@ class AttachmentsApi {
       await _attachmentsActions.updateLabel(new UpdateLabelPayload(idToUpdate: idToUpdate, newLabel: newLabel));
 
   // Module Actions
-  Future<Null> createAttachmentUsage() async {
-    await _attachmentsActions.createAttachmentUsage();
+  Future<Null> createAttachmentUsage({cef.Selection selection}) async {
+    await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: selection));
   }
 
   /// Calls w-annotations-service endpoint to retrieve all attachments, attachment usages, and anchors for the

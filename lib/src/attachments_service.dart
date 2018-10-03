@@ -1,9 +1,9 @@
 library w_attachments_client.service;
 
-import 'dart:math';
 import 'dart:async';
 import 'dart:core';
 import 'dart:html' hide Client, Selection;
+import 'dart:math';
 
 import 'package:app_intelligence/app_intelligence_browser.dart';
 import 'package:frugal/frugal.dart' as frugal;
@@ -21,8 +21,8 @@ import 'package:w_attachments_client/src/upload.dart';
 
 import './utils.dart';
 
-part './attachments_service/attachments_by_producers_payload.dart';
+part './attachments_service/get_attachments_by_producers_response.dart';
 part './attachments_service/attachment_removed_service_payload.dart';
 part './attachments_service/attachments_service.dart';
 part './attachments_service/attachments_test_service.dart';
-part './attachments_service/attachment_usage_created_payload.dart';
+part './attachments_service/create_attachment_usage_response.dart';

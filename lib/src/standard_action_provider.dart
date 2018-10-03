@@ -1,6 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:uuid/uuid.dart';
-import 'package:wdesk_sdk/content_extension_framework_v2.dart';
+import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 import 'package:web_skin_dart/ui_components.dart';
 
 import 'package:w_attachments_client/src/models/action_item.dart';
@@ -46,9 +45,10 @@ class StandardActionProvider implements ActionProvider {
           icon: ActionItem.iconBuilder(icon: IconGlyph.UPLOADED),
           tooltip: 'Upload File',
           testId: 'wa.AttachmentControls.Icon.UploadFile',
-          isDisabled: readOnly && _api.isValidSelection,
+          isDisabled: readOnly || !_api.isValidSelection,
           callback: ((StatefulActionItem action) {
-            _api.createAttachmentUsage();
+            cef.Selection selection = _api.currentSelection;
+            _api.createAttachmentUsage(selection: selection);
           }));
       panelActions.add(uploadFile);
     }

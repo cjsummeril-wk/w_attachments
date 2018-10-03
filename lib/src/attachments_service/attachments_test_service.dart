@@ -59,14 +59,14 @@ class AttachmentsTestService extends AttachmentsService {
   }
 
   @override
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
+  Future<CreateAttachmentUsageResponse> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
     Anchor anchor = new Anchor.fromFAnchor(_createFAnchors([producerWurl]).first);
     AttachmentUsage usage = new AttachmentUsage.fromFAttachmentUsage(_createFAttachmentUsages([anchor.id]).first);
     Attachment attachment = _attachmentsCache[usage.attachmentId];
     if (attachmentId != null) {
       attachment = new Attachment.fromFAttachment(_createFAttachments([usage.attachmentId]).first);
     }
-    return new AttachmentUsageCreatedPayload(anchor: anchor, attachmentUsage: usage, attachment: attachment);
+    return new CreateAttachmentUsageResponse(anchor: anchor, attachmentUsage: usage, attachment: attachment);
   }
 
   @override
@@ -119,7 +119,7 @@ class AttachmentsTestService extends AttachmentsService {
   }
 
   @override
-  Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
+  Future<GetAttachmentsByProducersResponse> getAttachmentsByProducers({@required List<String> producerWurls}) async {
     if (_cfg[purgeCache]) {
       _anchorsCache.clear();
       _usagesCache.clear();
@@ -176,7 +176,7 @@ class AttachmentsTestService extends AttachmentsService {
       _hasEncounteredError = true;
       throw new FAnnotationError();
     }
-    return new Future.value(new AttachmentsByProducersPayload(
+    return new Future.value(new GetAttachmentsByProducersResponse(
         attachments: attachments, attachmentUsages: attachmentUsages, anchors: anchors));
   }
 

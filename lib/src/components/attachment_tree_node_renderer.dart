@@ -8,7 +8,8 @@ class _AttachmentTreeNodeRenderer extends w_virtual_components.TreeNodeRenderer 
 
   bool get isEmptyNode => node is EmptyTreeNode;
 
-  bool get selected => (!isEmptyNode && node.content is Attachment && node.store.currentlySelected.contains(node.key));
+  bool get selected =>
+      (!isEmptyNode && node.content is Attachment && node.store.currentlySelectedAttachments.contains(node.key));
 
   dynamic _avatarAnchorComponent;
 

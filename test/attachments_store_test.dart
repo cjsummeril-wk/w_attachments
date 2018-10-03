@@ -765,7 +765,7 @@ void main() {
         _attachmentsService.serviceWindow = mockWindow;
 
         when(_attachmentsService.getAttachmentsByProducers)
-            .thenReturn(new AttachmentsByProducersPayload(attachments: <Attachment>[
+            .thenReturn(new GetAttachmentsByProducersResponse(attachments: <Attachment>[
           new Attachment()
             ..id = 1
             ..filename = 'firstdoc.docx',
@@ -1421,19 +1421,35 @@ void main() {
       });
 
       test('does nothing if isValidSelection is false', () async {
-        await _attachmentsActions.createAttachmentUsage();
+        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
+            producerSelection: new cef.Selection(wuri: "selectionWuri", scope: "selectionScope")));
         verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any, attachmentId: any));
+        verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any));
+      });
+
+      test('does nothing if isValidSelection is false due to discontiguous selections', () async {
+        final contiguousSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+        final aSecondContiguousSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+        // make sure isValidSelection is false by discontiguity
+        _extensionContext.selectionApi.didChangeSelectionsController
+            .add([contiguousSelection, aSecondContiguousSelection]);
+        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
+            producerSelection: new cef.Selection(wuri: "selectionWuri", scope: "selectionScope")));
+        verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any, attachmentId: any));
+        verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any));
       });
 
       test('calls createAttachmentUsage with valid selection', () async {
         final testSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+        // make sure isValidSelection is true
+        _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
         when(_extensionContext.selectionApi.getCurrentSelections()).thenReturn([testSelection]);
         when(_extensionContext.observedRegionApi.create(selection: testSelection))
             .thenReturn(new cef.ObservedRegion(wuri: "regionWuri", scope: "regionScope"));
-        // make sure isValidSelection is true
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
-        await new Future(() {});
-        await _attachmentsActions.createAttachmentUsage();
+        print(_store.isValidSelection);
+        await _attachmentsActions
+            .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
         verify(_attachmentsService.createAttachmentUsage(producerWurl: "regionWuri"));
       });
     });

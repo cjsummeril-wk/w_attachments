@@ -15,7 +15,7 @@ class AttachmentsActions extends Disposable {
   final deselectAttachments = new Action<DeselectAttachmentsPayload>();
 
   // module-level actions
-  final createAttachmentUsage = new Action<Null>();
+  final createAttachmentUsage = new Action<CreateAttachmentUsagePayload>();
   final getAttachmentsByProducers = new Action<GetAttachmentsByProducersPayload>();
   final setActionItemState = new Action<ActionStateChangePayload>();
   final setGroups = new Action<SetGroupsPayload>();

@@ -93,21 +93,25 @@ class AttachmentsService extends Disposable {
     super.onDispose();
   }
 
-  Future<AttachmentUsageCreatedPayload> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
-    AttachmentUsageCreatedPayload result;
+  // TODO RAM-668 clean this up to work properly, catch FAnnotationError, etc.
+  Future<CreateAttachmentUsageResponse> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
     try {
-      FCreateAttachmentUsageRequest request = new FCreateAttachmentUsageRequest()
-        ..producerWurl = producerWurl
-        ..attachmentId = attachmentId;
+      FCreateAttachmentUsageRequest request = new FCreateAttachmentUsageRequest()..producerWurl = producerWurl;
+      if (attachmentId != null) {
+        request.attachmentId = attachmentId;
+      }
       FCreateAttachmentUsageResponse response = await _fClient.createAttachmentUsage(context, request);
-      result = new AttachmentUsageCreatedPayload(
+      return new CreateAttachmentUsageResponse(
           attachment: new Attachment.fromFAttachment(response.attachment),
           attachmentUsage: new AttachmentUsage.fromFAttachmentUsage(response.attachmentUsage),
           anchor: new Anchor.fromFAnchor(response.anchor));
-    } catch (e, stacktrace) {
+    } on FAnnotationError catch (e, stacktrace) {
       _logger.warning(e, stacktrace);
+      rethrow;
+    } catch (e, stacktrace) {
+      _logger.severe(e, stacktrace);
+      rethrow;
     }
-    return result;
   }
 
   Future<Iterable<Attachment>> getAttachmentsByIds({@required List<String> idsToLoad}) async {
@@ -118,13 +122,11 @@ class AttachmentsService extends Disposable {
     return null;
   }
 
-  Future<AttachmentsByProducersPayload> getAttachmentsByProducers({@required List<String> producerWurls}) async {
+  // TODO RAM-667 clean this up to work properly and all that, however it needs to be
+  Future<GetAttachmentsByProducersResponse> getAttachmentsByProducers({@required List<String> producerWurls}) async {
     FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()..producerWurls = producerWurls;
-
-    AttachmentsByProducersPayload result;
     try {
       FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(context, request);
-      print("warn $response");
       List<Attachment> returnAttachments = [];
       if (response.attachments?.isNotEmpty == true) {
         response.attachments
@@ -139,13 +141,15 @@ class AttachmentsService extends Disposable {
       if (response.anchors?.isNotEmpty == true) {
         response.anchors.forEach((FAnchor anchor) => returnAnchors.add(new Anchor.fromFAnchor(anchor)));
       }
-      result = new AttachmentsByProducersPayload(
+      return new GetAttachmentsByProducersResponse(
           attachments: returnAttachments, attachmentUsages: returnAttachmentUsages, anchors: returnAnchors);
-    } catch (e, stacktrace) {
-      print("warn $e");
+    } on FAnnotationError catch (e, stacktrace) {
       _logger.warning(e, stacktrace);
+      rethrow;
+    } catch (e, stacktrace) {
+      _logger.severe(e, stacktrace);
+      rethrow;
     }
-    return result;
   }
 
   Future<Iterable<File>> selectFiles({bool allowMultiple: true}) async {

@@ -97,6 +97,10 @@ void main() {
     });
 
     test('renders upload button with correct props', () async {
+      // make sure isValidSelection is true
+      final testSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+      _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+
       ContextGroup headerlessGroup = new ContextGroup(name: 'headerlessGroup', displayAsHeaderless: true);
       await _store.api.setGroups(groups: [headerlessGroup]);
 
@@ -109,6 +113,10 @@ void main() {
     });
 
     test('renders upload button as disabled ', () async {
+      // make sure isValidSelection is true
+      final testSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+      _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+
       ContextGroup headerlessGroup = new ContextGroup(name: 'headerlessGroup', displayAsHeaderless: true);
       await _store.api.setGroups(groups: [headerlessGroup]);
 
@@ -124,10 +132,6 @@ void main() {
       // new actions with read only will be loaded in and rendered in the attachmentsPanel.
 
       StandardActionProvider.readOnly = true;
-      final testSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
-      when(_extensionContext.selectionApi.getCurrentSelections()).thenReturn([testSelection]);
-      // make sure isValidSelection is true
-      _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
       await new Future(() {});
       await _store.api.refreshPanelToolbar();
 

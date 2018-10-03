@@ -10,7 +10,7 @@ class Filter {
 
   List<PredicateGroup> applyToContextGroup(ContextGroup group) {
     return new List<PredicateGroup>.from(predicates).map((predicateGroup) {
-      predicateGroup.regroup(group.attachments);
+      predicateGroup.rebuildAndRedrawGroup(group.attachments);
       return predicateGroup;
     }).toList();
   }

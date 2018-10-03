@@ -33,11 +33,12 @@ class AttachmentsStore extends Store {
   List<AttachmentUsage> _attachmentUsages = [];
   Map<String, List<Anchor>> _anchors = {};
 
+  // CEF-specific properties
+  cef.Selection _currentSelection;
+
   // headerless properties
   ContextGroup currentlyDisplayedSingle;
   bool _showingHeaderlessGroup = false;
-
-  Set<int> _currentlySelected = new Set<int>();
 
   // group and filter properties
   List<Filter> _filtersVar = [];
@@ -69,7 +70,7 @@ class AttachmentsStore extends Store {
         _extensionContext = extensionContext,
         _groups = groups,
         this._moduleConfig = moduleConfig ?? new AttachmentsConfig() {
-    _regroup();
+    _rebuildAndRedrawGroups();
     _api = new AttachmentsApi(attachmentsActions, this);
 
     _actionProvider = actionProviderFactory != null
@@ -113,7 +114,7 @@ class AttachmentsStore extends Store {
     // Event Listeners
     listenToStream(attachmentsEvents.attachmentRemoved, _handleAttachmentRemoved);
 
-    // CEF Listensers
+    // CEF Listeners
     listenToStream(_extensionContext.observedRegionApi.didChangeScopes, _onDidChangeScopes);
     listenToStream(_extensionContext.selectionApi.didChangeSelections, _onDidChangeSelection);
   }
@@ -128,7 +129,7 @@ class AttachmentsStore extends Store {
 
   String get primarySelection => _moduleConfig.primarySelection;
 
-  Set<int> get currentlySelected => _currentlySelected;
+  Set<int> get currentlySelectedAttachments => _currentlySelectedAttachments;
 
   bool get enableClickToSelect => _moduleConfig.enableClickToSelect;
 
@@ -140,6 +141,8 @@ class AttachmentsStore extends Store {
 
   /// isValidSelection returns true if there is a valid selection in the content
   bool get isValidSelection => _isValidSelection;
+
+  cef.Selection get currentSelection => _currentSelection;
 
   /// currentScopes returns the list of scopes that we have loaded attachments for
   Iterable<String> get currentScopes => _currentScopes;
@@ -210,11 +213,11 @@ class AttachmentsStore extends Store {
     _filters.clear();
     _rootNode.clearChildren();
     _rootNode = null;
-    _currentlySelected = null;
+    _currentlySelectedAttachments = null;
     currentlyDisplayedSingle = null;
   }
 
-  _regroup() {
+  _rebuildAndRedrawGroups() {
     _showingHeaderlessGroup = false;
     if (_groups.isEmpty) {
       return false;
@@ -230,7 +233,7 @@ class AttachmentsStore extends Store {
       currentlyDisplayedSingle = null;
     }
     for (var group in _groups) {
-      group.regroup(_attachments);
+      group.rebuildAndRedrawGroup(_attachments);
     }
     if (_groups.any((Group group) => group.hasChildren)) {
       _rootNode.clearChildren();
@@ -275,7 +278,7 @@ class AttachmentsStore extends Store {
     Attachment attachmentToRemove = _getAttachmentById(id);
     if (attachmentToRemove != null && _attachments.contains(attachmentToRemove)) {
       _attachments.remove(attachmentToRemove);
-      _regroup();
+      _rebuildAndRedrawGroups();
       attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: [attachmentToRemove?.id]));
     }
   }
@@ -286,59 +289,67 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _createAttachmentUsage(Null _) async {
+  _createAttachmentUsage(CreateAttachmentUsagePayload payload) async {
     if (!_isValidSelection) {
       _logger.warning('_createAttachmentUsage without valid selection');
       return;
     }
 
-    final currentSelection = _extensionContext.selectionApi.getCurrentSelections().firstWhere((s) => !s.isEmpty);
+    try {
+      final region = await _extensionContext.observedRegionApi.create(selection: payload.producerSelection);
 
-    final region = await _extensionContext.observedRegionApi.create(selection: currentSelection);
+      CreateAttachmentUsageResponse resp = await attachmentsService.createAttachmentUsage(producerWurl: region.wuri);
 
-    AttachmentUsageCreatedPayload resp = await attachmentsService.createAttachmentUsage(producerWurl: region.wuri);
-
-    if (resp == null) return;
-
-    _anchors[resp.anchor.producerWurl] ??= [];
-    _anchors[resp.anchor.producerWurl].add(resp.anchor);
-    AttachmentUsage foundAttachmentUsage = _attachmentUsages
-        .firstWhere((AttachmentUsage usage) => (usage?.id == resp.attachmentUsage?.id), orElse: () => null);
-    if (foundAttachmentUsage == null) {
+      _anchors[resp.anchor.producerWurl] ??= [];
+      _anchors[resp.anchor.producerWurl].add(resp.anchor);
       _attachmentUsages.add(resp.attachmentUsage);
-    }
-    Attachment foundAttachment =
-        _attachments.firstWhere((Attachment existing) => (existing?.id == resp.attachment?.id), orElse: () => null);
-    if (foundAttachment == null) {
-      _attachments.add(resp.attachment);
-    }
+      // need to check if the attachment associated with this usage already exists, and if not, add it.
+      Attachment foundAttachment =
+          _attachments.firstWhere((Attachment existing) => (existing?.id == resp.attachment?.id), orElse: () => null);
+      if (foundAttachment == null) {
+        _attachments.add(resp.attachment);
+      }
 
-    _regroup();
+      _rebuildAndRedrawGroups();
+    } catch (e, stacktrace) {
+      _logger.warning(e, stacktrace);
+    }
   }
 
   _getAttachmentsByProducers(Set<String> producerWurls) async {
-    AttachmentsByProducersPayload newAttachments =
+    GetAttachmentsByProducersResponse response =
         await attachmentsService.getAttachmentsByProducers(producerWurls: producerWurls.toList());
 
     for (String wurl in producerWurls) {
-      _anchors[wurl] = newAttachments.anchors.where((Anchor anchor) => anchor.producerWurl.startsWith(wurl));
+      List<Anchor> responseAnchors = response?.anchors?.where((Anchor anchor) => anchor.producerWurl.startsWith(wurl));
+      if (responseAnchors.isNotEmpty) {
+        _anchors[wurl] ??= [];
+        for (Anchor anchor in responseAnchors) {
+          if (!_anchors[wurl].any((a) => a.id == anchor.id)) {
+            _anchors[wurl].add(anchor);
+          }
+        }
+      } else {
+        _logger.warning('Wurl $wurl was not associated with any anchors.');
+      }
     }
 
-    for (AttachmentUsage attachmentUsage in newAttachments.attachmentUsages) {
+    for (AttachmentUsage attachmentUsage in response.attachmentUsages) {
+      // check to see if there is an attachmentUsage already existent
       AttachmentUsage foundAttachmentUsage = _attachmentUsages
           .firstWhere((AttachmentUsage usage) => (usage?.id == attachmentUsage?.id), orElse: () => null);
       if (foundAttachmentUsage == null) {
         _attachmentUsages.add(attachmentUsage);
       }
     }
-    for (Attachment attachment in newAttachments.attachments) {
+    for (Attachment attachment in response.attachments) {
       Attachment foundAttachment =
           _attachments.firstWhere((Attachment existing) => (existing?.id == attachment?.id), orElse: () => null);
       if (foundAttachment == null) {
         _attachments.add(attachment);
       }
     }
-    _regroup();
+    _rebuildAndRedrawGroups();
   }
 
   _setActionItemState(ActionStateChangePayload request) {
@@ -353,7 +364,7 @@ class AttachmentsStore extends Store {
 
   _setGroups(SetGroupsPayload request) {
     _groups = request.groups;
-    _regroup();
+    _rebuildAndRedrawGroups();
   }
 
   _setAttachmentsConfig(AttachmentsConfig config) {
@@ -371,7 +382,7 @@ class AttachmentsStore extends Store {
   _addAttachment(AddAttachmentPayload request) {
     if (!_attachments.contains(request.toAdd)) {
       _attachments.add(request.toAdd);
-      _regroup();
+      _rebuildAndRedrawGroups();
     }
   }
 
@@ -387,16 +398,16 @@ class AttachmentsStore extends Store {
   }
 
   _selectAttachments(SelectAttachmentsPayload request) {
-    if (!request.maintainSelections && currentlySelected.isNotEmpty) {
-      _deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: currentlySelected.toList()));
-      for (var key in currentlySelected) {
+    if (!request.maintainSelections && currentlySelectedAttachments.isNotEmpty) {
+      _deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: currentlySelectedAttachments.toList()));
+      for (var key in currentlySelectedAttachments) {
         _treeNodes[key]?.forEach((node) => node.trigger());
       }
     }
     List<int> attachmentIds = request?.attachmentIds;
     if (attachmentIds != null) {
       for (int id in attachmentIds) {
-        if (currentlySelected.add(id)) {
+        if (currentlySelectedAttachments.add(id)) {
           attachmentsEvents.attachmentSelected(
               new AttachmentSelectedEventPayload(selectedAttachmentId: id), dispatchKey);
           _treeNodes[id]?.forEach((node) => node.trigger());
@@ -409,7 +420,7 @@ class AttachmentsStore extends Store {
     List<int> attachmentIds = request?.attachmentIds;
     if (attachmentIds != null) {
       for (int id in attachmentIds) {
-        if (currentlySelected.remove(id)) {
+        if (currentlySelectedAttachments.remove(id)) {
           _treeNodes[id]?.forEach((node) => node.trigger());
           attachmentsEvents.attachmentDeselected(
               new AttachmentDeselectedEventPayload(deselectedAttachmentId: id), dispatchKey);
@@ -452,12 +463,17 @@ class AttachmentsStore extends Store {
   }
 
   void _onDidChangeSelection(List<cef.Selection> currentSelections) {
-    final valid =
-        (currentSelections != null && currentSelections.isNotEmpty && currentSelections.any((s) => !s.isEmpty));
+    // if any of them is NOT empty AND if the list of those that are not empty, it is VALID
+    final valid = (currentSelections != null &&
+        currentSelections.isNotEmpty &&
+        currentSelections.where((s) => !s.isEmpty).length == 1);
     // only fire the action if the value of isValidSelection changed to avoid many many useless actions
     if (valid != _isValidSelection) {
       _isValidSelection = valid;
       trigger();
+    }
+    if (valid) {
+      _currentSelection = currentSelections.firstWhere((s) => !s.isEmpty);
     }
   }
 

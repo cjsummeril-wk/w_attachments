@@ -23,7 +23,7 @@ class ContextGroup extends Group {
   List<GroupPivot> get pivots => _pivots;
 
   @override
-  Set<Attachment> regroup(List<Attachment> newAttachments) {
+  Set<Attachment> rebuildAndRedrawGroup(List<Attachment> newAttachments) {
     // filter the given attachments to match this context group
     // all attachments for this group and its child groups will initially be in this list
     Set<Attachment> filteredAttachments = new Set<Attachment>();
@@ -41,7 +41,7 @@ class ContextGroup extends Group {
     Set<Attachment> claimedAttachments = new Set<Attachment>();
     if (childGroups?.isNotEmpty == true) {
       claimedAttachments = childGroups.fold(<Attachment>[], (List<Attachment> result, group) {
-        result.addAll(group.regroup(filteredAttachments.toList()));
+        result.addAll(group.rebuildAndRedrawGroup(filteredAttachments.toList()));
         return result;
       }).toSet();
     }

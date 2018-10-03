@@ -3,6 +3,7 @@ library w_attachments_client.action_payloads;
 import 'dart:html' show File;
 
 import 'package:meta/meta.dart';
+import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/models/action_item.dart';
 import 'package:w_attachments_client/src/models/group.dart';

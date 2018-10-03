@@ -9,7 +9,7 @@ abstract class Group {
 
   Group({@required this.name, this.childGroups, this.customIconGlyph: IconGlyph.FOLDER_ATTACHMENTS_G2});
 
-  Set<Attachment> regroup(List<Attachment> newAttachments);
+  Set<Attachment> rebuildAndRedrawGroup(List<Attachment> newAttachments);
 
   List<Attachment> get attachments => _attachments;
 
