@@ -51,7 +51,6 @@ class AttachmentsStore extends Store {
   Map<dynamic, List<AttachmentsTreeNode>> _treeNodes = {};
 
   // content extension framework properties
-  bool _isValidSelection = false;
   Iterable<String> _currentScopes = [];
   Set<int> _currentlySelectedAttachments = new Set<int>();
 
@@ -140,7 +139,7 @@ class AttachmentsStore extends Store {
   bool get showingHeaderlessGroup => _showingHeaderlessGroup;
 
   /// isValidSelection returns true if there is a valid selection in the content
-  bool get isValidSelection => _isValidSelection;
+  bool get isValidSelection => _currentSelection != null;
 
   cef.Selection get currentSelection => _currentSelection;
 
@@ -290,7 +289,7 @@ class AttachmentsStore extends Store {
   }
 
   _createAttachmentUsage(CreateAttachmentUsagePayload payload) async {
-    if (!_isValidSelection) {
+    if (!isValidSelection) {
       _logger.warning('_createAttachmentUsage without valid selection');
       return;
     }
@@ -468,12 +467,13 @@ class AttachmentsStore extends Store {
         currentSelections.isNotEmpty &&
         currentSelections.where((s) => !s.isEmpty).length == 1);
     // only fire the action if the value of isValidSelection changed to avoid many many useless actions
-    if (valid != _isValidSelection) {
-      _isValidSelection = valid;
+    if (valid != isValidSelection) {
       trigger();
     }
     if (valid) {
       _currentSelection = currentSelections.firstWhere((s) => !s.isEmpty);
+    } else {
+      _currentSelection = null;
     }
   }
 
