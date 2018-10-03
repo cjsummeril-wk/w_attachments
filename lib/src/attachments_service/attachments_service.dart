@@ -34,7 +34,10 @@ class AttachmentsService extends Disposable {
   static const selectionKeys = 'selection_keys';
 
   AttachmentsService(
-      {@required msg.NatsMessagingClient messagingClient, AppIntelligence appIntelligence, ModalManager modalManager})
+      {@required msg.NatsMessagingClient messagingClient,
+        AppIntelligence appIntelligence,
+        ModalManager modalManager,
+        FWAnnotationsService fClient: null})
       : _uploadStatusStreamController = new StreamController<UploadStatus>.broadcast() {
     _appIntelligence = (appIntelligence != null)
         ? appIntelligence.clone(appIntelName)
@@ -44,6 +47,9 @@ class AttachmentsService extends Disposable {
     _msgClient = messagingClient;
     _uploadManager = manageAndReturnDisposable(new UploadManager());
     _modalManager = modalManager;
+    if (fClient != null) {
+      _fClient = fClient;
+    }
     manageStreamController(_uploadStatusStreamController);
     manageDisposable(_appIntelligence);
   }
@@ -82,7 +88,8 @@ class AttachmentsService extends Disposable {
       _transport = null;
     });
 
-    _fClient = new FWAnnotationsServiceClient(provider, [logCorrelationIdMiddleware]);
+    // Only initialize the client if one has not been provided in the constructor
+    _fClient = _fClient == null? new FWAnnotationsServiceClient(provider, [logCorrelationIdMiddleware]) : _fClient;
   }
 
   @mustCallSuper

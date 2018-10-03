@@ -3,6 +3,7 @@ library w_attachments_client.test.mocks;
 import 'dart:async';
 import 'dart:html' show File, Window;
 
+import 'package:app_intelligence/app_intelligence_browser.dart';
 import 'package:frugal/frugal.dart' as frugal;
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
@@ -17,13 +18,15 @@ import 'package:w_attachments_client/w_attachments_service_api.dart';
 
 export 'package:w_attachments_client/src/attachments_service.dart';
 
+part './mocks/app_intelligence_mock.dart';
 part './mocks/attachments_actions_mock.dart';
 part './mocks/attachments_events_mock.dart';
 part './mocks/attachments_service_api_mock.dart';
 part './mocks/attachments_service_stub.dart';
 part './mocks/attachments_store_mock.dart';
-part './mocks/client_mock.dart';
+part './mocks/client_adapter_mocks/client_mock.dart';
 part './mocks/extension_context_mock.dart';
 part './mocks/frugal_mock.dart';
 part './mocks/file_mock.dart';
+part './mocks/nats_messaging_client_mock.dart';
 part './mocks/window_mock.dart';

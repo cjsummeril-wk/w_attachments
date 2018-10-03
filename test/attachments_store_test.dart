@@ -36,7 +36,7 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsService());
 
         mockWindow = spy(new WindowMock(), window);
         _attachmentsService.serviceWindow = mockWindow;
