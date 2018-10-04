@@ -35,9 +35,9 @@ class AttachmentsService extends Disposable {
 
   AttachmentsService(
       {@required msg.NatsMessagingClient messagingClient,
-        AppIntelligence appIntelligence,
-        ModalManager modalManager,
-        FWAnnotationsService fClient: null})
+      AppIntelligence appIntelligence,
+      ModalManager modalManager,
+      FWAnnotationsService fClient: null})
       : _uploadStatusStreamController = new StreamController<UploadStatus>.broadcast() {
     _appIntelligence = (appIntelligence != null)
         ? appIntelligence.clone(appIntelName)
@@ -91,7 +91,7 @@ class AttachmentsService extends Disposable {
     });
 
     // Only initialize the client if one has not been provided in the constructor
-    _fClient = _fClient == null? new FWAnnotationsServiceClient(provider, [logCorrelationIdMiddleware]) : _fClient;
+    _fClient = _fClient == null ? new FWAnnotationsServiceClient(provider, [logCorrelationIdMiddleware]) : _fClient;
   }
 
   @mustCallSuper

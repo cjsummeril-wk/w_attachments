@@ -15,7 +15,8 @@ import 'package:w_attachments_client/w_attachments_client.dart';
 import './mocks/mocks_library.dart';
 
 void mockServiceMethod(Function serviceMethod, dynamic returnValue) {
-  when(serviceMethod()).thenAnswer((_) => (returnValue is Error || returnValue is Exception) ? throw returnValue : returnValue);
+  when(serviceMethod())
+      .thenAnswer((_) => (returnValue is Error || returnValue is Exception) ? throw returnValue : returnValue);
 }
 
 Completer hookinActionVerifier(Action toVerify) {

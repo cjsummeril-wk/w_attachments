@@ -44,7 +44,6 @@ void main() {
       tearDown(() {
         _extensionContext.dispose();
         _store.dispose();
-        _attachmentsServiceMock.dispose();
       });
 
       test('should have proper default values', () {
@@ -166,10 +165,6 @@ void main() {
                 attachments: [],
                 groups: []));
         _api = _store.api;
-      });
-
-      tearDown(() {
-        _attachmentsServiceMock.dispose();
       });
 
       test('should not require a group in the groups list', () async {
@@ -908,6 +903,11 @@ void main() {
           // Assert (2/2)
           verifyNever(_attachmentsServiceMock.getAttachmentsByIds);
         });
+
+        // TODO RAM-732 App Intelligence
+//        test('store logs when it receives attachments out of scope', () async {
+//
+//        });
       });
 
 //      test('default with 12 items', () async {
@@ -1051,7 +1051,6 @@ void main() {
         _attachmentsActions.dispose();
         _attachmentsEvents.dispose();
         _extensionContext.dispose();
-        _attachmentsServiceMock.dispose();
         _store.dispose();
         _api = null;
       });
@@ -1466,7 +1465,6 @@ void main() {
       });
 
       tearDown(() async {
-        await _attachmentsServiceMock.dispose();
         await _extensionContext.dispose();
       });
 
@@ -1509,7 +1507,6 @@ void main() {
       });
 
       tearDown(() async {
-        await _attachmentsServiceMock.dispose();
         await _extensionContext.dispose();
       });
 
