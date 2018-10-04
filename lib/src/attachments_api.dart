@@ -118,8 +118,6 @@ class AttachmentsApi {
     // for(AttachmentUsage attachmentUsage in _attachmentsStore.attachmentUsages) {
     //   usageIds.add(attachmentUsage.id);
     // }
-    print('gonna send a list of usageIds');
-    print('List of Usage IDS: ${usageIds}');
     return await _attachmentsActions.getAttachmentUsagesByIds(usageIds);
   }
 

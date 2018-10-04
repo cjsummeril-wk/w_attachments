@@ -33,7 +33,6 @@ class StandardActionProvider implements ActionProvider {
         isDisabled: false,
         shouldShow: () => _api?.attachments?.isNotEmpty == true,
         callback: ((StatefulActionItem action) async {
-          print('hit callback of getAttachmentUsageByIdsButton');
           _api.setActionState(action, 'progress');
           await _api.getAttachmentUsagesByIds();
           _api.setActionState(action, 'default');

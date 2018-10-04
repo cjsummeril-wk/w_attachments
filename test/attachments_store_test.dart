@@ -1601,16 +1601,24 @@ void main() {
       });
 
       test('_getAttachmentUsagesById should convert FAttachmentUsage to AttachmentUsage', () async {
-        List<int> usageIds = [1234, 4567, 7890];
+        List<int> usageIds = [1234];
         AttachmentUsage attachmentUsage =
             new AttachmentUsage.fromFAttachmentUsage(MockFAttachmentsService.mockValidResponse.attachmentUsages.first);
         List<AttachmentUsage> attachmentUsages = [attachmentUsage];
 
+        AttachmentUsage mockAttachmentUsage = new AttachmentUsage()
+          ..accountResourceId = 'crispy-bacon-lettuce-and-tomato-sammich'
+          ..anchorId = 1234
+          ..attachmentId = 3456
+          ..id = 5678
+          ..label = 'i dont like labels.'
+          ..parentId = 7890;
+        List<AttachmentUsage> returnedAttachmentUsages = [mockAttachmentUsage];
+
         Completer getAttachmentUsagesByIdsCompleter =
             test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
 
-        when(_attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: any))
-            .thenReturn(MockFAttachmentsService.mockValidResponse);
+        when(_attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: any)).thenReturn(returnedAttachmentUsages);
 
         await _store.attachmentsActions.getAttachmentUsagesByIds(usageIds);
 

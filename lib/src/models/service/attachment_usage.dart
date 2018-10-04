@@ -25,4 +25,18 @@ class AttachmentUsage {
     ..anchorId = anchorId
     ..parentId = parentId
     ..attachmentId = attachmentId;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  bool operator ==(other) {
+    return other is AttachmentUsage &&
+        other.accountResourceId == accountResourceId &&
+        other.anchorId == anchorId &&
+        other.attachmentId == attachmentId &&
+        other.id == id &&
+        other.label == label &&
+        other.parentId == parentId;
+  }
 }

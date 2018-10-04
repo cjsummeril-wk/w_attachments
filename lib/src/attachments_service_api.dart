@@ -48,7 +48,7 @@ class AttachmentsServiceApi extends Disposable {
     return _attachmentsService.getAttachmentsByIds(idsToLoad: idsToLoad);
   }
 
-  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<int> idsToLoad}) async {
+  Future<List<AttachmentUsage>> getAttachmentUsagesByIds({@required List<int> idsToLoad}) async {
     return _attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: idsToLoad);
   }
 

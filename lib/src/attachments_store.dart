@@ -96,8 +96,6 @@ class AttachmentsStore extends Store {
 
     // Module Action Listeners
     triggerOnActionV2(attachmentsActions.createAttachmentUsage, _createAttachmentUsage);
-    triggerOnActionV2(attachmentsActions.getAttachmentsByProducers, _getAttachmentsByProducers);
-    triggerOnActionV2(attachmentsActions.getAttachmentUsagesByIds, _getAttachmentUsagesByIds);
     triggerOnActionV2(attachmentsActions.setActionItemState, _setActionItemState);
     triggerOnActionV2(attachmentsActions.setGroups, _setGroups);
     triggerOnActionV2(attachmentsActions.setFilters, _setFilters);
@@ -112,6 +110,8 @@ class AttachmentsStore extends Store {
     [
       attachmentsActions.getAttachmentsByIds.listen(_handleGetAttachmentsByIds),
       attachmentsActions.hoverOverAttachmentNode.listen(_hoverOverAttachmentNodes),
+      attachmentsActions.getAttachmentsByProducers.listen(_getAttachmentsByProducers),
+      attachmentsActions.getAttachmentUsagesByIds.listen(_getAttachmentUsagesByIds),
       attachmentsActions.hoverOutAttachmentNode.listen(_hoverOutAttachmentNodes),
       attachmentsActions.updateAttachment.listen(_updateAttachment),
       attachmentsActions.upsertAttachment.listen(_upsertAttachment),
@@ -363,15 +363,16 @@ class AttachmentsStore extends Store {
   }
 
   _getAttachmentUsagesByIds(List<int> usageIds) async {
-    print('hit getAttachmentUsageByIds in attachmentStore');
     if (usageIds != null && usageIds.isNotEmpty) {
-      print('gonna dispatch that service method for getAttachmentUSagesByIds');
-      FGetAttachmentUsagesByIdsResponse response =
-          await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: usageIds);
+      List<AttachmentUsage> response = await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: usageIds);
       if (response != null) {
-        print('We Got a Response! ${response.attachmentUsages}');
-        for (FAttachmentUsage fAttachmentUsage in response.attachmentUsages) {
-          _attachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(fAttachmentUsage));
+        for (AttachmentUsage responseUsage in response) {
+          AttachmentUsage matchedUsage =
+              _attachmentUsages.firstWhere((AttachmentUsage usage) => usage.id == responseUsage.id, orElse: () => null);
+          if (responseUsage != matchedUsage) {
+            _attachmentUsages.remove(matchedUsage);
+            _attachmentUsages.add(responseUsage);
+          }
         }
         return _attachmentUsages;
       } else {

@@ -13,10 +13,9 @@ class AttachmentsService extends Disposable {
   StreamController<UploadStatus> _uploadStatusStreamController;
   Stream<UploadStatus> get uploadStatusStream => _uploadStatusStreamController?.stream;
 
-  frugal.FContext get requestContext => _msgClient.createFContext()..timeout = new Duration(seconds: 30);
+  frugal.FContext get context => _msgClient.createFContext()..timeout = new Duration(seconds: 30);
 
   final msg.ThriftProtocol _protocol = msg.ThriftProtocol.BINARY;
-  frugal.FContext get context => _msgClient.createFContext();
   final Logger _logger = new Logger('w_attachments_client.attachments_service');
 
   static const analyticLabel = 'w_attachments_client';
@@ -148,13 +147,18 @@ class AttachmentsService extends Disposable {
     return result;
   }
 
-  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
-    print('service method time! for getAttachmentUsagesByIds');
+  Future<List<AttachmentUsage>> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
     try {
       FGetAttachmentUsagesByIdsRequest request = new FGetAttachmentUsagesByIdsRequest()
         ..attachmentUsageIds = usageIdsToLoad;
-      FGetAttachmentUsagesByIdsResponse response = await _fClient.getAttachmentUsagesByIds(requestContext, request);
-      return response;
+      FGetAttachmentUsagesByIdsResponse response = await _fClient.getAttachmentUsagesByIds(context, request);
+
+      List<AttachmentUsage> returnAttachmentUsages = [];
+      if (response.attachmentUsages?.isNotEmpty == true) {
+        response.attachmentUsages.forEach(
+            (FAttachmentUsage usage) => returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(usage)));
+      }
+      return returnAttachmentUsages;
     } catch (e) {
       _logger.warning(e);
     }
