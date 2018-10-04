@@ -1,3 +1,4 @@
+import 'package:mockito/mirrors.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
@@ -9,6 +10,7 @@ import 'package:w_attachments_client/src/models.dart';
 import 'package:w_attachments_client/src/service_adapters/attachments_service_library.dart';
 
 import '../mocks/client_adapter_mocks/client_adapter_mocks_library.dart';
+import '../mocks/mocks_library.dart' show AttachmentsServiceMock;
 import '../test_utils.dart' as test_utils;
 
 void main() {
@@ -32,7 +34,6 @@ void main() {
   Exception genericException;
   FGetAttachmentsByIdsResponse happyPathResponse;
 
-
   group('Attachments Service Impl Tests', () {
     setUp(() {
       // Create Mocks
@@ -43,10 +44,8 @@ void main() {
       testReporter = new TestReporter(new Uuid().v4());
 
       // Create Subject
-      attachmentServiceImpl = new AttachmentsService(
-          messagingClient: natsMsgClientMock,
-          fClient: annoServiceClientMock
-      );
+      attachmentServiceImpl = spy(new AttachmentsServiceMock(),
+          new AttachmentsService(messagingClient: natsMsgClientMock, fClient: annoServiceClientMock));
 
       // Create return values
       fAnnoErrorSenseless = new FAnnotationError();
@@ -58,7 +57,6 @@ void main() {
         new FAttachment()..id = 2,
       ];
       happyPathResponse = new FGetAttachmentsByIdsResponse()..attachments = happyPathAttachments;
-
     });
 
     group('getAttachmentsByIdTests', () {
@@ -75,7 +73,7 @@ void main() {
         expect(results.any((Attachment attch) => attch.id == 2), isTrue);
       });
 
-        // TODO: RAM-732 App Intelligence
+      // TODO: RAM-732 App Intelligence
 //      test('when there is an FAnnotationError, service logs it as a warning', () async {
 //        // Arrange
 //        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentsByIds(any, any),

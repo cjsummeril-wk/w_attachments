@@ -6,7 +6,6 @@ class FAnnotationsClientMock extends ServiceMockProxy<_FAnnotationsClientMock> i
   FAnnotationsClientMock() : super(new _FAnnotationsClientMock());
 
   @override
-  Future<FGetAttachmentsByIdsResponse> getAttachmentsByIds(
-          FContext ctx, FGetAttachmentsByIdsRequest request) =>
+  Future<FGetAttachmentsByIdsResponse> getAttachmentsByIds(FContext ctx, FGetAttachmentsByIdsRequest request) =>
       new Future.value(mock.getAttachmentsByIds(ctx, request));
 }

@@ -1,31 +1,32 @@
 library w_attachments_client.test.attachments_store_test;
 
 import 'dart:async';
-import 'dart:html' hide Client, Selection;
-import 'dart:math';
 
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
-import 'package:uuid/uuid.dart';
-import 'package:w_attachments_client/src/service_adapters/attachments_service_library.dart';
-import 'package:w_attachments_client/w_attachments_client.dart' hide AttachmentsService;
+
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
+import 'package:w_attachments_client/w_attachments_client.dart';
 
 import './mocks/mocks_library.dart';
 
 void main() {
   group('AttachmentsStore', () {
+    // Mocks
+    AttachmentsServiceMock _attachmentsServiceMock;
+
+    // Subject
     AttachmentsStore _store;
+
+    // Other
     AttachmentsActions _attachmentsActions;
     AttachmentsEvents _attachmentsEvents;
     AttachmentsApi _api;
     ExtensionContextMock _extensionContext;
-    AttachmentsService _attachmentsService;
-    Window mockWindow;
 
     String validWurl = 'wurl://docs.v1/doc:962DD25A85142FBBD7AC5AC84BAE9BD6';
     String testUsername = 'Ron Swanson';
@@ -37,16 +38,13 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsService());
-
-        mockWindow = spy(new WindowMock(), window);
-        _attachmentsService.serviceWindow = mockWindow;
+        _attachmentsServiceMock = new AttachmentsServiceMock();
       });
 
       tearDown(() {
         _extensionContext.dispose();
         _store.dispose();
-        _attachmentsService.dispose();
+        _attachmentsServiceMock.dispose();
       });
 
       test('should have proper default values', () {
@@ -56,7 +54,7 @@ void main() {
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsService,
+                attachmentsService: _attachmentsServiceMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -76,7 +74,7 @@ void main() {
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
+            attachmentsService: _attachmentsServiceMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -92,7 +90,7 @@ void main() {
             moduleConfig: new AttachmentsConfig(enableUploadDropzones: false, label: 'AttachmentPackage'),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
+            attachmentsService: _attachmentsServiceMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -107,7 +105,7 @@ void main() {
             moduleConfig: new AttachmentsConfig(enableClickToSelect: false, label: 'AttachmentPackage'),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
+            attachmentsService: _attachmentsServiceMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -121,7 +119,7 @@ void main() {
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
+            attachmentsService: _attachmentsServiceMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -139,7 +137,7 @@ void main() {
             moduleConfig: new AttachmentsConfig(enableDraggable: false, label: 'AttachmentPackage'),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
+            attachmentsService: _attachmentsServiceMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -154,7 +152,7 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+        _attachmentsServiceMock = new AttachmentsServiceMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
@@ -162,18 +160,16 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsService,
+                attachmentsService: _attachmentsServiceMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: []));
         _api = _store.api;
-        mockWindow = spy(new WindowMock(), window);
-        _attachmentsService.serviceWindow = mockWindow;
       });
 
       tearDown(() {
-        _attachmentsService.dispose();
+        _attachmentsServiceMock.dispose();
       });
 
       test('should not require a group in the groups list', () async {
@@ -214,7 +210,7 @@ void main() {
 //        _attachmentsActions = new AttachmentsActions();
 //        _attachmentsEvents = new AttachmentsEvents();
 //        _extensionContext = new ExtensionContextMock();
-//        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+//        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsService(messagingClient: natsMsgClientMock, fClient: annoServiceClientMock));
 //        _store = spy(
 //            new AttachmentsStoreMock(),
 //            new AttachmentsStore(
@@ -744,11 +740,20 @@ void main() {
 
     // could refactor these tests for getAttachmentsByProducers
     group('loadAttachments', () {
+      List<Attachment> happyPathAttachments;
+      List<AttachmentUsage> happyPathUsages;
+      List<Anchor> happyPathAnchors;
+
       setUp(() {
+        // Mocks
+        _attachmentsServiceMock = new AttachmentsServiceMock();
+
+        // Client
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+
+        // Subject
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
@@ -756,17 +761,14 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsService,
+                attachmentsService: _attachmentsServiceMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: []));
-        _api = _store.api;
-        mockWindow = spy(new WindowMock(), window);
-        _attachmentsService.serviceWindow = mockWindow;
 
-        when(_attachmentsService.getAttachmentsByProducers)
-            .thenReturn(new GetAttachmentsByProducersResponse(attachments: <Attachment>[
+        // Responses
+        happyPathAttachments = [
           new Attachment()
             ..id = 1
             ..filename = 'firstdoc.docx',
@@ -776,7 +778,8 @@ void main() {
           new Attachment()
             ..id = 3
             ..filename = 'thirddoc.pptx'
-        ], attachmentUsages: <AttachmentUsage>[
+        ];
+        happyPathUsages = [
           new AttachmentUsage()
             ..id = 4
             ..attachmentId = 1
@@ -789,7 +792,8 @@ void main() {
             ..id = 6
             ..attachmentId = 3
             ..anchorId = 9
-        ], anchors: <Anchor>[
+        ];
+        happyPathAnchors = [
           new Anchor()
             ..id = 7
             ..producerWurl =
@@ -802,11 +806,108 @@ void main() {
             ..id = 9
             ..producerWurl =
                 'wurl://sheets.v0/0:sheets_26858afc0f1541d88598db63c757f66c/1:sheets_26858af6858afc0f1541d88598db63c757f66c_3a92c44fb39b46ce9d138fd88dcc8af7_6-3-1-1-2'
-        ]));
+        ];
       });
 
-      tearDown(() {
-        _attachmentsService.dispose();
+      // TODO RAM-667
+      test('Attachments store handles getAttachmentsByProducers', () async {
+        // Arrange
+        GetAttachmentsByProducersResponse getAttachmentsByProducersResponse = new GetAttachmentsByProducersResponse(
+            attachments: happyPathAttachments, attachmentUsages: happyPathUsages, anchors: happyPathAnchors);
+        when(_attachmentsServiceMock.getAttachmentsByProducers).thenReturn(getAttachmentsByProducersResponse);
+
+        // Act
+
+        // Assert
+      });
+
+      group('Attachment store handles getAttachmentsByIds', () {
+        // Attachments that have no correlating usage (in happy path)
+        List<Attachment> noMatchAttachments;
+
+        // Attachments that have some correlating usage (in happy path)
+        List<Attachment> twoMatchAttachments;
+
+        setUp(() {
+          noMatchAttachments = [
+            new Attachment()
+              ..id = 99
+              ..filename = 'wut.jpg',
+            new Attachment()
+              ..id = 98
+              ..filename = 'idgaf.docx',
+            new Attachment()
+              ..id = 97
+              ..filename = 'ihop.xlsx'
+          ];
+
+          twoMatchAttachments = [
+            new Attachment()
+              ..id = 1
+              ..filename = 'who.pdf',
+            new Attachment()
+              ..id = 2
+              ..filename = 'let_the.gif',
+            new Attachment()
+              ..id = 97
+              ..filename = 'dogs_out.png'
+          ];
+        });
+
+        test('handles getAttachmentsByIds (happy path)', () async {
+          // Arrange
+          List<int> getIds = [1, 2, 3];
+          _store.attachmentUsages = happyPathUsages;
+          when(_attachmentsServiceMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(happyPathAttachments);
+
+          // Act
+          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+
+          // Assert
+          expect(_store.attachments.length, equals(3));
+        });
+
+        test('overwrites the results that match correlating usage referencing attachment id', () async {
+          // Arrange
+          List<int> getIds = [1, 2, 97];
+          _store.attachmentUsages = happyPathUsages;
+          when(_attachmentsServiceMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(twoMatchAttachments);
+
+          // Act
+          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+
+          // Assert
+          expect(_store.attachments.length, equals(2));
+        });
+
+        test('does not insert attachments without correlating usage referencing attachment id', () async {
+          // Arrange
+          List<int> getIds = [97, 98, 99];
+          _store.attachmentUsages = happyPathUsages;
+          when(_attachmentsServiceMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(noMatchAttachments);
+
+          // Act
+          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+
+          // Assert
+          expect(_store.attachments.length, equals(0));
+        });
+
+        test('does not perform any action if the payload is empty or null', () async {
+          // Arrange
+          _store.attachmentUsages = happyPathUsages;
+          when(_attachmentsServiceMock.getAttachmentsByIds).thenReturn(happyPathAttachments);
+
+          // Act (1/2)
+          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: null));
+          // Assert (1/2)
+          verifyNever(_attachmentsServiceMock.getAttachmentsByIds);
+
+          // Act (2/2)
+          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: []));
+          // Assert (2/2)
+          verifyNever(_attachmentsServiceMock.getAttachmentsByIds);
+        });
       });
 
 //      test('default with 12 items', () async {
@@ -928,7 +1029,7 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+        _attachmentsServiceMock = new AttachmentsServiceMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
@@ -936,14 +1037,12 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsService,
+                attachmentsService: _attachmentsServiceMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: []));
         _api = _store.api;
-        mockWindow = spy(new WindowMock(), window);
-        _attachmentsService.serviceWindow = mockWindow;
       });
 
       tearDown(() async {
@@ -952,7 +1051,7 @@ void main() {
         _attachmentsActions.dispose();
         _attachmentsEvents.dispose();
         _extensionContext.dispose();
-        _attachmentsService.dispose();
+        _attachmentsServiceMock.dispose();
         _store.dispose();
         _api = null;
       });
@@ -1261,10 +1360,7 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
-
-        mockWindow = spy(new WindowMock(), window);
-        _attachmentsService.serviceWindow = mockWindow;
+        _attachmentsServiceMock = new AttachmentsServiceMock();
       });
 
       test('properties from config are exposed properly', () {
@@ -1282,7 +1378,7 @@ void main() {
             moduleConfig: config,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
+            attachmentsService: _attachmentsServiceMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -1313,7 +1409,7 @@ void main() {
             moduleConfig: config,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
+            attachmentsService: _attachmentsServiceMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -1353,26 +1449,24 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+        _attachmentsServiceMock = new AttachmentsServiceMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsService,
+                attachmentsService: _attachmentsServiceMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: [],
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
         _api = _store.api;
-        mockWindow = spy(new WindowMock(), window);
-        _attachmentsService.serviceWindow = mockWindow;
       });
 
       tearDown(() async {
-        await _attachmentsService.dispose();
+        await _attachmentsServiceMock.dispose();
         await _extensionContext.dispose();
       });
 
@@ -1398,34 +1492,32 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = spy(new AttachmentsServiceStub(), new AttachmentsTestService());
+        _attachmentsServiceMock = new AttachmentsServiceMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsService,
+                attachmentsService: _attachmentsServiceMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: [],
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
         _api = _store.api;
-        mockWindow = spy(new WindowMock(), window);
-        _attachmentsService.serviceWindow = mockWindow;
       });
 
       tearDown(() async {
-        await _attachmentsService.dispose();
+        await _attachmentsServiceMock.dispose();
         await _extensionContext.dispose();
       });
 
       test('does nothing if isValidSelection is false', () async {
         await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
             producerSelection: new cef.Selection(wuri: "selectionWuri", scope: "selectionScope")));
-        verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any, attachmentId: any));
-        verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any));
+        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
+        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any));
       });
 
       test('does nothing if isValidSelection is false due to discontiguous selections', () async {
@@ -1436,8 +1528,8 @@ void main() {
             .add([contiguousSelection, aSecondContiguousSelection]);
         await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
             producerSelection: new cef.Selection(wuri: "selectionWuri", scope: "selectionScope")));
-        verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any, attachmentId: any));
-        verifyNever(_attachmentsService.createAttachmentUsage(producerWurl: any));
+        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
+        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any));
       });
 
       test('calls createAttachmentUsage with valid selection', () async {
@@ -1451,7 +1543,7 @@ void main() {
         print(_store.isValidSelection);
         await _attachmentsActions
             .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
-        verify(_attachmentsService.createAttachmentUsage(producerWurl: "regionWuri"));
+        verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: "regionWuri"));
       });
     });
   });
