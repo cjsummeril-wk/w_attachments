@@ -18,7 +18,7 @@ class AttachmentsActions extends Disposable {
   final createAttachmentUsage = new Action<CreateAttachmentUsagePayload>();
   final getAttachmentsByIds = new Action<GetAttachmentsByIdsPayload>();
   final getAttachmentsByProducers = new Action<GetAttachmentsByProducersPayload>();
-  final getAttachmentUsagesByIds = new Action<List<String>>();
+  final getAttachmentUsagesByIds = new Action<List<int>>();
   final setActionItemState = new Action<ActionStateChangePayload>();
   final setGroups = new Action<SetGroupsPayload>();
   final setFilters = new Action<SetFiltersPayload>();

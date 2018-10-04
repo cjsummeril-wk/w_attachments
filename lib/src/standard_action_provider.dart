@@ -22,24 +22,24 @@ class StandardActionProvider implements ActionProvider {
   List<PanelActionItem> getPanelActions() {
     List<PanelActionItem> panelActions = [];
 
-//    ActionItem downloadAsZip = new PanelActionItem(
-//        icon: ActionItem.iconBuilder(icon: IconGlyph.FOLDER_ZIP_G2),
-//        states: {
-//          'default': ActionItem.iconBuilder(icon: IconGlyph.FOLDER_ZIP_G2),
-//          'progress': (ProgressSpinner()..size = ProgressSpinnerSize.SMALL)()
-//        },
-//        tooltip: 'Download All in Zip',
-//        testId: 'wa.AttachmentControls.Icon.ZipAll',
-//        isDisabled: false,
-//        shouldShow: () => _api?.attachments?.isNotEmpty == true,
-//        callback: ((StatefulActionItem action) async {
-//          _api.setActionState(action, 'progress');
-//          await _api.downloadAllAttachmentsAsZip(
-//              keys: _api.attachmentKeys, label: _api.label, zipSelection: _api.zipSelection);
-//          _api.setActionState(action, 'default');
-//        }));
-//    panelActions.add(downloadAsZip);
-//
+    ActionItem getAttachmentUsageByIdsButton = new PanelActionItem(
+        icon: ActionItem.iconBuilder(icon: IconGlyph.FOLDER_ZIP_G2),
+        states: {
+          'default': ActionItem.iconBuilder(icon: IconGlyph.FOLDER_ZIP_G2),
+          'progress': (ProgressSpinner()..size = ProgressSpinnerSize.SMALL)()
+        },
+        tooltip: 'Get Attachment Usage Button',
+        testId: 'wa.AttachmentControls.Icon.GetAttachmentUsageByIds',
+        isDisabled: false,
+        shouldShow: () => _api?.attachments?.isNotEmpty == true,
+        callback: ((StatefulActionItem action) async {
+          print('hit callback of getAttachmentUsageByIdsButton');
+          _api.setActionState(action, 'progress');
+          await _api.getAttachmentUsagesByIds();
+          _api.setActionState(action, 'default');
+        }));
+    panelActions.add(getAttachmentUsageByIdsButton);
+
     if (_api.showingHeaderlessGroup) {
       ActionItem uploadFile = new PanelActionItem(
           icon: ActionItem.iconBuilder(icon: IconGlyph.UPLOADED),

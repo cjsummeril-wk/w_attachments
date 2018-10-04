@@ -96,11 +96,11 @@ class AttachmentsTestService extends AttachmentsService {
 //  }
 
   @override
-  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<String> usageIdsToLoad}) async {
+  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
     List<AttachmentUsage> attachmentUsages = [];
-    List<String> keysForWhichToCreateAttachmentUsages = new List.from(idsToLoad);
+    List<int> keysForWhichToCreateAttachmentUsages = new List.from(usageIdsToLoad);
 
-    for (String id in usageIdsToLoad) {
+    for (int id in usageIdsToLoad) {
       if (_usagesCache.keys.contains(id)) {
         attachmentUsages.add(_usagesCache[id]);
         keysForWhichToCreateAttachmentUsages.remove(id);

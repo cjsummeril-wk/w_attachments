@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:w_annotations_api/annotations_api_v1.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:w_module/w_module.dart';
@@ -361,12 +362,14 @@ class AttachmentsStore extends Store {
     _rebuildAndRedrawGroups();
   }
 
-  _getAttachmentUsagesByIds(List<String> usageIds) async {
-    /*
+  _getAttachmentUsagesByIds(List<int> usageIds) async {
+    print('hit getAttachmentUsageByIds in attachmentStore');
     if (usageIds != null && usageIds.isNotEmpty) {
+      print('gonna dispatch that service method for getAttachmentUSagesByIds');
       FGetAttachmentUsagesByIdsResponse response =
           await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: usageIds);
       if (response != null) {
+        print('We Got a Response! ${response.attachmentUsages}');
         for (FAttachmentUsage fAttachmentUsage in response.attachmentUsages) {
           _attachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(fAttachmentUsage));
         }
@@ -378,7 +381,6 @@ class AttachmentsStore extends Store {
     } else {
       _logger.warning("Invalid attachment usage ids: ", usageIds);
     }
-    */
     return null;
   }
 

@@ -148,8 +148,8 @@ class AttachmentsService extends Disposable {
     return result;
   }
 
-  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<String> usageIdsToLoad}) async {
-    /*
+  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
+    print('service method time! for getAttachmentUsagesByIds');
     try {
       FGetAttachmentUsagesByIdsRequest request = new FGetAttachmentUsagesByIdsRequest()
         ..attachmentUsageIds = usageIdsToLoad;
@@ -158,7 +158,6 @@ class AttachmentsService extends Disposable {
     } catch (e) {
       _logger.warning(e);
     }
-    */
     return null;
   }
 
