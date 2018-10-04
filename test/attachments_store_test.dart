@@ -7,14 +7,15 @@ import 'dart:math';
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
-import 'package:w_attachments_client/w_attachments_client.dart';
+import 'package:w_attachments_client/src/service_adapters/attachments_service_library.dart';
+import 'package:w_attachments_client/w_attachments_client.dart' hide AttachmentsService;
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 
-import './mocks.dart';
+import './mocks/mocks_library.dart';
 
 void main() {
   group('AttachmentsStore', () {

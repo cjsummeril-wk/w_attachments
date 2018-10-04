@@ -6,7 +6,7 @@ import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_session/mock.dart';
 import 'package:w_session/w_session.dart';
 
-import './mocks.dart';
+import './mocks/mocks_library.dart';
 
 void main() {
   group('AttachmentsModule', () {

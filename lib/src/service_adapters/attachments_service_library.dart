@@ -19,10 +19,11 @@ import 'package:w_attachments_client/src/components/utils.dart' as component_uti
 import 'package:w_attachments_client/src/service_models.dart';
 import 'package:w_attachments_client/src/upload.dart';
 
-import './utils.dart';
+import '../utils.dart';
 
-part './attachments_service/get_attachments_by_producers_response.dart';
-part './attachments_service/attachment_removed_service_payload.dart';
-part './attachments_service/attachments_service.dart';
-part './attachments_service/attachments_test_service.dart';
-part './attachments_service/create_attachment_usage_response.dart';
+part 'package:w_attachments_client/src/service_adapters/attachments/payloads/get_attachments_by_producers_response.dart';
+part 'package:w_attachments_client/src/service_adapters/attachments/payloads/attachment_removed_service_payload.dart';
+part 'package:w_attachments_client/src/service_adapters/attachments/attachments_service.dart';
+part 'package:w_attachments_client/src/service_adapters/attachments/attachments_test_service.dart';
+part 'package:w_attachments_client/src/service_adapters/attachments/payloads/create_attachment_usage_response.dart';
+part 'package:w_attachments_client/src/service_adapters/service_constants.dart';

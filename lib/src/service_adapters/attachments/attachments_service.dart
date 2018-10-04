@@ -75,6 +75,8 @@ class AttachmentsService extends Disposable {
           };
 
   Future<Null> initialize() async {
+    // TODO: RAM-732 App Intelligence
+    Logger.root.onRecord.listen(_appIntelligence.logging);
     var serviceDescriptor = msg.newServiceDescriptor(
         natsSubject: AnnotationsApiV1Constants.W_ANNOTATIONS_SERVICE, frugalProtocol: _protocol);
 
@@ -136,9 +138,11 @@ class AttachmentsService extends Disposable {
         result.add(clientAttach);
       }
     } on FAnnotationError catch (annoError) {
-      _logger.warning('Annotation Service Error: ${annoError.errorMessage}');
+      print('logging warning!!!!');
+      _logger.warning('${ServiceConstants.genericAnnoError}${annoError.errorMessage}');
     } on Exception catch (e) {
-      _logger.severe('Unexpected Service Error: ${e}');
+      print('got here yo');
+      _logger.severe('${ServiceConstants.trasportError}${e}');
     }
 
     return result;
