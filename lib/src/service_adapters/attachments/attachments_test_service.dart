@@ -96,7 +96,7 @@ class AttachmentsTestService extends AttachmentsService {
 //  }
 
   @override
-  Future<FGetAttachmentUsagesByIdsResponse> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
+  Future<List<AttachmentUsage>> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
     List<AttachmentUsage> attachmentUsages = [];
     List<int> keysForWhichToCreateAttachmentUsages = new List.from(usageIdsToLoad);
 
@@ -114,7 +114,14 @@ class AttachmentsTestService extends AttachmentsService {
     }
     FGetAttachmentUsagesByIdsResponse response = new FGetAttachmentUsagesByIdsResponse()
       ..attachmentUsages = fAttachmentUsages;
-    return new Future.value(response);
+
+    List<AttachmentUsage> returnAttachmentUsages = [];
+    if (response.attachmentUsages?.isNotEmpty == true) {
+      response.attachmentUsages.forEach(
+          (FAttachmentUsage usage) => returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(usage)));
+    }
+
+    return returnAttachmentUsages;
   }
 
   @override
