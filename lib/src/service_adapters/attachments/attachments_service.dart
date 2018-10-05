@@ -34,7 +34,10 @@ class AttachmentsService extends Disposable {
   static const selectionKeys = 'selection_keys';
 
   AttachmentsService(
-      {@required msg.NatsMessagingClient messagingClient, AppIntelligence appIntelligence, ModalManager modalManager})
+      {@required msg.NatsMessagingClient messagingClient,
+      AppIntelligence appIntelligence,
+      ModalManager modalManager,
+      FWAnnotationsService fClient: null})
       : _uploadStatusStreamController = new StreamController<UploadStatus>.broadcast() {
     _appIntelligence = (appIntelligence != null)
         ? appIntelligence.clone(appIntelName)
@@ -44,6 +47,9 @@ class AttachmentsService extends Disposable {
     _msgClient = messagingClient;
     _uploadManager = manageAndReturnDisposable(new UploadManager());
     _modalManager = modalManager;
+    if (fClient != null) {
+      _fClient = fClient;
+    }
     manageStreamController(_uploadStatusStreamController);
     manageDisposable(_appIntelligence);
   }
@@ -69,6 +75,8 @@ class AttachmentsService extends Disposable {
           };
 
   Future<Null> initialize() async {
+    // TODO: RAM-732 App Intelligence
+    Logger.root.onRecord.listen(_appIntelligence.logging);
     var serviceDescriptor = msg.newServiceDescriptor(
         natsSubject: AnnotationsApiV1Constants.W_ANNOTATIONS_SERVICE, frugalProtocol: _protocol);
 
@@ -82,7 +90,8 @@ class AttachmentsService extends Disposable {
       _transport = null;
     });
 
-    _fClient = new FWAnnotationsServiceClient(provider, [logCorrelationIdMiddleware]);
+    // Only initialize the client if one has not been provided in the constructor
+    _fClient = _fClient == null ? new FWAnnotationsServiceClient(provider, [logCorrelationIdMiddleware]) : _fClient;
   }
 
   @mustCallSuper
@@ -114,8 +123,27 @@ class AttachmentsService extends Disposable {
     }
   }
 
-  Future<Iterable<Attachment>> getAttachmentsByIds({@required List<String> idsToLoad}) async {
-    return null;
+  Future<Iterable<Attachment>> getAttachmentsByIds({@required List<int> idsToLoad, int revisionId}) async {
+    List<Attachment> result;
+    FGetAttachmentsByIdsResponse response;
+    try {
+      FGetAttachmentsByIdsRequest request = new FGetAttachmentsByIdsRequest()
+        ..attachmentIds = idsToLoad
+        ..revisionId = revisionId;
+      response = await _fClient.getAttachmentsByIds(context, request);
+
+      result = [];
+      for (FAttachment fAttach in response.attachments) {
+        Attachment clientAttach = new Attachment.fromFAttachment(fAttach);
+        result.add(clientAttach);
+      }
+    } on FAnnotationError catch (annoError) {
+      _logger.warning('${ServiceConstants.genericAnnoError}', annoError);
+    } on Exception catch (e) {
+      _logger.severe('${ServiceConstants.transportError}', e);
+    }
+
+    return result;
   }
 
   Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<String> idsToLoad}) async {

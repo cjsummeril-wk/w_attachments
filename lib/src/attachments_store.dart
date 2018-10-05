@@ -29,9 +29,18 @@ class AttachmentsStore extends Store {
   AttachmentsApi _api;
   ActionProvider _actionProvider;
   DispatchKey dispatchKey;
+
   List<Attachment> _attachments = [];
+  @visibleForTesting
+  void set attachments(List<Attachment> attachments) => _attachments = attachments;
+
   List<AttachmentUsage> _attachmentUsages = [];
-  Map<String, List<Anchor>> _anchors = {};
+  @visibleForTesting
+  void set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
+
+  Map<String, List<Anchor>> _anchorsByWurls = {};
+  @visibleForTesting
+  void set anchors(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
 
   // CEF-specific properties
   cef.Selection _currentSelection;
@@ -100,6 +109,7 @@ class AttachmentsStore extends Store {
     triggerOnActionV2(attachmentsActions.selectAttachments, _selectAttachments);
 
     [
+      attachmentsActions.getAttachmentsByIds.listen(_handleGetAttachmentsByIds),
       attachmentsActions.hoverOverAttachmentNode.listen(_hoverOverAttachmentNodes),
       attachmentsActions.hoverOutAttachmentNode.listen(_hoverOutAttachmentNodes),
       attachmentsActions.updateAttachment.listen(_updateAttachment),
@@ -155,7 +165,7 @@ class AttachmentsStore extends Store {
   List<String> get attachmentKeys => new List<String>.unmodifiable(_attachments.map((attachment) => attachment?.id));
   List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
   List<Anchor> anchorsByWurl(String wurl) =>
-      _anchors[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchors[wurl]);
+      _anchorsByWurls[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchorsByWurls[wurl]);
   List<AttachmentUsage> attachmentUsagesByAnchorId(int anchorId) =>
       new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
   List<AttachmentUsage> attachmentUsagesByAnchors(List<Anchor> anchors) {
@@ -299,8 +309,8 @@ class AttachmentsStore extends Store {
 
       CreateAttachmentUsageResponse resp = await attachmentsService.createAttachmentUsage(producerWurl: region.wuri);
 
-      _anchors[resp.anchor.producerWurl] ??= [];
-      _anchors[resp.anchor.producerWurl].add(resp.anchor);
+      _anchorsByWurls[resp.anchor.producerWurl] ??= [];
+      _anchorsByWurls[resp.anchor.producerWurl].add(resp.anchor);
       _attachmentUsages.add(resp.attachmentUsage);
       // need to check if the attachment associated with this usage already exists, and if not, add it.
       Attachment foundAttachment =
@@ -322,10 +332,10 @@ class AttachmentsStore extends Store {
     for (String wurl in producerWurls) {
       List<Anchor> responseAnchors = response?.anchors?.where((Anchor anchor) => anchor.producerWurl.startsWith(wurl));
       if (responseAnchors.isNotEmpty) {
-        _anchors[wurl] ??= [];
+        _anchorsByWurls[wurl] ??= [];
         for (Anchor anchor in responseAnchors) {
-          if (!_anchors[wurl].any((a) => a.id == anchor.id)) {
-            _anchors[wurl].add(anchor);
+          if (!_anchorsByWurls[wurl].any((a) => a.id == anchor.id)) {
+            _anchorsByWurls[wurl].add(anchor);
           }
         }
       } else {
@@ -434,6 +444,29 @@ class AttachmentsStore extends Store {
   _handleAttachmentRemoved(AttachmentRemovedEventPayload removeEvent) {
     if (removeEvent.responseStatus) {
       _removeAttachmentFromClientCache(removeEvent.removedSelectionId);
+    }
+  }
+
+  _handleGetAttachmentsByIds(GetAttachmentsByIdsPayload payload) async {
+    if (payload.attachmentIds?.isNotEmpty == true) {
+      List<Attachment> attachmentsResult =
+          await attachmentsService.getAttachmentsByIds(idsToLoad: payload.attachmentIds);
+
+      if (attachmentsResult?.isNotEmpty == true) {
+        // only replace attachments that are currently tracked by usages
+        List<Attachment> inScopeAttachments = [];
+        for (Attachment serverAttach in attachmentsResult) {
+          if ((_attachmentUsages.any((AttachmentUsage inScopeUsage) => inScopeUsage.attachmentId == serverAttach.id))) {
+            inScopeAttachments.add(serverAttach);
+          } else {
+            _logger.warning('Attachments store received out of scope attachment id: ${serverAttach.id}');
+          }
+        }
+        this._attachments = inScopeAttachments;
+        trigger();
+      } else {
+        _logger.warning('Service returned null/empty for getAttachmentsByIds');
+      }
     }
   }
 

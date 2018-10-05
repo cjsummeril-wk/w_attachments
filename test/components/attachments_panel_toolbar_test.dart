@@ -14,9 +14,8 @@ import 'package:w_attachments_client/src/attachments_store.dart';
 import 'package:w_attachments_client/src/components.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
-import 'package:w_attachments_client/w_attachments_service_api.dart';
 
-import '../mocks.dart';
+import '../mocks/mocks_library.dart';
 
 void main() {
   group('AttachmentPanelToolbar', () {

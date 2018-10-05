@@ -9,7 +9,7 @@ import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 
-import '../mocks.dart';
+import '../mocks/mocks_library.dart';
 
 void main() {
   group('TreeNode', () {
