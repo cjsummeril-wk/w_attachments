@@ -16,7 +16,7 @@ import '../test_utils.dart' as test_utils;
 void main() {
   // Test Constants
   const String f_anno_error_msg_senseless = 'servicedungoofed';
-  const String generic_exc_msg = 'shitsonfireyo';
+  const String generic_exc_msg = 'verybusinessfriendlyandprofessionalmessage';
 
   // Mocks
   FAnnotationsClientMock annoServiceClientMock;
@@ -48,8 +48,7 @@ void main() {
           new AttachmentsService(messagingClient: natsMsgClientMock, fClient: annoServiceClientMock));
 
       // Create return values
-      fAnnoErrorSenseless = new FAnnotationError();
-      fAnnoErrorSenseless.errorMessage = f_anno_error_msg_senseless;
+      fAnnoErrorSenseless = new FAnnotationError()..errorMessage = f_anno_error_msg_senseless;
       genericException = new Exception(generic_exc_msg);
 
       List<FAttachment> happyPathAttachments = [

@@ -733,7 +733,6 @@ void main() {
 //      });
 //    });
 
-    // could refactor these tests for getAttachmentsByProducers
     group('loadAttachments', () {
       List<Attachment> happyPathAttachments;
       List<AttachmentUsage> happyPathUsages;
@@ -849,7 +848,7 @@ void main() {
           ];
         });
 
-        test('handles getAttachmentsByIds (happy path)', () async {
+        test('(happy path)', () async {
           // Arrange
           List<int> getIds = [1, 2, 3];
           _store.attachmentUsages = happyPathUsages;
@@ -910,6 +909,7 @@ void main() {
 //        });
       });
 
+      // could refactor these tests for getAttachmentsByProducers
 //      test('default with 12 items', () async {
 //        var selectionWuris = [
 //          'wurl://sheets.v0/0:sheets_26858afc0f1541d88598db63c757f66c/1:sheets_26858af6858afc0f1541d88598db63c757f66c_3a92c44fb39b46ce9d138fd88dcc8af7_0-0-1-1-1',

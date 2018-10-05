@@ -138,11 +138,9 @@ class AttachmentsService extends Disposable {
         result.add(clientAttach);
       }
     } on FAnnotationError catch (annoError) {
-      print('logging warning!!!!');
-      _logger.warning('${ServiceConstants.genericAnnoError}${annoError.errorMessage}');
+      _logger.warning('${ServiceConstants.genericAnnoError}', annoError);
     } on Exception catch (e) {
-      print('got here yo');
-      _logger.severe('${ServiceConstants.trasportError}${e}');
+      _logger.severe('${ServiceConstants.transportError}', e);
     }
 
     return result;

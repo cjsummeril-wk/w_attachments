@@ -38,9 +38,9 @@ class AttachmentsStore extends Store {
   @visibleForTesting
   void set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
 
-  Map<String, List<Anchor>> _anchorMap = {};
+  Map<String, List<Anchor>> _anchorsByWurls = {};
   @visibleForTesting
-  void set anchors(Map<String, List<Anchor>> anchorMap) => _anchorMap = anchorMap;
+  void set anchors(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
 
   // CEF-specific properties
   cef.Selection _currentSelection;
@@ -165,7 +165,7 @@ class AttachmentsStore extends Store {
   List<String> get attachmentKeys => new List<String>.unmodifiable(_attachments.map((attachment) => attachment?.id));
   List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
   List<Anchor> anchorsByWurl(String wurl) =>
-      _anchorMap[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchorMap[wurl]);
+      _anchorsByWurls[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchorsByWurls[wurl]);
   List<AttachmentUsage> attachmentUsagesByAnchorId(int anchorId) =>
       new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
   List<AttachmentUsage> attachmentUsagesByAnchors(List<Anchor> anchors) {
@@ -309,8 +309,8 @@ class AttachmentsStore extends Store {
 
       CreateAttachmentUsageResponse resp = await attachmentsService.createAttachmentUsage(producerWurl: region.wuri);
 
-      _anchorMap[resp.anchor.producerWurl] ??= [];
-      _anchorMap[resp.anchor.producerWurl].add(resp.anchor);
+      _anchorsByWurls[resp.anchor.producerWurl] ??= [];
+      _anchorsByWurls[resp.anchor.producerWurl].add(resp.anchor);
       _attachmentUsages.add(resp.attachmentUsage);
       // need to check if the attachment associated with this usage already exists, and if not, add it.
       Attachment foundAttachment =
@@ -332,10 +332,10 @@ class AttachmentsStore extends Store {
     for (String wurl in producerWurls) {
       List<Anchor> responseAnchors = response?.anchors?.where((Anchor anchor) => anchor.producerWurl.startsWith(wurl));
       if (responseAnchors.isNotEmpty) {
-        _anchorMap[wurl] ??= [];
+        _anchorsByWurls[wurl] ??= [];
         for (Anchor anchor in responseAnchors) {
-          if (!_anchorMap[wurl].any((a) => a.id == anchor.id)) {
-            _anchorMap[wurl].add(anchor);
+          if (!_anchorsByWurls[wurl].any((a) => a.id == anchor.id)) {
+            _anchorsByWurls[wurl].add(anchor);
           }
         }
       } else {
@@ -447,10 +447,10 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _handleGetAttachmentsByIds(GetAttachmentsByIdsPayload getAttchByIdPayload) async {
-    if (getAttchByIdPayload.attachmentIds?.isNotEmpty == true) {
+  _handleGetAttachmentsByIds(GetAttachmentsByIdsPayload payload) async {
+    if (payload.attachmentIds?.isNotEmpty == true) {
       List<Attachment> attachmentsResult =
-          await attachmentsService.getAttachmentsByIds(idsToLoad: getAttchByIdPayload.attachmentIds);
+          await attachmentsService.getAttachmentsByIds(idsToLoad: payload.attachmentIds);
 
       if (attachmentsResult?.isNotEmpty == true) {
         // only replace attachments that are currently tracked by usages
@@ -464,6 +464,8 @@ class AttachmentsStore extends Store {
         }
         this._attachments = inScopeAttachments;
         trigger();
+      } else {
+        _logger.warning('Service returned null/empty for getAttachmentsByIds');
       }
     }
   }
