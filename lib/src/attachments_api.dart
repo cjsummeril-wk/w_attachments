@@ -115,9 +115,6 @@ class AttachmentsApi {
     List<int> usageIds =
         new List<int>.from(_attachmentsStore.attachmentUsages.map((AttachmentUsage usage) => usage.id));
 
-    // for(AttachmentUsage attachmentUsage in _attachmentsStore.attachmentUsages) {
-    //   usageIds.add(attachmentUsage.id);
-    // }
     return await _attachmentsActions.getAttachmentUsagesByIds(usageIds);
   }
 

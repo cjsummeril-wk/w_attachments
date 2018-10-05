@@ -374,6 +374,12 @@ class AttachmentsStore extends Store {
             _attachmentUsages.add(responseUsage);
           }
         }
+
+        // this is a temporary loop + print statement to assist with the manual testing of getAttachmentUsagesByIds.
+        for (AttachmentUsage usage in _attachmentUsages) {
+          print(
+              'AttachmentUsagesById returns: ID:: ${usage.id}, AttachmentId:: ${usage.attachmentId}, Label:: ${usage.label}');
+        }
         return _attachmentUsages;
       } else {
         _logger.warning("Unable to locate attachment usages with given ids: ", usageIds);
