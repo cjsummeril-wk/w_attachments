@@ -22,6 +22,7 @@ part 'action_payloads/download_attachment_payload.dart';
 part 'action_payloads/drop_files_payload.dart';
 part 'action_payloads/hover_over_node_payload.dart';
 part 'action_payloads/hover_out_node_payload.dart';
+part 'action_payloads/get_attachments_by_id_payload.dart';
 part 'action_payloads/get_attachments_by_producers_payload.dart';
 part 'action_payloads/remove_attachment_payload.dart';
 part 'action_payloads/replace_attachment_payload.dart';

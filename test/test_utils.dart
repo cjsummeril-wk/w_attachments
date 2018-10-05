@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:logging/logging.dart';
 
 import 'package:messaging_sdk/messaging_sdk.dart';
 import 'package:mockito/mockito.dart';
@@ -11,10 +12,11 @@ import 'package:w_session/w_session.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 
-import './mocks.dart';
+import './mocks/mocks_library.dart';
 
 void mockServiceMethod(Function serviceMethod, dynamic returnValue) {
-  when(serviceMethod()).thenAnswer((_) => returnValue);
+  when(serviceMethod())
+      .thenAnswer((_) => (returnValue is Error || returnValue is Exception) ? throw returnValue : returnValue);
 }
 
 Completer hookinActionVerifier(Action toVerify) {

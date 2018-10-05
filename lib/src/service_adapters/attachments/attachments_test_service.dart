@@ -69,31 +69,31 @@ class AttachmentsTestService extends AttachmentsService {
     return new CreateAttachmentUsageResponse(anchor: anchor, attachmentUsage: usage, attachment: attachment);
   }
 
-  @override
-  Future<Iterable<Attachment>> getAttachmentsByIds({@required List<String> idsToLoad}) async {
-    if (_cfg[purgeCache]) {
-      _attachmentsCache.clear();
-    }
-    List<Attachment> attachments = [];
-    List<int> keysForWhichToCreateAttachments = new List.from(idsToLoad);
-
-    for (String id in idsToLoad) {
-      if (_attachmentsCache.keys.contains(id)) {
-        attachments.add(_attachmentsCache[id]);
-        keysForWhichToCreateAttachments.remove(id);
-      }
-    }
-    List<FAttachment> fAttachments = _createFAttachments(keysForWhichToCreateAttachments);
-    for (FAttachment attach in fAttachments) {
-      attachments.add(new Attachment.fromFAttachment(attach));
-    }
-
-    if (_cfg[fetchAttachmentsError] && !_hasEncounteredError) {
-      _hasEncounteredError = true;
-      throw new FAnnotationError();
-    }
-    return new Future.value(attachments);
-  }
+//  @override
+//  Future<Iterable<Attachment>> getAttachmentsByIds({@required List<int> idsToLoad}) async {
+//    if (_cfg[purgeCache]) {
+//      _attachmentsCache.clear();
+//    }
+//    List<Attachment> attachments = [];
+//    List<int> keysForWhichToCreateAttachments = new List.from(idsToLoad);
+//
+//    for (String id in idsToLoad) {
+//      if (_attachmentsCache.keys.contains(id)) {
+//        attachments.add(_attachmentsCache[id]);
+//        keysForWhichToCreateAttachments.remove(id);
+//      }
+//    }
+//    List<FAttachment> fAttachments = _createFAttachments(keysForWhichToCreateAttachments);
+//    for (FAttachment attach in fAttachments) {
+//      attachments.add(new Attachment.fromFAttachment(attach));
+//    }
+//
+//    if (_cfg[fetchAttachmentsError] && !_hasEncounteredError) {
+//      _hasEncounteredError = true;
+//      throw new FAnnotationError();
+//    }
+//    return new Future.value(attachments);
+//  }
 
   @override
   Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<String> idsToLoad}) async {
