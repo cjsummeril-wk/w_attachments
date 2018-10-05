@@ -32,7 +32,8 @@ void main() {
   // Return Values
   FAnnotationError fAnnoErrorSenseless;
   Exception genericException;
-  FGetAttachmentsByIdsResponse happyPathResponse;
+  FGetAttachmentsByIdsResponse getAttachmentsByIdsHappyPathResponse;
+  FGetAttachmentUsagesByIdsResponse getAttachmentUsagesByIdsHappyPathResponse;
 
   group('Attachments Service Impl Tests', () {
     setUp(() {
@@ -55,13 +56,21 @@ void main() {
         new FAttachment()..id = 1,
         new FAttachment()..id = 2,
       ];
-      happyPathResponse = new FGetAttachmentsByIdsResponse()..attachments = happyPathAttachments;
+
+      List<FAttachmentUsage> happyPathAttachmentUsages = [
+        new FAttachmentUsage()..id = 1234,
+        new FAttachmentUsage()..id = 4567,
+      ];
+      getAttachmentsByIdsHappyPathResponse = new FGetAttachmentsByIdsResponse()..attachments = happyPathAttachments;
+      getAttachmentUsagesByIdsHappyPathResponse = new FGetAttachmentUsagesByIdsResponse()
+        ..attachmentUsages = happyPathAttachmentUsages;
     });
 
     group('getAttachmentsByIdTests', () {
       test('(happy path) service handler converts frugal to local models and returns', () async {
         // Arrange
-        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentsByIds(any, any), happyPathResponse);
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByIds(any, any), getAttachmentsByIdsHappyPathResponse);
 
         // Act
         Iterable<Attachment> results = await attachmentServiceImpl.getAttachmentsByIds(idsToLoad: [1, 2]);
@@ -110,6 +119,22 @@ void main() {
 //          expect(logEntry.level, LoggingLevel.warning);
 //        }, count: 1));
 //      });
+    });
+    group('getAttachmentUsagesByIdsTests', () {
+      test('(happy path) should convert FAttachmentUsage to AttachmentUsage in _getAttachmentUsagesByIds', () async {
+        // Arrange
+        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any),
+            getAttachmentUsagesByIdsHappyPathResponse);
+
+        // Act
+        List<AttachmentUsage> results =
+            await attachmentServiceImpl.getAttachmentUsagesByIds(usageIdsToLoad: [1234, 4567]);
+
+        // Assert
+        expect(results.length, equals(2));
+        expect(results.any((AttachmentUsage usage) => usage.id == 1234), isTrue);
+        expect(results.any((AttachmentUsage usage) => usage.id == 4567), isTrue);
+      });
     });
   });
 }
