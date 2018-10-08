@@ -174,7 +174,7 @@ class AttachmentsService extends Disposable {
 
       FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(context, request);
 
-      if (response?.attachments?.isNotEmpty == true) {
+      if (response.attachments?.isNotEmpty == true) {
         response.attachments
             .forEach((FAttachment attachment) => returnAttachments.add(new Attachment.fromFAttachment(attachment)));
       }
@@ -192,7 +192,7 @@ class AttachmentsService extends Disposable {
           attachments: returnAttachments, attachmentUsages: returnAttachmentUsages, anchors: returnAnchors);
     } on FAnnotationError catch (e, stacktrace) {
       _logger.warning(e, stacktrace);
-      rethrow;
+      return null;
     } catch (e, stacktrace) {
       _logger.severe(e, stacktrace);
       rethrow;

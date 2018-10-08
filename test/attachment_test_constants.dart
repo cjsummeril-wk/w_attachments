@@ -21,12 +21,12 @@ class AttachmentTestConstants {
     ..id = anchorIdOne
     ..accountResourceId = "crispy-rice-cakes"
     ..disconnected = false
-    ..producerWurl = "wurl://crispy-fried-dates";
+    ..producerWurl = testWurl;
   static Anchor mockChangedAnchor = new Anchor()
     ..id = anchorIdTwo
     ..accountResourceId = "crispy-veggie-straws"
     ..disconnected = false
-    ..producerWurl = "wurl://crispy-witty-comments";
+    ..producerWurl = testWurl;
 
   static AttachmentUsage mockAttachmentUsage = new AttachmentUsage()
     ..id = attachmentUsageIdOne

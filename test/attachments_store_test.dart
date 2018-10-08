@@ -1477,9 +1477,10 @@ void main() {
             reason: "getAttachmentUsagesByIds did not complete");
         verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
         expect(_store.attachmentUsages, isNotEmpty);
-        expect(_store.attachmentUsages.first.id, equals(AttachmentTestConstants.mockAttachmentUsageList.first.id),
-            reason:
-                "Returned attachment usage ${_store.attachmentUsages.first.id} did not match expected value ${AttachmentTestConstants.mockAttachmentUsageList.first.id}");
+        expect(
+            _store.attachmentUsages,
+            anyElement(
+                predicate((AttachmentUsage u) => u.id == AttachmentTestConstants.mockChangedAttachmentUsage.id)));
       });
 
       test(
@@ -1515,9 +1516,11 @@ void main() {
 
         GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
 
-        expect(_store.attachmentUsages.first.label, AttachmentTestConstants.mockAttachmentUsage.label);
-        expect(_store.attachmentUsages.first.accountResourceId,
-            AttachmentTestConstants.mockAttachmentUsage.accountResourceId);
+        expect(
+            _store.attachmentUsages,
+            anyElement(predicate((AttachmentUsage u) =>
+                u.label == AttachmentTestConstants.mockAttachmentUsage.label &&
+                u.accountResourceId == AttachmentTestConstants.mockAttachmentUsage.accountResourceId)));
 
         await _store.attachmentsActions.getAttachmentUsagesByIds(payload);
 
@@ -1525,9 +1528,11 @@ void main() {
             reason: "getAttachmentUsagesByIds did not complete");
         verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
 
-        expect(_store.attachmentUsages.first.label, AttachmentTestConstants.mockChangedAttachmentUsage.label);
-        expect(_store.attachmentUsages.first.accountResourceId,
-            AttachmentTestConstants.mockChangedAttachmentUsage.accountResourceId);
+        expect(
+            _store.attachmentUsages,
+            anyElement(predicate((AttachmentUsage u) =>
+                u.label == AttachmentTestConstants.mockChangedAttachmentUsage.label &&
+                u.accountResourceId == AttachmentTestConstants.mockChangedAttachmentUsage.accountResourceId)));
       });
     });
 
@@ -1579,18 +1584,12 @@ void main() {
 
         await _attachmentsActions.getAttachmentsByProducers(
             new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
-        expect(
-            _store.anchors[AttachmentTestConstants.existingWurl]
-                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id, orElse: () => null),
-            isNotNull);
-        expect(
-            _store.anchors[AttachmentTestConstants.testWurl]
-                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id, orElse: () => null),
-            isNotNull);
-        expect(
-            _store.anchors[AttachmentTestConstants.testWurl]
-                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id, orElse: () => null),
-            isNotNull);
+        expect(_store.anchors[AttachmentTestConstants.existingWurl],
+            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
+        expect(_store.anchors[AttachmentTestConstants.testWurl],
+            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
+        expect(_store.anchors[AttachmentTestConstants.testWurl],
+            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
       });
 
       test('calls getAttachmentsByProducers overriding', () async {
@@ -1601,18 +1600,11 @@ void main() {
 
         await _attachmentsActions
             .getAttachmentsByProducers(new GetAttachmentsByProducersPayload(producerWurls: producerWurls));
-        expect(
-            _store.anchors[AttachmentTestConstants.existingWurl]
-                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id, orElse: () => null),
-            isNull);
-        expect(
-            _store.anchors[AttachmentTestConstants.testWurl]
-                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id, orElse: () => null),
-            isNull);
-        expect(
-            _store.anchors[AttachmentTestConstants.testWurl]
-                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id, orElse: () => null),
-            isNotNull);
+        expect(_store.anchors[AttachmentTestConstants.existingWurl], isNull);
+        expect(_store.anchors[AttachmentTestConstants.testWurl],
+            everyElement(predicate((Anchor a) => a.id != AttachmentTestConstants.mockAnchor.id)));
+        expect(_store.anchors[AttachmentTestConstants.testWurl],
+            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
       });
     });
   });

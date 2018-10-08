@@ -1,22 +1,22 @@
 part of w_attachments_client.models.service;
 
-class AttachmentUsage {
+class AttachmentUsage extends ServiceModel {
   String accountResourceId;
   int anchorId;
   int attachmentId;
-  int id;
   String label;
   int parentId;
 
   AttachmentUsage();
 
-  AttachmentUsage.fromFAttachmentUsage(FAttachmentUsage fAttachmentUsage)
-      : id = fAttachmentUsage.id,
-        label = fAttachmentUsage.label,
-        accountResourceId = fAttachmentUsage.accountResourceId,
-        anchorId = fAttachmentUsage.anchorId,
-        parentId = fAttachmentUsage.parentId,
-        attachmentId = fAttachmentUsage.attachmentId;
+  AttachmentUsage.fromFAttachmentUsage(FAttachmentUsage fAttachmentUsage) {
+    id = fAttachmentUsage.id;
+    label = fAttachmentUsage.label;
+    accountResourceId = fAttachmentUsage.accountResourceId;
+    anchorId = fAttachmentUsage.anchorId;
+    parentId = fAttachmentUsage.parentId;
+    attachmentId = fAttachmentUsage.attachmentId;
+  }
 
   FAttachmentUsage toFAttachmentUsage() => new FAttachmentUsage()
     ..id = id
@@ -32,10 +32,10 @@ class AttachmentUsage {
   @override
   bool operator ==(other) {
     return other is AttachmentUsage &&
+        other.id == id &&
         other.accountResourceId == accountResourceId &&
         other.anchorId == anchorId &&
         other.attachmentId == attachmentId &&
-        other.id == id &&
         other.label == label &&
         other.parentId == parentId;
   }
