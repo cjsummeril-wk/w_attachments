@@ -36,7 +36,8 @@ class StandardActionProvider implements ActionProvider {
         shouldShow: () => _api?.attachments?.isNotEmpty == true,
         callback: ((StatefulActionItem action) async {
           _api.setActionState(action, 'progress');
-          await _api.getAttachmentUsagesByIds();
+          List<int> usageIds = new List<int>.from(_api.attachmentUsages.map((AttachmentUsage usage) => usage.id));
+          await _api.getAttachmentUsagesByIds(usageIds);
           _api.setActionState(action, 'default');
         }));
     panelActions.add(getAttachmentUsageByIdsButton);

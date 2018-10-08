@@ -111,12 +111,8 @@ class AttachmentsApi {
   /// Calls w-annotations-service endpoint to retrieve attachment usages for the provided id
   ///
   /// [UsageIds] contains a list of ids in order to grab the proper usages
-  Future<Null> getAttachmentUsagesByIds() async {
-    List<int> usageIds =
-        new List<int>.from(_attachmentsStore.attachmentUsages.map((AttachmentUsage usage) => usage.id));
-
+  Future<Null> getAttachmentUsagesByIds(List<int> usageIds) async {
     GetAttachmentUsagesByIdsPayload requestPayload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
-
     await _attachmentsActions.getAttachmentUsagesByIds(requestPayload);
   }
 
