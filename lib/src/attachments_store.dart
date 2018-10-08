@@ -345,10 +345,12 @@ class AttachmentsStore extends Store {
         if (responseAnchors?.isNotEmpty == true) {
           _anchorsByWurls[wurl] ??= [];
           for (Anchor anchor in responseAnchors) {
-            Anchor _foundAnchor =
-                _anchorsByWurls[wurl].firstWhere((Anchor a) => a?.id == anchor?.id, orElse: () => null);
-            if (_foundAnchor != null) {
-              _anchorsByWurls.remove(_foundAnchor);
+            if (payload.maintainAttachments) {
+              Anchor _foundAnchor =
+                  _anchorsByWurls[wurl].firstWhere((Anchor a) => a?.id == anchor?.id, orElse: () => null);
+              if (_foundAnchor != null) {
+                _anchorsByWurls.remove(_foundAnchor);
+              }
             }
             _anchorsByWurls[wurl].add(anchor);
           }
@@ -364,10 +366,12 @@ class AttachmentsStore extends Store {
 
     if (response?.attachmentUsages?.isNotEmpty == true) {
       for (AttachmentUsage attachmentUsage in response.attachmentUsages) {
-        AttachmentUsage _foundAttachmentUsage =
-            _attachmentUsages.firstWhere((AttachmentUsage u) => (u?.id == attachmentUsage?.id), orElse: () => null);
-        if (_foundAttachmentUsage != null) {
-          _attachmentUsages.remove(_foundAttachmentUsage);
+        if (payload.maintainAttachments) {
+          AttachmentUsage _foundAttachmentUsage =
+              _attachmentUsages.firstWhere((AttachmentUsage u) => (u?.id == attachmentUsage?.id), orElse: () => null);
+          if (_foundAttachmentUsage != null) {
+            _attachmentUsages.remove(_foundAttachmentUsage);
+          }
         }
         _attachmentUsages.add(attachmentUsage);
       }
@@ -375,10 +379,12 @@ class AttachmentsStore extends Store {
 
     if (response?.attachments?.isNotEmpty == true) {
       for (Attachment attachment in response?.attachments) {
-        Attachment _foundAttachment =
-            _attachments.firstWhere((Attachment a) => (a?.id == attachment?.id), orElse: () => null);
-        if (_foundAttachment != null) {
-          _attachments.remove(_foundAttachment);
+        if (payload.maintainAttachments) {
+          Attachment _foundAttachment =
+              _attachments.firstWhere((Attachment a) => (a?.id == attachment?.id), orElse: () => null);
+          if (_foundAttachment != null) {
+            _attachments.remove(_foundAttachment);
+          }
         }
         _attachments.add(attachment);
       }
