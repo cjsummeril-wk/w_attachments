@@ -115,7 +115,9 @@ class AttachmentsApi {
     List<int> usageIds =
         new List<int>.from(_attachmentsStore.attachmentUsages.map((AttachmentUsage usage) => usage.id));
 
-    return await _attachmentsActions.getAttachmentUsagesByIds(usageIds);
+    GetAttachmentUsagesByIdsPayload requestPayload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
+
+    await _attachmentsActions.getAttachmentUsagesByIds(requestPayload);
   }
 
   /// selectAttachmentsBySelectionKeys selects attachment cards based on the passed in [attachmentIds]

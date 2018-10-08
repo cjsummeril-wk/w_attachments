@@ -1,3 +1,4 @@
+import '../test_constants.dart';
 import 'package:mockito/mirrors.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -57,13 +58,9 @@ void main() {
         new FAttachment()..id = 2,
       ];
 
-      List<FAttachmentUsage> happyPathAttachmentUsages = [
-        new FAttachmentUsage()..id = 1234,
-        new FAttachmentUsage()..id = 4567,
-      ];
       getAttachmentsByIdsHappyPathResponse = new FGetAttachmentsByIdsResponse()..attachments = happyPathAttachments;
       getAttachmentUsagesByIdsHappyPathResponse = new FGetAttachmentUsagesByIdsResponse()
-        ..attachmentUsages = happyPathAttachmentUsages;
+        ..attachmentUsages = TestConstants.happyPathAttachmentUsages;
     });
 
     group('getAttachmentsByIdTests', () {
@@ -127,13 +124,13 @@ void main() {
             getAttachmentUsagesByIdsHappyPathResponse);
 
         // Act
-        List<AttachmentUsage> results =
-            await attachmentServiceImpl.getAttachmentUsagesByIds(usageIdsToLoad: [1234, 4567]);
+        List<AttachmentUsage> results = await attachmentServiceImpl.getAttachmentUsagesByIds(
+            usageIdsToLoad: [TestConstants.attachmentUsageIdOne, TestConstants.attachmentUsageIdTwo]);
 
         // Assert
         expect(results.length, equals(2));
-        expect(results.any((AttachmentUsage usage) => usage.id == 1234), isTrue);
-        expect(results.any((AttachmentUsage usage) => usage.id == 4567), isTrue);
+        expect(results.any((AttachmentUsage usage) => usage.id == TestConstants.attachmentUsageIdOne), isTrue);
+        expect(results.any((AttachmentUsage usage) => usage.id == TestConstants.attachmentUsageIdTwo), isTrue);
       });
     });
   });

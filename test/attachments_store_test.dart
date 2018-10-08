@@ -14,6 +14,7 @@ import 'package:w_attachments_client/src/attachments_store.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 
 import './mocks/mocks_library.dart';
+import 'test_constants.dart';
 import 'test_utils.dart' as test_utils;
 
 void main() {
@@ -1055,7 +1056,6 @@ void main() {
 
       tearDown(() async {
         // eliminate all attachments in the store cache, cancelUpload handles all cases that loadAttachments doesn't
-        // await _api.getAttachmentsByProducers(producerWurlsToLoad: []);
         _store.attachments = [];
         _store.attachmentUsages = [];
         _store.anchors = {};
@@ -1583,30 +1583,23 @@ void main() {
         test('_getAttachmentUsagesById should convert FAttachmentUsage to AttachmentUsage', () async {
           List<int> usageIds = [1234];
 
-          AttachmentUsage mockAttachmentUsage = new AttachmentUsage()
-            ..accountResourceId = 'crispy-bacon-lettuce-and-tomato-sammich'
-            ..anchorId = 1234
-            ..attachmentId = 3456
-            ..id = 5678
-            ..label = 'i dont like labels.'
-            ..parentId = 7890;
-          List<AttachmentUsage> returnedAttachmentUsages = [mockAttachmentUsage];
-
           Completer getAttachmentUsagesByIdsCompleter =
               test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
 
           when(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: any))
-              .thenReturn(returnedAttachmentUsages);
+              .thenReturn(TestConstants.mockAttachmentUsageList);
 
-          await _store.attachmentsActions.getAttachmentUsagesByIds(usageIds);
+          GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
+
+          await _store.attachmentsActions.getAttachmentUsagesByIds(payload);
 
           expect(getAttachmentUsagesByIdsCompleter.future, completes,
               reason: "getAttachmentUsagesByIds did not complete");
           verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
           expect(_store.attachmentUsages, isNotEmpty);
-          expect(_store.attachmentUsages.first.id, equals(returnedAttachmentUsages.first.id),
+          expect(_store.attachmentUsages.first.id, equals(TestConstants.mockAttachmentUsageList.first.id),
               reason:
-                  "Returned attachment usage ${_store.attachmentUsages.first.id} did not match expected value ${returnedAttachmentUsages.first.id}");
+                  "Returned attachment usage ${_store.attachmentUsages.first.id} did not match expected value ${TestConstants.mockAttachmentUsageList.first.id}");
         });
       });
     });

@@ -362,9 +362,10 @@ class AttachmentsStore extends Store {
     _rebuildAndRedrawGroups();
   }
 
-  _getAttachmentUsagesByIds(List<int> usageIds) async {
-    if (usageIds != null && usageIds.isNotEmpty) {
-      List<AttachmentUsage> response = await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: usageIds);
+  _getAttachmentUsagesByIds(GetAttachmentUsagesByIdsPayload payload) async {
+    if (payload.attachmentUsageIds != null && payload.attachmentUsageIds.isNotEmpty) {
+      List<AttachmentUsage> response =
+          await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
       if (response != null) {
         for (AttachmentUsage responseUsage in response) {
           AttachmentUsage matchedUsage =
@@ -376,40 +377,37 @@ class AttachmentsStore extends Store {
         }
 
         // this is a temporary loop + print statement to assist with the manual testing of getAttachmentUsagesByIds.
+        // TODO: RAM-739
         for (AttachmentUsage usage in _attachmentUsages) {
           print(
               'AttachmentUsagesById returns: ID:: ${usage.id}, AttachmentId:: ${usage.attachmentId}, Label:: ${usage.label}');
         }
         return _attachmentUsages;
       } else {
-        _logger.warning("Unable to locate attachment usages with given ids: ", usageIds);
+        _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);
         return null;
       }
     } else {
-      _logger.warning("Invalid attachment usage ids: ", usageIds);
+      _logger.warning("Invalid attachment usage ids: ", payload.attachmentUsageIds);
     }
     return null;
   }
 
-  // TODO: convert to setter
   _setActionItemState(ActionStateChangePayload request) {
     if (request?.action != null) {
       request.action.itemState = request.newState;
     }
   }
 
-  // TODO: convert to setter
   _setFilters(SetFiltersPayload request) {
     _filters = request.filters;
   }
 
-  // TODO: convert to setter
   void _setGroups(SetGroupsPayload request) {
     _groups = request.groups;
     _rebuildAndRedrawGroups();
   }
 
-  // TODO: convert to setter
   _setAttachmentsConfig(AttachmentsConfig config) {
     _moduleConfig = config;
   }

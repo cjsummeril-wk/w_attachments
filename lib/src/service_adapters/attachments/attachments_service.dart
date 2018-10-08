@@ -146,7 +146,7 @@ class AttachmentsService extends Disposable {
     return result;
   }
 
-  Future<List<AttachmentUsage>> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
+  Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
     try {
       FGetAttachmentUsagesByIdsRequest request = new FGetAttachmentUsagesByIdsRequest()
         ..attachmentUsageIds = usageIdsToLoad;
