@@ -40,6 +40,8 @@ class AttachmentsStore extends Store {
   Map<String, List<Anchor>> _anchorsByWurls = {};
   @visibleForTesting
   void set anchors(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
+  @visibleForTesting
+  Map<String, List<Anchor>> get anchors => _anchorsByWurls;
 
   // CEF-specific properties
   cef.Selection _currentSelection;
@@ -100,6 +102,7 @@ class AttachmentsStore extends Store {
     triggerOnActionV2(attachmentsActions.setGroups, _setGroups);
     triggerOnActionV2(attachmentsActions.setFilters, _setFilters);
     triggerOnActionV2(attachmentsActions.updateAttachmentsConfig, _setAttachmentsConfig);
+    triggerOnActionV2(attachmentsActions.getAttachmentsByProducers, _getAttachmentsByProducers);
 
     // Attachment Action Listeners
     triggerOnActionV2(attachmentsActions.addAttachment, _addAttachment);
@@ -330,35 +333,57 @@ class AttachmentsStore extends Store {
     GetAttachmentsByProducersResponse response =
         await attachmentsService.getAttachmentsByProducers(producerWurls: payload.producerWurls);
 
-    for (String wurl in payload.producerWurls) {
-      List<Anchor> responseAnchors = response?.anchors?.where((Anchor anchor) => anchor.producerWurl.startsWith(wurl));
-      if (responseAnchors.isNotEmpty) {
-        _anchorsByWurls[wurl] ??= [];
-        for (Anchor anchor in responseAnchors) {
-          if (!_anchorsByWurls[wurl].any((a) => a.id == anchor.id)) {
-            _anchorsByWurls[wurl].add(anchor);
-          }
-        }
-      } else {
-        _logger.warning('Wurl $wurl was not associated with any anchors.');
-      }
+    if (!payload.maintainAttachments) {
+      _anchorsByWurls.clear();
+      _attachmentUsages.clear();
+      _attachments.clear();
     }
 
-    for (AttachmentUsage attachmentUsage in response.attachmentUsages) {
-      // check to see if there is an attachmentUsage already existent
-      AttachmentUsage foundAttachmentUsage = _attachmentUsages
-          .firstWhere((AttachmentUsage usage) => (usage?.id == attachmentUsage?.id), orElse: () => null);
-      if (foundAttachmentUsage == null) {
+    if (response?.anchors?.isNotEmpty == true) {
+      for (String wurl in payload.producerWurls) {
+        List<Anchor> responseAnchors = response.anchors.where((Anchor a) => a.producerWurl.startsWith(wurl)).toList();
+        if (responseAnchors?.isNotEmpty == true) {
+          _anchorsByWurls[wurl] ??= [];
+          for (Anchor anchor in responseAnchors) {
+            Anchor _foundAnchor =
+                _anchorsByWurls[wurl].firstWhere((Anchor a) => a?.id == anchor?.id, orElse: () => null);
+            if (_foundAnchor != null) {
+              _anchorsByWurls.remove(_foundAnchor);
+            }
+            _anchorsByWurls[wurl].add(anchor);
+          }
+        } else {
+          _logger.warning('Wurl $wurl was not associated with any anchors.');
+        }
+      }
+    } else {
+      //_logger.warning("No associated anchors with $wurl");
+      _rebuildAndRedrawGroups();
+      return;
+    }
+
+    if (response?.attachmentUsages?.isNotEmpty == true) {
+      for (AttachmentUsage attachmentUsage in response.attachmentUsages) {
+        AttachmentUsage _foundAttachmentUsage =
+            _attachmentUsages.firstWhere((AttachmentUsage u) => (u?.id == attachmentUsage?.id), orElse: () => null);
+        if (_foundAttachmentUsage != null) {
+          _attachmentUsages.remove(_foundAttachmentUsage);
+        }
         _attachmentUsages.add(attachmentUsage);
       }
     }
-    for (Attachment attachment in response.attachments) {
-      Attachment foundAttachment =
-          _attachments.firstWhere((Attachment existing) => (existing?.id == attachment?.id), orElse: () => null);
-      if (foundAttachment == null) {
+
+    if (response?.attachments?.isNotEmpty == true) {
+      for (Attachment attachment in response?.attachments) {
+        Attachment _foundAttachment =
+            _attachments.firstWhere((Attachment a) => (a?.id == attachment?.id), orElse: () => null);
+        if (_foundAttachment != null) {
+          _attachments.remove(_foundAttachment);
+        }
         _attachments.add(attachment);
       }
     }
+
     _rebuildAndRedrawGroups();
   }
 

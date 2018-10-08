@@ -808,18 +808,6 @@ void main() {
         ];
       });
 
-      // TODO RAM-667
-      test('Attachments store handles getAttachmentsByProducers', () async {
-        // Arrange
-        GetAttachmentsByProducersResponse getAttachmentsByProducersResponse = new GetAttachmentsByProducersResponse(
-            attachments: happyPathAttachments, attachmentUsages: happyPathUsages, anchors: happyPathAnchors);
-        when(_attachmentsServiceMock.getAttachmentsByProducers).thenReturn(getAttachmentsByProducersResponse);
-
-        // Act
-
-        // Assert
-      });
-
       group('Attachment store handles getAttachmentsByIds', () {
         // Attachments that have no correlating usage (in happy path)
         List<Attachment> noMatchAttachments;
@@ -913,120 +901,6 @@ void main() {
 //
 //        });
       });
-
-      // could refactor these tests for getAttachmentsByProducers
-//      test('default with 12 items', () async {
-//        var selectionWuris = [
-//          'wurl://sheets.v0/0:sheets_26858afc0f1541d88598db63c757f66c/1:sheets_26858af6858afc0f1541d88598db63c757f66c_3a92c44fb39b46ce9d138fd88dcc8af7_0-0-1-1-1',
-//          'wurl://sheets.v0/0:sheets_26858afc0f1541d88598db63c757f66c/1:sheets_26858af6858afc0f1541d88598db63c757f66c_3a92c44fb39b46ce9d138fd88dcc8af7_10-4-1-1-3',
-//          'wurl://sheets.v0/0:sheets_26858afc0f1541d88598db63c757f66c/1:sheets_26858af6858afc0f1541d88598db63c757f66c_3a92c44fb39b46ce9d138fd88dcc8af7_6-3-1-1-2'
-//        ];
-//
-//        expect(_api.attachments.length, 0);
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionWuris);
-//        await new Future.delayed(new Duration(seconds: 1));
-//        expect(_api.attachments.length, 12);
-//      });
-
-//      test('with maintainAttachments true', () async {
-//        var uuid = new Uuid();
-//        var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-//
-//        expect(_api.attachments.length, 0);
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys, maintainAttachments: true);
-//        expect(_api.attachments.length, 12);
-//
-//        var newSelectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: newSelectionKeys, maintainAttachments: true);
-//        expect(_api.attachments.length, 24);
-//      });
-
-//      test('with 3 pending/progress uploads', () async {
-//        var uuid = new Uuid();
-//        var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-//
-//        expect(_api.attachments.length, 0);
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys);
-//        expect(_api.attachments.length, 12);
-//
-//        _api.attachments[0].uploadStatus = Status.Pending;
-//        _api.attachments[2].uploadStatus = Status.Progress;
-//        _api.attachments[4].uploadStatus = Status.Started;
-//
-//        var newSelectionKeys = new List.generate(7, (int index) => uuid.v4().toString().substring(0, 22));
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: newSelectionKeys);
-//        expect(_api.attachments.length, 10);
-//      });
-
-//      test('with 3 pending/progress uploads and maintainAttachments true', () async {
-//        var uuid = new Uuid();
-//        var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-//
-//        expect(_api.attachments.length, 0);
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys, maintainAttachments: true);
-//        expect(_api.attachments.length, 12);
-//
-//        _api.attachments[0].uploadStatus = Status.Pending;
-//        _api.attachments[2].uploadStatus = Status.Progress;
-//        _api.attachments[4].uploadStatus = Status.Started;
-//
-//        var newSelectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: newSelectionKeys, maintainAttachments: true);
-//        expect(_api.attachments.length, 24);
-//      });
-
-//      test('12 initial list, with maintainAttachments true, 9 new keys, and 3 duplicate keys', () async {
-//        var uuid = new Uuid();
-//        var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-//
-//        expect(_api.attachments.length, 0);
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys, maintainAttachments: true);
-//        expect(_api.attachments.length, 12);
-//
-//        var newSelectionKeys = new List.generate(9, (int index) => uuid.v4().toString().substring(0, 22));
-//        newSelectionKeys.addAll(selectionKeys.getRange(0, 3));
-//
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: newSelectionKeys, maintainAttachments: true);
-//        expect(_api.attachments.length, 21);
-//      });
-
-//      test('12 initial list, with 3 pending/progress uploads, 4 new keys, and 3 duplicate keys', () async {
-//        var uuid = new Uuid();
-//        var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-//
-//        expect(_api.attachments.length, 0);
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys);
-//        expect(_api.attachments.length, 12);
-//
-//        _api.attachments[0].uploadStatus = Status.Pending;
-//        _api.attachments[2].uploadStatus = Status.Progress;
-//        _api.attachments[4].uploadStatus = Status.Started;
-//
-//        var newSelectionKeys = new List.generate(4, (int index) => uuid.v4().toString().substring(0, 22));
-//        newSelectionKeys.addAll(selectionKeys.getRange(4, 8));
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: newSelectionKeys);
-//        expect(_api.attachments.length, 10);
-//      });
-
-//      test(
-//          '12 initial list, with 3 pending/progress uploads, maintainAttachments true, 9 new keys, and 3 duplicate keys',
-//          () async {
-//        var uuid = new Uuid();
-//        var selectionKeys = new List.generate(12, (int index) => uuid.v4().toString().substring(0, 22));
-//
-//        expect(_api.attachments.length, 0);
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: selectionKeys, maintainAttachments: true);
-//        expect(_api.attachments.length, 12);
-//
-//        _api.attachments[0].uploadStatus = Status.Pending;
-//        _api.attachments[2].uploadStatus = Status.Progress;
-//        _api.attachments[4].uploadStatus = Status.Started;
-//
-//        var newSelectionKeys = new List.generate(9, (int index) => uuid.v4().toString().substring(0, 22));
-//        newSelectionKeys.addAll(selectionKeys.getRange(5, 9));
-//        await _api.getAttachmentsByProducers(producerWurlsToLoad: newSelectionKeys, maintainAttachments: true);
-//        expect(_api.attachments.length, 21);
-//      });
     });
 
     group('AttachmentsStore attachment actions', () {
@@ -1514,7 +1388,11 @@ void main() {
       });
 
       tearDown(() async {
+        await _attachmentsActions.dispose();
+        await _attachmentsEvents.dispose();
         await _extensionContext.dispose();
+        await _store.dispose();
+        _api = null;
       });
 
       test('does nothing if isValidSelection is false', () async {
@@ -1544,7 +1422,6 @@ void main() {
         when(_extensionContext.observedRegionApi.create(selection: testSelection))
             .thenReturn(new cef.ObservedRegion(wuri: "regionWuri", scope: "regionScope"));
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
-        print(_store.isValidSelection);
         await _attachmentsActions
             .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
         verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: "regionWuri"));
@@ -1571,9 +1448,14 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
         _api = _store.api;
       });
+
       tearDown(() async {
-        await _attachmentsServiceMock.dispose();
+        await _attachmentsActions.dispose();
+        await _attachmentsEvents.dispose();
         await _extensionContext.dispose();
+        await _attachmentsServiceMock.dispose();
+        await _store.dispose();
+        _api = null;
       });
 
       test(
@@ -1643,9 +1525,94 @@ void main() {
             reason: "getAttachmentUsagesByIds did not complete");
         verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
 
-        expect(_store.attachmentUsages.first.label, AttachmentTestConstants.mockedChangedAttachmentUsage.label);
+        expect(_store.attachmentUsages.first.label, AttachmentTestConstants.mockChangedAttachmentUsage.label);
         expect(_store.attachmentUsages.first.accountResourceId,
-            AttachmentTestConstants.mockedChangedAttachmentUsage.accountResourceId);
+            AttachmentTestConstants.mockChangedAttachmentUsage.accountResourceId);
+      });
+    });
+
+    group('getAttachmentsByProducers-', () {
+      GetAttachmentsByProducersResponse getAttachmentsByProducersHappyResponse = new GetAttachmentsByProducersResponse(
+          anchors: AttachmentTestConstants.mockAnchorList,
+          attachmentUsages: AttachmentTestConstants.mockAttachmentUsageList,
+          attachments: AttachmentTestConstants.mockAttachmentList);
+
+      setUp(() {
+        _attachmentsActions = new AttachmentsActions();
+        _attachmentsEvents = new AttachmentsEvents();
+        _extensionContext = new ExtensionContextMock();
+        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _store = spy(
+            new AttachmentsStoreMock(),
+            new AttachmentsStore(
+                actionProviderFactory: StandardActionProvider.actionProviderFactory,
+                attachmentsActions: _attachmentsActions,
+                attachmentsEvents: _attachmentsEvents,
+                attachmentsService: _attachmentsServiceMock,
+                extensionContext: _extensionContext,
+                dispatchKey: attachmentsModuleDispatchKey,
+                attachments: [],
+                groups: [],
+                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+        _api = _store.api;
+
+        _store.anchors = {
+          AttachmentTestConstants.existingWurl: [AttachmentTestConstants.mockAnchor],
+          AttachmentTestConstants.testWurl: [AttachmentTestConstants.mockAnchor]
+        };
+      });
+
+      tearDown(() async {
+        await _attachmentsActions.dispose();
+        await _attachmentsEvents.dispose();
+        await _extensionContext.dispose();
+        await _attachmentsServiceMock.dispose();
+        await _store.dispose();
+        _api = null;
+      });
+
+      test('calls getAttachmentsByProducers preserving', () async {
+        List<String> producerWurls = [AttachmentTestConstants.testWurl];
+
+        when(_attachmentsServiceMock.getAttachmentsByProducers(producerWurls: producerWurls))
+            .thenReturn(getAttachmentsByProducersHappyResponse);
+
+        await _attachmentsActions.getAttachmentsByProducers(
+            new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
+        expect(
+            _store.anchors[AttachmentTestConstants.existingWurl]
+                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id, orElse: () => null),
+            isNotNull);
+        expect(
+            _store.anchors[AttachmentTestConstants.testWurl]
+                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id, orElse: () => null),
+            isNotNull);
+        expect(
+            _store.anchors[AttachmentTestConstants.testWurl]
+                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id, orElse: () => null),
+            isNotNull);
+      });
+
+      test('calls getAttachmentsByProducers overriding', () async {
+        List<String> producerWurls = [AttachmentTestConstants.testWurl];
+
+        when(_attachmentsServiceMock.getAttachmentsByProducers(producerWurls: producerWurls))
+            .thenReturn(getAttachmentsByProducersHappyResponse);
+
+        await _attachmentsActions
+            .getAttachmentsByProducers(new GetAttachmentsByProducersPayload(producerWurls: producerWurls));
+        expect(
+            _store.anchors[AttachmentTestConstants.existingWurl]
+                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id, orElse: () => null),
+            isNull);
+        expect(
+            _store.anchors[AttachmentTestConstants.testWurl]
+                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id, orElse: () => null),
+            isNull);
+        expect(
+            _store.anchors[AttachmentTestConstants.testWurl]
+                ?.firstWhere((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id, orElse: () => null),
+            isNotNull);
       });
     });
   });

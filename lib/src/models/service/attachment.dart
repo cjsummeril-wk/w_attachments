@@ -25,7 +25,7 @@ class Attachment {
 
   bool get isUploadComplete => false;
 
-  FAttachment toFAttachment(Attachment attachment) => new FAttachment()
+  FAttachment toFAttachment() => new FAttachment()
     ..id = id
     ..accountResourceId = accountResourceId
     ..fsResourceId = fsResourceId

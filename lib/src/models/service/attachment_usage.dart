@@ -18,7 +18,7 @@ class AttachmentUsage {
         parentId = fAttachmentUsage.parentId,
         attachmentId = fAttachmentUsage.attachmentId;
 
-  FAttachmentUsage toFAttachmentUsage(AttachmentUsage attachmentUsage) => new FAttachmentUsage()
+  FAttachmentUsage toFAttachmentUsage() => new FAttachmentUsage()
     ..id = id
     ..label = label
     ..accountResourceId = accountResourceId

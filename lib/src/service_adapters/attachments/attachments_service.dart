@@ -164,25 +164,30 @@ class AttachmentsService extends Disposable {
     return null;
   }
 
-  // TODO RAM-667 clean this up to work properly and all that, however it needs to be
   Future<GetAttachmentsByProducersResponse> getAttachmentsByProducers({@required List<String> producerWurls}) async {
     FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()..producerWurls = producerWurls;
+
     try {
-      FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(context, request);
+      List<Anchor> returnAnchors = [];
+      List<AttachmentUsage> returnAttachmentUsages = [];
       List<Attachment> returnAttachments = [];
-      if (response.attachments?.isNotEmpty == true) {
+
+      FGetAttachmentsByProducersResponse response = await _fClient.getAttachmentsByProducers(context, request);
+
+      if (response?.attachments?.isNotEmpty == true) {
         response.attachments
             .forEach((FAttachment attachment) => returnAttachments.add(new Attachment.fromFAttachment(attachment)));
       }
-      List<AttachmentUsage> returnAttachmentUsages = [];
+
       if (response.attachmentUsages?.isNotEmpty == true) {
         response.attachmentUsages.forEach((FAttachmentUsage attachmentUsage) =>
             returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(attachmentUsage)));
       }
-      List<Anchor> returnAnchors = [];
+
       if (response.anchors?.isNotEmpty == true) {
         response.anchors.forEach((FAnchor anchor) => returnAnchors.add(new Anchor.fromFAnchor(anchor)));
       }
+
       return new GetAttachmentsByProducersResponse(
           attachments: returnAttachments, attachmentUsages: returnAttachmentUsages, anchors: returnAnchors);
     } on FAnnotationError catch (e, stacktrace) {
