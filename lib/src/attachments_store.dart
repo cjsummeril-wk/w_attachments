@@ -371,7 +371,7 @@ class AttachmentsStore extends Store {
           AttachmentUsage matchedUsage =
               _attachmentUsages.firstWhere((AttachmentUsage usage) => usage.id == responseUsage.id, orElse: () => null);
           if (responseUsage != matchedUsage) {
-            _attachmentUsages.remove(matchedUsage);
+            _attachmentUsages?.remove(matchedUsage);
             _attachmentUsages.add(responseUsage);
           }
         }

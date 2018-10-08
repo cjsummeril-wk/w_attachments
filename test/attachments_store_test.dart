@@ -14,7 +14,7 @@ import 'package:w_attachments_client/src/attachments_store.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 
 import './mocks/mocks_library.dart';
-import 'test_constants.dart';
+import 'attachment_test_constants.dart';
 import 'test_utils.dart' as test_utils;
 
 void main() {
@@ -1587,7 +1587,7 @@ void main() {
               test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
 
           when(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: any))
-              .thenReturn(TestConstants.mockAttachmentUsageList);
+              .thenReturn(AttachmentTestConstants.mockAttachmentUsageList);
 
           GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
 
@@ -1597,9 +1597,9 @@ void main() {
               reason: "getAttachmentUsagesByIds did not complete");
           verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
           expect(_store.attachmentUsages, isNotEmpty);
-          expect(_store.attachmentUsages.first.id, equals(TestConstants.mockAttachmentUsageList.first.id),
+          expect(_store.attachmentUsages.first.id, equals(AttachmentTestConstants.mockAttachmentUsageList.first.id),
               reason:
-                  "Returned attachment usage ${_store.attachmentUsages.first.id} did not match expected value ${TestConstants.mockAttachmentUsageList.first.id}");
+                  "Returned attachment usage ${_store.attachmentUsages.first.id} did not match expected value ${AttachmentTestConstants.mockAttachmentUsageList.first.id}");
         });
       });
     });

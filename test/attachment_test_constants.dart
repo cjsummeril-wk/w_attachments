@@ -1,7 +1,9 @@
 import 'package:w_annotations_api/annotations_api_v1.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 
-class TestConstants {
+/// Class designated Attachments service and frugal based test constants.
+/// Any other constants not associated with the attachments service should be defined in their own TestConstants file.
+class AttachmentTestConstants {
   // Test Constants for GetAttachmentUsageByIds Tests
   static int attachmentUsageIdOne = 1234;
   static int attachmentUsageIdTwo = 4567;

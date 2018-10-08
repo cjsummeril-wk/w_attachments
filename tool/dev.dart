@@ -21,7 +21,7 @@ main(List<String> args) async {
     ..exclude = ['test/generated_runner_test.dart']
     ..lineLength = 120;
   config.test
-    ..platforms = ['content-shell', 'vm']
+    ..platforms = ['dartium']
     ..unitTests = ['test/generated_runner_test.dart']
     ..pubServe = true;
 
