@@ -13,9 +13,18 @@ class AttachmentTestConstants {
     ..anchorId = 1234
     ..attachmentId = 3456
     ..id = 5678
-    ..label = 'i dont like labels.'
+    ..label = 'chrispy-bacon-and-sun-dried-tomato-salad'
     ..parentId = 7890;
-  static List<AttachmentUsage> mockAttachmentUsageList = [mockAttachmentUsage];
+
+  static AttachmentUsage mockedChangedAttachmentUsage = new AttachmentUsage()
+    ..id = 5678
+    ..accountResourceId = 'crispy-bacon-pancakes'
+    ..anchorId = 999
+    ..attachmentId = 999
+    ..label = 'chrispy-bacon-and-crispy-chicken-waffles'
+    ..parentId = 999;
+
+  static List<AttachmentUsage> mockAttachmentUsageList = [mockedChangedAttachmentUsage];
 
   static List<FAttachmentUsage> happyPathAttachmentUsages = [
     new FAttachmentUsage()..id = attachmentUsageIdOne,
