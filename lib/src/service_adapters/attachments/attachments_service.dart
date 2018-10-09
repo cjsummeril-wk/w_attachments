@@ -146,7 +146,21 @@ class AttachmentsService extends Disposable {
     return result;
   }
 
-  Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<String> idsToLoad}) async {
+  Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
+    try {
+      FGetAttachmentUsagesByIdsRequest request = new FGetAttachmentUsagesByIdsRequest()
+        ..attachmentUsageIds = usageIdsToLoad;
+      FGetAttachmentUsagesByIdsResponse response = await _fClient.getAttachmentUsagesByIds(context, request);
+
+      List<AttachmentUsage> returnAttachmentUsages = [];
+      if (response.attachmentUsages?.isNotEmpty == true) {
+        response.attachmentUsages.forEach(
+            (FAttachmentUsage usage) => returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(usage)));
+      }
+      return returnAttachmentUsages;
+    } catch (e) {
+      _logger.warning(e);
+    }
     return null;
   }
 

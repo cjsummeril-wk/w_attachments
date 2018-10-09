@@ -1,3 +1,4 @@
+import '../attachment_test_constants.dart';
 import 'package:mockito/mirrors.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -32,7 +33,8 @@ void main() {
   // Return Values
   FAnnotationError fAnnoErrorSenseless;
   Exception genericException;
-  FGetAttachmentsByIdsResponse happyPathResponse;
+  FGetAttachmentsByIdsResponse getAttachmentsByIdsHappyPathResponse;
+  FGetAttachmentUsagesByIdsResponse getAttachmentUsagesByIdsHappyPathResponse;
 
   group('Attachments Service Impl Tests', () {
     setUp(() {
@@ -55,13 +57,17 @@ void main() {
         new FAttachment()..id = 1,
         new FAttachment()..id = 2,
       ];
-      happyPathResponse = new FGetAttachmentsByIdsResponse()..attachments = happyPathAttachments;
+
+      getAttachmentsByIdsHappyPathResponse = new FGetAttachmentsByIdsResponse()..attachments = happyPathAttachments;
+      getAttachmentUsagesByIdsHappyPathResponse = new FGetAttachmentUsagesByIdsResponse()
+        ..attachmentUsages = AttachmentTestConstants.happyPathAttachmentUsages;
     });
 
     group('getAttachmentsByIdTests', () {
       test('(happy path) service handler converts frugal to local models and returns', () async {
         // Arrange
-        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentsByIds(any, any), happyPathResponse);
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByIds(any, any), getAttachmentsByIdsHappyPathResponse);
 
         // Act
         Iterable<Attachment> results = await attachmentServiceImpl.getAttachmentsByIds(idsToLoad: [1, 2]);
@@ -110,6 +116,42 @@ void main() {
 //          expect(logEntry.level, LoggingLevel.warning);
 //        }, count: 1));
 //      });
+    });
+    group('getAttachmentUsagesByIdsTests', () {
+      test('(happy path) should convert FAttachmentUsage to AttachmentUsage in _getAttachmentUsagesByIds', () async {
+        // Arrange
+        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any),
+            getAttachmentUsagesByIdsHappyPathResponse);
+
+        // Act
+        List<AttachmentUsage> results = await attachmentServiceImpl.getAttachmentUsagesByIds(usageIdsToLoad: [
+          AttachmentTestConstants.attachmentUsageIdOne,
+          AttachmentTestConstants.attachmentUsageIdTwo
+        ]);
+
+        // Assert
+        expect(results.length, equals(2));
+        expect(
+            results.any((AttachmentUsage usage) => usage.id == AttachmentTestConstants.attachmentUsageIdOne), isTrue);
+        expect(
+            results.any((AttachmentUsage usage) => usage.id == AttachmentTestConstants.attachmentUsageIdTwo), isTrue);
+      });
+
+      test(
+          '(sad path) should handle a null return successfully, no attachmentUsage should be returned, in the case that the service returns an error.',
+          () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any), FAnnotationError);
+
+        // Act
+        List<AttachmentUsage> results = await attachmentServiceImpl.getAttachmentUsagesByIds(usageIdsToLoad: [null]);
+        // TODO: RAM-732 App Intelligence
+        // add logger expectations and handlers when implemented.
+
+        // Assert
+        expect(results, isNull);
+      });
     });
   });
 }

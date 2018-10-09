@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
 
+import 'package:w_annotations_api/annotations_api_v1.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/action_payloads.dart';
@@ -13,6 +14,8 @@ import 'package:w_attachments_client/src/attachments_store.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 
 import './mocks/mocks_library.dart';
+import 'attachment_test_constants.dart';
+import 'test_utils.dart' as test_utils;
 
 void main() {
   group('AttachmentsStore', () {
@@ -60,7 +63,9 @@ void main() {
                 groups: [],
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
         _api = _store.api;
+      });
 
+      test('should have default true enableDraggable, and can be set to false', () {
         expect(_store.enableDraggable, isTrue);
         expect(_store.enableUploadDropzones, isTrue);
         expect(_store.enableClickToSelect, isTrue);
@@ -1047,7 +1052,9 @@ void main() {
 
       tearDown(() async {
         // eliminate all attachments in the store cache, cancelUpload handles all cases that loadAttachments doesn't
-        await _api.getAttachmentsByProducers(producerWurlsToLoad: []);
+        _store.attachments = [];
+        _store.attachmentUsages = [];
+        _store.anchors = {};
         _attachmentsActions.dispose();
         _attachmentsEvents.dispose();
         _extensionContext.dispose();
@@ -1541,6 +1548,104 @@ void main() {
         await _attachmentsActions
             .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
         verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: "regionWuri"));
+      });
+    });
+
+    group('getAttachmentUsageById -', () {
+      setUp(() {
+        _attachmentsActions = new AttachmentsActions();
+        _attachmentsEvents = new AttachmentsEvents();
+        _extensionContext = new ExtensionContextMock();
+        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _store = spy(
+            new AttachmentsStoreMock(),
+            new AttachmentsStore(
+                actionProviderFactory: StandardActionProvider.actionProviderFactory,
+                attachmentsActions: _attachmentsActions,
+                attachmentsEvents: _attachmentsEvents,
+                attachmentsService: _attachmentsServiceMock,
+                extensionContext: _extensionContext,
+                dispatchKey: attachmentsModuleDispatchKey,
+                attachments: [],
+                groups: [],
+                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+        _api = _store.api;
+      });
+      tearDown(() async {
+        await _attachmentsServiceMock.dispose();
+        await _extensionContext.dispose();
+      });
+
+      test(
+          '_getAttachmentUsagesById should convert FAttachmentUsage to AttachmentUsage, should add an AttachmentUsage to the list in the store',
+          () async {
+        List<int> usageIds = [5678];
+
+        Completer getAttachmentUsagesByIdsCompleter =
+            test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
+
+        when(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: any))
+            .thenReturn(AttachmentTestConstants.mockAttachmentUsageList);
+
+        GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
+
+        await _store.attachmentsActions.getAttachmentUsagesByIds(payload);
+
+        expect(getAttachmentUsagesByIdsCompleter.future, completes,
+            reason: "getAttachmentUsagesByIds did not complete");
+        verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
+        expect(_store.attachmentUsages, isNotEmpty);
+        expect(_store.attachmentUsages.first.id, equals(AttachmentTestConstants.mockAttachmentUsageList.first.id),
+            reason:
+                "Returned attachment usage ${_store.attachmentUsages.first.id} did not match expected value ${AttachmentTestConstants.mockAttachmentUsageList.first.id}");
+      });
+
+      test(
+          '_getAttachmentsUsageByIds when IDs are null, no changes will be made to the attachmentUsages list in the store',
+          () async {
+        List<int> usageIds = [null];
+        _store.attachmentUsages = [];
+
+        Completer getAttachmentUsagesByIdsCompleter =
+            test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
+
+        GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
+
+        await _store.attachmentsActions.getAttachmentUsagesByIds(payload);
+
+        expect(getAttachmentUsagesByIdsCompleter.future, completes,
+            reason: "getAttachmentUsagesByIds did not complete");
+        verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
+
+        expect(_store.attachmentUsages, isEmpty);
+      });
+
+      test('_getAttachmentsUsageByIds when IDs match a current ID in the list of usages, the usage should be updated.',
+          () async {
+        List<int> usageIds = [5678];
+        _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
+
+        Completer getAttachmentUsagesByIdsCompleter =
+            test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
+
+        when(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: any))
+            .thenReturn(AttachmentTestConstants.mockAttachmentUsageList);
+
+        GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
+
+        expect(_store.attachmentUsages.first.label, AttachmentTestConstants.mockAttachmentUsage.label);
+        expect(_store.attachmentUsages.first.accountResourceId,
+            AttachmentTestConstants.mockAttachmentUsage.accountResourceId);
+
+        await _store.attachmentsActions.getAttachmentUsagesByIds(payload);
+
+        expect(getAttachmentUsagesByIdsCompleter.future, completes,
+            reason: "getAttachmentUsagesByIds did not complete");
+        verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
+
+        expect(_store.attachmentUsages.first.label, AttachmentTestConstants.mockedChangedAttachmentUsage.label);
+        expect(_store.attachmentUsages.first.accountResourceId,
+            AttachmentTestConstants.mockedChangedAttachmentUsage.accountResourceId);
       });
     });
   });

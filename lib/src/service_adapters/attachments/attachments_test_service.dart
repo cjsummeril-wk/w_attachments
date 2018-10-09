@@ -96,26 +96,32 @@ class AttachmentsTestService extends AttachmentsService {
 //  }
 
   @override
-  Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<String> idsToLoad}) async {
+  Future<List<AttachmentUsage>> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
     List<AttachmentUsage> attachmentUsages = [];
-    List<int> keysForWhichToCreateAttachmentUsages = new List.from(idsToLoad);
+    List<int> keysForWhichToCreateAttachmentUsages = new List.from(usageIdsToLoad);
 
-    for (String id in idsToLoad) {
+    for (int id in usageIdsToLoad) {
       if (_usagesCache.keys.contains(id)) {
         attachmentUsages.add(_usagesCache[id]);
         keysForWhichToCreateAttachmentUsages.remove(id);
       }
     }
     List<FAttachmentUsage> fAttachmentUsages = _createFAttachmentUsages(keysForWhichToCreateAttachmentUsages);
-    for (FAttachmentUsage attach in fAttachmentUsages) {
-      attachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(attach));
-    }
 
     if (_cfg[fetchAttachmentsError] && !_hasEncounteredError) {
       _hasEncounteredError = true;
       throw new FAnnotationError();
     }
-    return new Future.value(attachmentUsages);
+    FGetAttachmentUsagesByIdsResponse response = new FGetAttachmentUsagesByIdsResponse()
+      ..attachmentUsages = fAttachmentUsages;
+
+    List<AttachmentUsage> returnAttachmentUsages = [];
+    if (response.attachmentUsages?.isNotEmpty == true) {
+      response.attachmentUsages.forEach(
+          (FAttachmentUsage usage) => returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(usage)));
+    }
+
+    return returnAttachmentUsages;
   }
 
   @override

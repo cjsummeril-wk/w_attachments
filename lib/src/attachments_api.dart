@@ -108,6 +108,14 @@ class AttachmentsApi {
       await _attachmentsActions.getAttachmentsByProducers(new GetAttachmentsByProducersPayload(
           producerWurls: producerWurlsToLoad, maintainAttachments: maintainAttachments));
 
+  /// Calls w-annotations-service endpoint to retrieve attachment usages for the provided id
+  ///
+  /// [UsageIds] contains a list of ids in order to grab the proper usages
+  Future<Null> getAttachmentUsagesByIds(List<int> usageIds) async {
+    GetAttachmentUsagesByIdsPayload requestPayload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
+    await _attachmentsActions.getAttachmentUsagesByIds(requestPayload);
+  }
+
   /// selectAttachmentsBySelectionKeys selects attachment cards based on the passed in [attachmentIds]
   ///
   ///   [attachmentIds] is a list of [Attachment] ids

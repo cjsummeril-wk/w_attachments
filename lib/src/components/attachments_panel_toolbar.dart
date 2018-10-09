@@ -48,7 +48,6 @@ class AttachmentsPanelToolbarComponent extends FluxUiComponent<AttachmentsPanelT
   ReactElement _renderMenuButton({@required PanelActionItem actionItem, @required String key}) {
     if (actionItem == null) return null;
     if (!actionItem.shouldShow()) return null;
-
     return (Button()
       ..key = key
       ..onClick = (_) {

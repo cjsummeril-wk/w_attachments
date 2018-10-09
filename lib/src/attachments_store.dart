@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:w_annotations_api/annotations_api_v1.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:w_module/w_module.dart';
@@ -111,6 +110,8 @@ class AttachmentsStore extends Store {
     [
       attachmentsActions.getAttachmentsByIds.listen(_handleGetAttachmentsByIds),
       attachmentsActions.hoverOverAttachmentNode.listen(_hoverOverAttachmentNodes),
+      attachmentsActions.getAttachmentsByProducers.listen(_getAttachmentsByProducers),
+      attachmentsActions.getAttachmentUsagesByIds.listen(_getAttachmentUsagesByIds),
       attachmentsActions.hoverOutAttachmentNode.listen(_hoverOutAttachmentNodes),
       attachmentsActions.updateAttachment.listen(_updateAttachment),
       attachmentsActions.upsertAttachment.listen(_upsertAttachment),
@@ -325,11 +326,11 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _getAttachmentsByProducers(Set<String> producerWurls) async {
+  _getAttachmentsByProducers(GetAttachmentsByProducersPayload payload) async {
     GetAttachmentsByProducersResponse response =
-        await attachmentsService.getAttachmentsByProducers(producerWurls: producerWurls.toList());
+        await attachmentsService.getAttachmentsByProducers(producerWurls: payload.producerWurls);
 
-    for (String wurl in producerWurls) {
+    for (String wurl in payload.producerWurls) {
       List<Anchor> responseAnchors = response?.anchors?.where((Anchor anchor) => anchor.producerWurl.startsWith(wurl));
       if (responseAnchors.isNotEmpty) {
         _anchorsByWurls[wurl] ??= [];
@@ -361,6 +362,37 @@ class AttachmentsStore extends Store {
     _rebuildAndRedrawGroups();
   }
 
+  _getAttachmentUsagesByIds(GetAttachmentUsagesByIdsPayload payload) async {
+    if (payload.attachmentUsageIds != null && payload.attachmentUsageIds.isNotEmpty) {
+      List<AttachmentUsage> response =
+          await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
+      if (response != null) {
+        for (AttachmentUsage responseUsage in response) {
+          AttachmentUsage matchedUsage =
+              _attachmentUsages.firstWhere((AttachmentUsage usage) => usage.id == responseUsage.id, orElse: () => null);
+          if (responseUsage != matchedUsage) {
+            _attachmentUsages?.remove(matchedUsage);
+            _attachmentUsages.add(responseUsage);
+          }
+        }
+
+        // this is a temporary loop + print statement to assist with the manual testing of getAttachmentUsagesByIds.
+        // TODO: RAM-739
+        for (AttachmentUsage usage in _attachmentUsages) {
+          print(
+              'AttachmentUsagesById returns: ID:: ${usage.id}, AttachmentId:: ${usage.attachmentId}, Label:: ${usage.label}');
+        }
+        return _attachmentUsages;
+      } else {
+        _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);
+        return null;
+      }
+    } else {
+      _logger.warning("Invalid attachment usage ids: ", payload.attachmentUsageIds);
+    }
+    return null;
+  }
+
   _setActionItemState(ActionStateChangePayload request) {
     if (request?.action != null) {
       request.action.itemState = request.newState;
@@ -371,7 +403,7 @@ class AttachmentsStore extends Store {
     _filters = request.filters;
   }
 
-  _setGroups(SetGroupsPayload request) {
+  void _setGroups(SetGroupsPayload request) {
     _groups = request.groups;
     _rebuildAndRedrawGroups();
   }
@@ -395,7 +427,7 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _updateAttachment(UpdateAttachmentPayload request) {
+  void _updateAttachment(UpdateAttachmentPayload request) {
     trigger();
     // treeNodes are not rendered as part of a general `trigger()` so must be triggered individually
     List nodes = _treeNodes[request.toUpdate.id];
@@ -441,7 +473,7 @@ class AttachmentsStore extends Store {
   Attachment _getAttachmentById(int id) =>
       _attachments.firstWhere((attachment) => attachment.id == id, orElse: () => null);
 
-  _handleAttachmentRemoved(AttachmentRemovedEventPayload removeEvent) {
+  void _handleAttachmentRemoved(AttachmentRemovedEventPayload removeEvent) {
     if (removeEvent.responseStatus) {
       _removeAttachmentFromClientCache(removeEvent.removedSelectionId);
     }
@@ -470,19 +502,19 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _handleUploadStatus(UploadStatus uploadStatus) {
+  void _handleUploadStatus(UploadStatus uploadStatus) {
     uploadStatus.attachment.uploadStatus = uploadStatus.status;
     if (uploadStatus.status != Status.Cancelled) {
       _upsertAttachment(new UpsertAttachmentPayload(toUpsert: uploadStatus.attachment));
     }
   }
 
-  _hoverOverAttachmentNodes(HoverOverNodePayload request) {
+  void _hoverOverAttachmentNodes(HoverOverNodePayload request) {
     _hoveredNode = request.hovered;
     _hoveredNode.trigger();
   }
 
-  _hoverOutAttachmentNodes(HoverOutNodePayload request) {
+  void _hoverOutAttachmentNodes(HoverOutNodePayload request) {
     _hoveredNode = null;
     request.unhovered.trigger();
   }
@@ -514,8 +546,10 @@ class AttachmentsStore extends Store {
     var allScopes = _extensionContext.observedRegionApi.getScopes();
     var currentScopes = _currentScopes.toSet();
     // create a set of the scopes we need to subscribe to
-    final Set<String> scopesToObtain = allScopes.difference(currentScopes);
-    _getAttachmentsByProducers(scopesToObtain);
+    final List<String> scopesToObtain = allScopes.difference(currentScopes).toList();
+    final GetAttachmentsByProducersPayload payload =
+        new GetAttachmentsByProducersPayload(producerWurls: scopesToObtain);
+    _getAttachmentsByProducers(payload);
     // create a set of the scopes we need to unsubscribe from
     // TODO: remove old attachments we no longer need to show
     // final Set<String> scopesToRemove = currentScopes.difference(allScopes);
