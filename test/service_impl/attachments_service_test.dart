@@ -33,8 +33,10 @@ void main() {
   // Return Values
   FAnnotationError fAnnoErrorSenseless;
   Exception genericException;
+
   FGetAttachmentsByIdsResponse getAttachmentsByIdsHappyPathResponse;
   FGetAttachmentUsagesByIdsResponse getAttachmentUsagesByIdsHappyPathResponse;
+  FGetAttachmentsByProducersResponse getAttachmentsByProducersHappyPathResponse;
 
   group('Attachments Service Impl Tests', () {
     setUp(() {
@@ -53,29 +55,123 @@ void main() {
       fAnnoErrorSenseless = new FAnnotationError()..errorMessage = f_anno_error_msg_senseless;
       genericException = new Exception(generic_exc_msg);
 
-      List<FAttachment> happyPathAttachments = [
-        new FAttachment()..id = 1,
-        new FAttachment()..id = 2,
-      ];
-
-      getAttachmentsByIdsHappyPathResponse = new FGetAttachmentsByIdsResponse()..attachments = happyPathAttachments;
+      getAttachmentsByIdsHappyPathResponse = new FGetAttachmentsByIdsResponse()
+        ..attachments = AttachmentTestConstants.mockFAttachmentList;
       getAttachmentUsagesByIdsHappyPathResponse = new FGetAttachmentUsagesByIdsResponse()
-        ..attachmentUsages = AttachmentTestConstants.happyPathAttachmentUsages;
+        ..attachmentUsages = AttachmentTestConstants.mockFAttachmentUsageList;
+      getAttachmentsByProducersHappyPathResponse = new FGetAttachmentsByProducersResponse()
+        ..anchors = AttachmentTestConstants.mockFAnchorList
+        ..attachmentUsages = AttachmentTestConstants.mockFAttachmentUsageList
+        ..attachments = AttachmentTestConstants.mockFAttachmentList;
+    });
+
+    group('getAttachmentsByProducersTests', () {
+      test('service handler converts frugal to local models and returns', () async {
+        // Arrange
+        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
+            getAttachmentsByProducersHappyPathResponse);
+
+        // Act
+        GetAttachmentsByProducersResponse results =
+            await attachmentServiceImpl.getAttachmentsByProducers(producerWurls: [AttachmentTestConstants.testWurl]);
+
+        // Assert
+        expect(results.anchors.length, equals(2));
+        expect(results.attachmentUsages.length, equals(2));
+        expect(results.attachments.length, equals(2));
+
+        expect(results.anchors.any((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id), isTrue);
+        expect(results.anchors.any((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id), isTrue);
+
+        expect(
+            results.attachmentUsages.any((AttachmentUsage a) =>
+                a.id == AttachmentTestConstants.mockAttachmentUsage.id &&
+                a.anchorId == AttachmentTestConstants.mockAnchor.id &&
+                a.attachmentId == AttachmentTestConstants.mockAttachment.id),
+            isTrue);
+        expect(
+            results.attachmentUsages.any((AttachmentUsage a) =>
+                a.id == AttachmentTestConstants.mockChangedAttachmentUsage.id &&
+                a.anchorId == AttachmentTestConstants.mockChangedAnchor.id &&
+                a.attachmentId == AttachmentTestConstants.mockChangedAttachment.id),
+            isTrue);
+
+        expect(results.attachments.any((Attachment a) => a.id == AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(results.attachments.any((Attachment a) => a.id == AttachmentTestConstants.mockChangedAttachment.id),
+            isTrue);
+      });
+
+      test('service handler handles empty payloads', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
+            new FGetAttachmentsByProducersResponse()
+              ..anchors = null
+              ..attachmentUsages = null
+              ..attachments = null);
+
+        // Act
+        GetAttachmentsByProducersResponse results =
+            await attachmentServiceImpl.getAttachmentsByProducers(producerWurls: [AttachmentTestConstants.testWurl]);
+
+        // Assert
+        expect(results.anchors.length, equals(0));
+        expect(results.attachmentUsages.length, equals(0));
+        expect(results.attachments.length, equals(0));
+      });
+
+      test('service handler handles FAnnotationError', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
+            new FGetAttachmentsByProducersResponse()
+              ..anchors = null
+              ..attachmentUsages = null
+              ..attachments = null);
+
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any), new FAnnotationError());
+
+        // Act
+        GetAttachmentsByProducersResponse results =
+            await attachmentServiceImpl.getAttachmentsByProducers(producerWurls: [AttachmentTestConstants.testWurl]);
+
+        // Assert
+        expect(results, isNull);
+      });
+
+      test('service handler rethrows other exceptions', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
+            new FGetAttachmentsByProducersResponse()
+              ..anchors = null
+              ..attachmentUsages = null
+              ..attachments = null);
+
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any), new Exception());
+
+        // Act
+        expect(attachmentServiceImpl.getAttachmentsByProducers(producerWurls: [AttachmentTestConstants.testWurl]),
+            throwsA(new isInstanceOf<Exception>()));
+      });
     });
 
     group('getAttachmentsByIdTests', () {
-      test('(happy path) service handler converts frugal to local models and returns', () async {
+      test('service handler converts frugal to local models and returns', () async {
         // Arrange
         test_utils.mockServiceMethod(
             () => annoServiceClientMock.mock.getAttachmentsByIds(any, any), getAttachmentsByIdsHappyPathResponse);
 
         // Act
-        Iterable<Attachment> results = await attachmentServiceImpl.getAttachmentsByIds(idsToLoad: [1, 2]);
+        Iterable<Attachment> results = await attachmentServiceImpl.getAttachmentsByIds(
+            idsToLoad: [AttachmentTestConstants.attachmentIdOne, AttachmentTestConstants.attachmentIdTwo]);
 
         // Assert
         expect(results.length, equals(2));
-        expect(results.any((Attachment attch) => attch.id == 1), isTrue);
-        expect(results.any((Attachment attch) => attch.id == 2), isTrue);
+        expect(results.any((Attachment a) => a.id == AttachmentTestConstants.attachmentIdOne), isTrue);
+        expect(results.any((Attachment a) => a.id == AttachmentTestConstants.attachmentIdTwo), isTrue);
       });
 
       // TODO: RAM-732 App Intelligence
@@ -117,6 +213,7 @@ void main() {
 //        }, count: 1));
 //      });
     });
+
     group('getAttachmentUsagesByIdsTests', () {
       test('(happy path) should convert FAttachmentUsage to AttachmentUsage in _getAttachmentUsagesByIds', () async {
         // Arrange

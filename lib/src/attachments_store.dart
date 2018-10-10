@@ -8,6 +8,7 @@ import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
+import 'package:w_attachments_client/src/utils.dart';
 
 typedef ActionProvider ActionProviderFactory(AttachmentsApi api);
 
@@ -31,15 +32,16 @@ class AttachmentsStore extends Store {
 
   List<Attachment> _attachments = [];
   @visibleForTesting
-  void set attachments(List<Attachment> attachments) => _attachments = attachments;
+  set attachments(List<Attachment> attachments) => _attachments = attachments;
 
   List<AttachmentUsage> _attachmentUsages = [];
   @visibleForTesting
-  void set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
+  set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
 
   Map<String, List<Anchor>> _anchorsByWurls = {};
   @visibleForTesting
-  void set anchors(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
+  set anchorsByWurls(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
+  Map<String, List<Anchor>> get anchorsByWurls => _anchorsByWurls;
 
   // CEF-specific properties
   cef.Selection _currentSelection;
@@ -109,8 +111,8 @@ class AttachmentsStore extends Store {
 
     [
       attachmentsActions.getAttachmentsByIds.listen(_handleGetAttachmentsByIds),
+      attachmentsActions.getAttachmentsByProducers.listen(_handleGetAttachmentsByProducers),
       attachmentsActions.hoverOverAttachmentNode.listen(_hoverOverAttachmentNodes),
-      attachmentsActions.getAttachmentsByProducers.listen(_getAttachmentsByProducers),
       attachmentsActions.getAttachmentUsagesByIds.listen(_getAttachmentUsagesByIds),
       attachmentsActions.hoverOutAttachmentNode.listen(_hoverOutAttachmentNodes),
       attachmentsActions.updateAttachment.listen(_updateAttachment),
@@ -326,39 +328,34 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _getAttachmentsByProducers(GetAttachmentsByProducersPayload payload) async {
+  _handleGetAttachmentsByProducers(GetAttachmentsByProducersPayload payload) async {
     GetAttachmentsByProducersResponse response =
         await attachmentsService.getAttachmentsByProducers(producerWurls: payload.producerWurls);
 
+    if (response == null) {
+      _logger.warning('No associated data for wurls ${payload.producerWurls}.');
+      return;
+    }
+
+    if (!payload.maintainAttachments) {
+      _anchorsByWurls.clear();
+      _attachmentUsages.clear();
+      _attachments.clear();
+    }
+
     for (String wurl in payload.producerWurls) {
-      List<Anchor> responseAnchors = response?.anchors?.where((Anchor anchor) => anchor.producerWurl.startsWith(wurl));
-      if (responseAnchors.isNotEmpty) {
-        _anchorsByWurls[wurl] ??= [];
-        for (Anchor anchor in responseAnchors) {
-          if (!_anchorsByWurls[wurl].any((a) => a.id == anchor.id)) {
-            _anchorsByWurls[wurl].add(anchor);
-          }
-        }
+      List<Anchor> responseAnchors = response.anchors.where((Anchor a) => a.producerWurl.startsWith(wurl)).toList();
+      if (responseAnchors?.isNotEmpty == true) {
+        _anchorsByWurls[wurl] ??= <Anchor>[];
+        _anchorsByWurls[wurl] = removeAndAddType(responseAnchors, _anchorsByWurls[wurl], payload.maintainAttachments);
       } else {
         _logger.warning('Wurl $wurl was not associated with any anchors.');
       }
     }
 
-    for (AttachmentUsage attachmentUsage in response.attachmentUsages) {
-      // check to see if there is an attachmentUsage already existent
-      AttachmentUsage foundAttachmentUsage = _attachmentUsages
-          .firstWhere((AttachmentUsage usage) => (usage?.id == attachmentUsage?.id), orElse: () => null);
-      if (foundAttachmentUsage == null) {
-        _attachmentUsages.add(attachmentUsage);
-      }
-    }
-    for (Attachment attachment in response.attachments) {
-      Attachment foundAttachment =
-          _attachments.firstWhere((Attachment existing) => (existing?.id == attachment?.id), orElse: () => null);
-      if (foundAttachment == null) {
-        _attachments.add(attachment);
-      }
-    }
+    _attachmentUsages = removeAndAddType(response.attachmentUsages, _attachmentUsages, payload.maintainAttachments);
+    _attachments = removeAndAddType(response.attachments, _attachments, payload.maintainAttachments);
+
     _rebuildAndRedrawGroups();
   }
 
@@ -366,31 +363,25 @@ class AttachmentsStore extends Store {
     if (payload.attachmentUsageIds != null && payload.attachmentUsageIds.isNotEmpty) {
       List<AttachmentUsage> response =
           await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
-      if (response != null) {
-        for (AttachmentUsage responseUsage in response) {
-          AttachmentUsage matchedUsage =
-              _attachmentUsages.firstWhere((AttachmentUsage usage) => usage.id == responseUsage.id, orElse: () => null);
-          if (responseUsage != matchedUsage) {
-            _attachmentUsages?.remove(matchedUsage);
-            _attachmentUsages.add(responseUsage);
-          }
-        }
 
-        // this is a temporary loop + print statement to assist with the manual testing of getAttachmentUsagesByIds.
-        // TODO: RAM-739
-        for (AttachmentUsage usage in _attachmentUsages) {
-          print(
-              'AttachmentUsagesById returns: ID:: ${usage.id}, AttachmentId:: ${usage.attachmentId}, Label:: ${usage.label}');
-        }
-        return _attachmentUsages;
-      } else {
-        _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);
+      if (response == null) {
+        _logger.warning("Invalid attachment usage ids: ", payload.attachmentUsageIds);
         return null;
       }
+
+      _attachmentUsages = removeAndAddType(response, _attachmentUsages, false);
+
+      // this is a temporary loop + print statement to assist with the manual testing of getAttachmentUsagesByIds.
+      // TODO: RAM-739
+      for (AttachmentUsage usage in _attachmentUsages) {
+        print(
+            'AttachmentUsagesById returns: ID:: ${usage.id}, AttachmentId:: ${usage.attachmentId}, Label:: ${usage.label}');
+      }
+      return _attachmentUsages;
     } else {
-      _logger.warning("Invalid attachment usage ids: ", payload.attachmentUsageIds);
+      _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);
+      return null;
     }
-    return null;
   }
 
   _setActionItemState(ActionStateChangePayload request) {
@@ -494,7 +485,7 @@ class AttachmentsStore extends Store {
             _logger.warning('Attachments store received out of scope attachment id: ${serverAttach.id}');
           }
         }
-        this._attachments = inScopeAttachments;
+        _attachments = inScopeAttachments;
         trigger();
       } else {
         _logger.warning('Service returned null/empty for getAttachmentsByIds');
@@ -549,7 +540,7 @@ class AttachmentsStore extends Store {
     final List<String> scopesToObtain = allScopes.difference(currentScopes).toList();
     final GetAttachmentsByProducersPayload payload =
         new GetAttachmentsByProducersPayload(producerWurls: scopesToObtain);
-    _getAttachmentsByProducers(payload);
+    _handleGetAttachmentsByProducers(payload);
     // create a set of the scopes we need to unsubscribe from
     // TODO: remove old attachments we no longer need to show
     // final Set<String> scopesToRemove = currentScopes.difference(allScopes);
