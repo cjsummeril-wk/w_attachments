@@ -8,6 +8,7 @@ import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
+import 'package:w_attachments_client/src/utils.dart';
 
 typedef ActionProvider ActionProviderFactory(AttachmentsApi api);
 
@@ -31,17 +32,16 @@ class AttachmentsStore extends Store {
 
   List<Attachment> _attachments = [];
   @visibleForTesting
-  void set attachments(List<Attachment> attachments) => _attachments = attachments;
+  set attachments(List<Attachment> attachments) => _attachments = attachments;
 
   List<AttachmentUsage> _attachmentUsages = [];
   @visibleForTesting
-  void set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
+  set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
 
   Map<String, List<Anchor>> _anchorsByWurls = {};
   @visibleForTesting
-  void set anchors(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
-  @visibleForTesting
-  Map<String, List<Anchor>> get anchors => _anchorsByWurls;
+  set anchorsByWurls(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
+  Map<String, List<Anchor>> get anchorsByWurls => _anchorsByWurls;
 
   // CEF-specific properties
   cef.Selection _currentSelection;
@@ -328,24 +328,12 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _removeAndAddType<E extends ServiceModel>(List<E> incoming, List<E> stores, bool maintain) {
-    for (E e in incoming) {
-      if (maintain) {
-        E _found = stores.firstWhere((E _e) => _e.id == e.id, orElse: () => null);
-        if (_found != null) {
-          stores.remove(_found);
-        }
-      }
-
-      stores.add(e);
-    }
-  }
-
   _handleGetAttachmentsByProducers(GetAttachmentsByProducersPayload payload) async {
     GetAttachmentsByProducersResponse response =
         await attachmentsService.getAttachmentsByProducers(producerWurls: payload.producerWurls);
 
     if (response == null) {
+      _logger.warning('No associated data for wurls ${payload.producerWurls}.');
       return;
     }
 
@@ -359,14 +347,14 @@ class AttachmentsStore extends Store {
       List<Anchor> responseAnchors = response.anchors.where((Anchor a) => a.producerWurl.startsWith(wurl)).toList();
       if (responseAnchors?.isNotEmpty == true) {
         _anchorsByWurls[wurl] ??= <Anchor>[];
-        _removeAndAddType(responseAnchors, _anchorsByWurls[wurl], payload.maintainAttachments);
+        _anchorsByWurls[wurl] = removeAndAddType(responseAnchors, _anchorsByWurls[wurl], payload.maintainAttachments);
       } else {
         _logger.warning('Wurl $wurl was not associated with any anchors.');
       }
     }
 
-    _removeAndAddType(response.attachmentUsages, _attachmentUsages, payload.maintainAttachments);
-    _removeAndAddType(response.attachments, _attachments, payload.maintainAttachments);
+    _attachmentUsages = removeAndAddType(response.attachmentUsages, _attachmentUsages, payload.maintainAttachments);
+    _attachments = removeAndAddType(response.attachments, _attachments, payload.maintainAttachments);
 
     _rebuildAndRedrawGroups();
   }
@@ -381,7 +369,7 @@ class AttachmentsStore extends Store {
         return null;
       }
 
-      _removeAndAddType(response, _attachmentUsages, false);
+      _attachmentUsages = removeAndAddType(response, _attachmentUsages, false);
 
       // this is a temporary loop + print statement to assist with the manual testing of getAttachmentUsagesByIds.
       // TODO: RAM-739

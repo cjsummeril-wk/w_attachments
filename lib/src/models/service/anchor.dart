@@ -1,6 +1,6 @@
 part of w_attachments_client.models.service;
 
-class Anchor extends ServiceModel {
+class Anchor extends AnnotationModel {
   String accountResourceId;
   bool disconnected;
   String producerWurl;

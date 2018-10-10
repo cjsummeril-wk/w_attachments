@@ -1,6 +1,6 @@
 part of w_attachments_client.models.service;
 
-abstract class ServiceModel {
+abstract class AnnotationModel {
   int id;
 
   @override

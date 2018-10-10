@@ -100,6 +100,62 @@ void main() {
         expect(results.attachments.any((Attachment a) => a.id == AttachmentTestConstants.mockChangedAttachment.id),
             isTrue);
       });
+
+      test('service handler handles empty payloads', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
+            new FGetAttachmentsByProducersResponse()
+              ..anchors = null
+              ..attachmentUsages = null
+              ..attachments = null);
+
+        // Act
+        GetAttachmentsByProducersResponse results =
+            await attachmentServiceImpl.getAttachmentsByProducers(producerWurls: [AttachmentTestConstants.testWurl]);
+
+        // Assert
+        expect(results.anchors.length, equals(0));
+        expect(results.attachmentUsages.length, equals(0));
+        expect(results.attachments.length, equals(0));
+      });
+
+      test('service handler handles FAnnotationError', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
+            new FGetAttachmentsByProducersResponse()
+              ..anchors = null
+              ..attachmentUsages = null
+              ..attachments = null);
+
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any), new FAnnotationError());
+
+        // Act
+        GetAttachmentsByProducersResponse results =
+            await attachmentServiceImpl.getAttachmentsByProducers(producerWurls: [AttachmentTestConstants.testWurl]);
+
+        // Assert
+        expect(results, isNull);
+      });
+
+      test('service handler rethrows other exceptions', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
+            new FGetAttachmentsByProducersResponse()
+              ..anchors = null
+              ..attachmentUsages = null
+              ..attachments = null);
+
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any), new Exception());
+
+        // Act
+        expect(attachmentServiceImpl.getAttachmentsByProducers(producerWurls: [AttachmentTestConstants.testWurl]),
+            throwsA(new isInstanceOf<Exception>()));
+      });
     });
 
     group('getAttachmentsByIdTests', () {
@@ -157,6 +213,7 @@ void main() {
 //        }, count: 1));
 //      });
     });
+
     group('getAttachmentUsagesByIdsTests', () {
       test('(happy path) should convert FAttachmentUsage to AttachmentUsage in _getAttachmentUsagesByIds', () async {
         // Arrange

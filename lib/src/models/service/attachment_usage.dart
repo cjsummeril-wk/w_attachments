@@ -1,6 +1,6 @@
 part of w_attachments_client.models.service;
 
-class AttachmentUsage extends ServiceModel {
+class AttachmentUsage extends AnnotationModel {
   String accountResourceId;
   int anchorId;
   int attachmentId;

@@ -926,9 +926,6 @@ void main() {
 
       tearDown(() async {
         // eliminate all attachments in the store cache, cancelUpload handles all cases that loadAttachments doesn't
-        _store.attachments = [];
-        _store.attachmentUsages = [];
-        _store.anchors = {};
         _attachmentsActions.dispose();
         _attachmentsEvents.dispose();
         _extensionContext.dispose();
@@ -1453,7 +1450,6 @@ void main() {
         await _attachmentsActions.dispose();
         await _attachmentsEvents.dispose();
         await _extensionContext.dispose();
-        await _attachmentsServiceMock.dispose();
         await _store.dispose();
         _api = null;
       });
@@ -1561,7 +1557,7 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
         _api = _store.api;
 
-        _store.anchors = {
+        _store.anchorsByWurls = {
           AttachmentTestConstants.existingWurl: [AttachmentTestConstants.mockAnchor],
           AttachmentTestConstants.testWurl: [AttachmentTestConstants.mockAnchor]
         };
@@ -1571,9 +1567,20 @@ void main() {
         await _attachmentsActions.dispose();
         await _attachmentsEvents.dispose();
         await _extensionContext.dispose();
-        await _attachmentsServiceMock.dispose();
         await _store.dispose();
         _api = null;
+      });
+
+      test('gracefull null return', () async {
+        List<String> producerWurls = [AttachmentTestConstants.testWurl];
+
+        when(_attachmentsServiceMock.getAttachmentsByProducers(producerWurls: producerWurls)).thenReturn(null);
+
+        Map<String, List<Anchor>> _previous = new Map<String, List<Anchor>>.from(_store.anchorsByWurls);
+
+        await _attachmentsActions.getAttachmentsByProducers(
+            new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
+        expect(_previous, equals(_store.anchorsByWurls));
       });
 
       test('calls getAttachmentsByProducers preserving', () async {
@@ -1584,11 +1591,11 @@ void main() {
 
         await _attachmentsActions.getAttachmentsByProducers(
             new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
-        expect(_store.anchors[AttachmentTestConstants.existingWurl],
+        expect(_store.anchorsByWurls[AttachmentTestConstants.existingWurl],
             anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
-        expect(_store.anchors[AttachmentTestConstants.testWurl],
+        expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
             anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
-        expect(_store.anchors[AttachmentTestConstants.testWurl],
+        expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
             anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
       });
 
@@ -1600,10 +1607,10 @@ void main() {
 
         await _attachmentsActions
             .getAttachmentsByProducers(new GetAttachmentsByProducersPayload(producerWurls: producerWurls));
-        expect(_store.anchors[AttachmentTestConstants.existingWurl], isNull);
-        expect(_store.anchors[AttachmentTestConstants.testWurl],
+        expect(_store.anchorsByWurls[AttachmentTestConstants.existingWurl], isNull);
+        expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
             everyElement(predicate((Anchor a) => a.id != AttachmentTestConstants.mockAnchor.id)));
-        expect(_store.anchors[AttachmentTestConstants.testWurl],
+        expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
             anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
       });
     });
