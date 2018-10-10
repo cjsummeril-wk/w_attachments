@@ -252,6 +252,7 @@ class AttachmentsStore extends Store {
       _rootNode.addChildren(_generateTreeNodes(_groups));
       _rootNode.triggerRoot();
     }
+    trigger();
   }
 
   List<GroupTreeNode> _generateTreeNodes(List<Group> groups) {
