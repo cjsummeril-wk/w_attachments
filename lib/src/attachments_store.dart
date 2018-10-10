@@ -370,13 +370,6 @@ class AttachmentsStore extends Store {
       }
 
       _attachmentUsages = removeAndAddType(response, _attachmentUsages, false);
-
-      // this is a temporary loop + print statement to assist with the manual testing of getAttachmentUsagesByIds.
-      // TODO: RAM-739
-      for (AttachmentUsage usage in _attachmentUsages) {
-        print(
-            'AttachmentUsagesById returns: ID:: ${usage.id}, AttachmentId:: ${usage.attachmentId}, Label:: ${usage.label}');
-      }
       return _attachmentUsages;
     } else {
       _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);

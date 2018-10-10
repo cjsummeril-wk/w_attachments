@@ -238,8 +238,9 @@ void main() {
           '(sad path) should handle a null return successfully, no attachmentUsage should be returned, in the case that the service returns an error.',
           () async {
         // Arrange
-        test_utils.mockServiceMethod(
-            () => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any), FAnnotationError);
+
+        FAnnotationError error = new FAnnotationError();
+        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any), error);
 
         // Act
         List<AttachmentUsage> results = await attachmentServiceImpl.getAttachmentUsagesByIds(usageIdsToLoad: [null]);

@@ -22,25 +22,24 @@ class StandardActionProvider implements ActionProvider {
   List<PanelActionItem> getPanelActions() {
     List<PanelActionItem> panelActions = [];
 
-    // this action item is only temporary, it is useful for QA testing to ensure the usages are retrieved correctly.
-    // TODO: RAM-739
-    ActionItem getAttachmentUsageByIdsButton = new PanelActionItem(
-        icon: ActionItem.iconBuilder(icon: IconGlyph.FOLDER_ZIP_G2),
-        states: {
-          'default': ActionItem.iconBuilder(icon: IconGlyph.FOLDER_ZIP_G2),
-          'progress': (ProgressSpinner()..size = ProgressSpinnerSize.SMALL)()
-        },
-        tooltip: 'Get Attachment Usage Button',
-        testId: 'wa.AttachmentControls.Icon.GetAttachmentUsageByIds',
-        isDisabled: false,
-        shouldShow: () => _api?.attachments?.isNotEmpty == true,
-        callback: ((StatefulActionItem action) async {
-          _api.setActionState(action, 'progress');
-          List<int> usageIds = new List<int>.from(_api.attachmentUsages.map((AttachmentUsage usage) => usage.id));
-          await _api.getAttachmentUsagesByIds(usageIds);
-          _api.setActionState(action, 'default');
-        }));
-    panelActions.add(getAttachmentUsageByIdsButton);
+//     ActionItem downloadAsZip = new PanelActionItem(
+//        icon: ActionItem.iconBuilder(icon: IconGlyph.FOLDER_ZIP_G2),
+//        states: {
+//          'default': ActionItem.iconBuilder(icon: IconGlyph.FOLDER_ZIP_G2),
+//          'progress': (ProgressSpinner()..size = ProgressSpinnerSize.SMALL)()
+//        },
+//        tooltip: 'Download All in Zip',
+//        testId: 'wa.AttachmentControls.Icon.ZipAll',
+//        isDisabled: false,
+//        shouldShow: () => _api?.attachments?.isNotEmpty == true,
+//        callback: ((StatefulActionItem action) async {
+//          _api.setActionState(action, 'progress');
+//          await _api.downloadAllAttachmentsAsZip(
+//              keys: _api.attachmentKeys, label: _api.label, zipSelection: _api.zipSelection);
+//          _api.setActionState(action, 'default');
+//        }));
+//    panelActions.add(downloadAsZip);
+//
 
     if (_api.showingHeaderlessGroup) {
       ActionItem uploadFile = new PanelActionItem(

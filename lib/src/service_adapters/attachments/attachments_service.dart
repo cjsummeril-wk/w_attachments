@@ -116,7 +116,7 @@ class AttachmentsService extends Disposable {
           anchor: new Anchor.fromFAnchor(response.anchor));
     } on FAnnotationError catch (e, stacktrace) {
       _logger.warning(e, stacktrace);
-      rethrow;
+      return null;
     } catch (e, stacktrace) {
       _logger.severe(e, stacktrace);
       rethrow;
@@ -124,26 +124,25 @@ class AttachmentsService extends Disposable {
   }
 
   Future<Iterable<Attachment>> getAttachmentsByIds({@required List<int> idsToLoad, int revisionId}) async {
-    List<Attachment> result;
-    FGetAttachmentsByIdsResponse response;
     try {
+      List<Attachment> result = [];
       FGetAttachmentsByIdsRequest request = new FGetAttachmentsByIdsRequest()
         ..attachmentIds = idsToLoad
         ..revisionId = revisionId;
-      response = await _fClient.getAttachmentsByIds(context, request);
+      FGetAttachmentsByIdsResponse response = await _fClient.getAttachmentsByIds(context, request);
 
-      result = [];
       for (FAttachment fAttach in response.attachments) {
         Attachment clientAttach = new Attachment.fromFAttachment(fAttach);
         result.add(clientAttach);
       }
+      return result;
     } on FAnnotationError catch (annoError) {
       _logger.warning('${ServiceConstants.genericAnnoError}', annoError);
+      return null;
     } on Exception catch (e) {
       _logger.severe('${ServiceConstants.transportError}', e);
+      rethrow;
     }
-
-    return result;
   }
 
   Future<Iterable<AttachmentUsage>> getAttachmentUsagesByIds({@required List<int> usageIdsToLoad}) async {
@@ -158,10 +157,13 @@ class AttachmentsService extends Disposable {
             (FAttachmentUsage usage) => returnAttachmentUsages.add(new AttachmentUsage.fromFAttachmentUsage(usage)));
       }
       return returnAttachmentUsages;
-    } catch (e) {
-      _logger.warning(e);
+    } on FAnnotationError catch (e, stacktrace) {
+      _logger.warning(e, stacktrace);
+      return null;
+    } on Exception catch (e, stacktrace) {
+      _logger.warning(e, stacktrace);
+      rethrow;
     }
-    return null;
   }
 
   Future<GetAttachmentsByProducersResponse> getAttachmentsByProducers({@required List<String> producerWurls}) async {
