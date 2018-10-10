@@ -6,5 +6,6 @@ class ServiceMockProxy<MockT> {
   ServiceMockProxy(this.mock);
 
   @override
-  dynamic noSuchMethod(Invocation invocation) => mock.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => throw new NoSuchMethodError(
+      this, invocation.memberName, invocation.positionalArguments, invocation.namedArguments);
 }

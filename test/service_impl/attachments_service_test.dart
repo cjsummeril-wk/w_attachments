@@ -34,6 +34,7 @@ void main() {
   FAnnotationError fAnnoErrorSenseless;
   Exception genericException;
 
+  FCreateAttachmentUsageResponse createAttachmentUsageHappyPathResponse;
   FGetAttachmentsByIdsResponse getAttachmentsByIdsHappyPathResponse;
   FGetAttachmentUsagesByIdsResponse getAttachmentUsagesByIdsHappyPathResponse;
   FGetAttachmentsByProducersResponse getAttachmentsByProducersHappyPathResponse;
@@ -55,6 +56,10 @@ void main() {
       fAnnoErrorSenseless = new FAnnotationError()..errorMessage = f_anno_error_msg_senseless;
       genericException = new Exception(generic_exc_msg);
 
+      createAttachmentUsageHappyPathResponse = new FCreateAttachmentUsageResponse()
+        ..anchor = AttachmentTestConstants.mockFAnchor
+        ..attachmentUsage = AttachmentTestConstants.mockFAttachmentUsage
+        ..attachment = AttachmentTestConstants.mockFAttachment;
       getAttachmentsByIdsHappyPathResponse = new FGetAttachmentsByIdsResponse()
         ..attachments = AttachmentTestConstants.mockFAttachmentList;
       getAttachmentUsagesByIdsHappyPathResponse = new FGetAttachmentUsagesByIdsResponse()
@@ -123,13 +128,6 @@ void main() {
       test('service handler handles FAnnotationError', () async {
         // Arrange
         test_utils.mockServiceMethod(
-            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
-            new FGetAttachmentsByProducersResponse()
-              ..anchors = null
-              ..attachmentUsages = null
-              ..attachments = null);
-
-        test_utils.mockServiceMethod(
             () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any), new FAnnotationError());
 
         // Act
@@ -143,17 +141,85 @@ void main() {
       test('service handler rethrows other exceptions', () async {
         // Arrange
         test_utils.mockServiceMethod(
-            () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any),
-            new FGetAttachmentsByProducersResponse()
-              ..anchors = null
-              ..attachmentUsages = null
-              ..attachments = null);
-
-        test_utils.mockServiceMethod(
             () => annoServiceClientMock.mock.getAttachmentsByProducers(any, any), new Exception());
 
         // Act
         expect(attachmentServiceImpl.getAttachmentsByProducers(producerWurls: [AttachmentTestConstants.testWurl]),
+            throwsA(new isInstanceOf<Exception>()));
+      });
+    });
+
+    group('createAttachmentUsageTests', () {
+      test('service handler converts frugal to local models and returns', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.createAttachmentUsage(any, any), createAttachmentUsageHappyPathResponse);
+
+        // Act
+        CreateAttachmentUsageResponse result =
+            await attachmentServiceImpl.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl);
+
+        // Assert
+        verify(annoServiceClientMock.mock.createAttachmentUsage(
+            any, new FCreateAttachmentUsageRequest()..producerWurl = AttachmentTestConstants.testWurl));
+        expect(result.anchor, new isInstanceOf<Anchor>());
+        expect(result.anchor.id, AttachmentTestConstants.anchorIdOne);
+
+        expect(result.attachmentUsage, new isInstanceOf<AttachmentUsage>());
+        expect(result.attachmentUsage.id, AttachmentTestConstants.attachmentUsageIdOne);
+        expect(result.attachmentUsage.anchorId, AttachmentTestConstants.anchorIdOne);
+        expect(result.attachmentUsage.attachmentId, AttachmentTestConstants.attachmentIdOne);
+
+        expect(result.attachment, new isInstanceOf<Attachment>());
+        expect(result.attachment.id, AttachmentTestConstants.attachmentIdOne);
+      });
+
+      test('service handler converts frugal to local models and returns, using passed-in attachmentId', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.createAttachmentUsage(any, any), createAttachmentUsageHappyPathResponse);
+
+        // Act
+        CreateAttachmentUsageResponse result = await attachmentServiceImpl.createAttachmentUsage(
+            producerWurl: AttachmentTestConstants.testWurl, attachmentId: AttachmentTestConstants.attachmentIdOne);
+
+        // Assert
+        verify(annoServiceClientMock.mock.createAttachmentUsage(
+            any,
+            new FCreateAttachmentUsageRequest()
+              ..producerWurl = AttachmentTestConstants.testWurl
+              ..attachmentId = AttachmentTestConstants.attachmentIdOne));
+        expect(result.anchor, new isInstanceOf<Anchor>());
+        expect(result.anchor.id, AttachmentTestConstants.anchorIdOne);
+
+        expect(result.attachmentUsage, new isInstanceOf<AttachmentUsage>());
+        expect(result.attachmentUsage.id, AttachmentTestConstants.attachmentUsageIdOne);
+        expect(result.attachmentUsage.anchorId, AttachmentTestConstants.anchorIdOne);
+        expect(result.attachmentUsage.attachmentId, AttachmentTestConstants.attachmentIdOne);
+
+        expect(result.attachment, new isInstanceOf<Attachment>());
+        expect(result.attachment.id, AttachmentTestConstants.attachmentIdOne);
+      });
+
+      test('service handler handles FAnnotationError', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.createAttachmentUsage(any, any), new FAnnotationError());
+
+        // Act
+        CreateAttachmentUsageResponse results =
+            await attachmentServiceImpl.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl);
+
+        // Assert
+        expect(results, isNull);
+      });
+
+      test('service handler rethrows other exceptions', () async {
+        // Arrange
+        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.createAttachmentUsage(any, any), new Exception());
+
+        // Act & Assert
+        expect(attachmentServiceImpl.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl),
             throwsA(new isInstanceOf<Exception>()));
       });
     });
@@ -172,6 +238,30 @@ void main() {
         expect(results.length, equals(2));
         expect(results.any((Attachment a) => a.id == AttachmentTestConstants.attachmentIdOne), isTrue);
         expect(results.any((Attachment a) => a.id == AttachmentTestConstants.attachmentIdTwo), isTrue);
+      });
+
+      test('service handler handles FAnnotationError', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentsByIds(any, any), new FAnnotationError());
+
+        // Act
+        Iterable<Attachment> results = await attachmentServiceImpl.getAttachmentsByIds(
+            idsToLoad: [AttachmentTestConstants.attachmentIdOne, AttachmentTestConstants.attachmentIdTwo]);
+
+        // Assert
+        expect(results, isNull);
+      });
+
+      test('service handler rethrows other exceptions', () async {
+        // Arrange
+        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentsByIds(any, any), new Exception());
+
+        // Act
+        expect(
+            attachmentServiceImpl.getAttachmentsByIds(
+                idsToLoad: [AttachmentTestConstants.attachmentIdOne, AttachmentTestConstants.attachmentIdTwo]),
+            throwsA(new isInstanceOf<Exception>()));
       });
 
       // TODO: RAM-732 App Intelligence
@@ -215,7 +305,7 @@ void main() {
     });
 
     group('getAttachmentUsagesByIdsTests', () {
-      test('(happy path) should convert FAttachmentUsage to AttachmentUsage in _getAttachmentUsagesByIds', () async {
+      test('should convert FAttachmentUsage to AttachmentUsage in _getAttachmentUsagesByIds', () async {
         // Arrange
         test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any),
             getAttachmentUsagesByIdsHappyPathResponse);
@@ -235,12 +325,11 @@ void main() {
       });
 
       test(
-          '(sad path) should handle a null return successfully, no attachmentUsage should be returned, in the case that the service returns an error.',
+          'should handle a null return successfully, no attachmentUsage should be returned, in the case that the service returns an error.',
           () async {
         // Arrange
-
-        FAnnotationError error = new FAnnotationError();
-        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any), error);
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any), new FAnnotationError());
 
         // Act
         List<AttachmentUsage> results = await attachmentServiceImpl.getAttachmentUsagesByIds(usageIdsToLoad: [null]);
@@ -249,6 +338,20 @@ void main() {
 
         // Assert
         expect(results, isNull);
+      });
+
+      test('service handler rethrows other exceptions', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.getAttachmentUsagesByIds(any, any), new Exception());
+
+        // Act
+        expect(
+            attachmentServiceImpl.getAttachmentUsagesByIds(usageIdsToLoad: [
+              AttachmentTestConstants.attachmentUsageIdOne,
+              AttachmentTestConstants.attachmentUsageIdTwo
+            ]),
+            throwsA(new isInstanceOf<Exception>()));
       });
     });
   });

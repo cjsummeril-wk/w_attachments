@@ -1351,13 +1351,13 @@ void main() {
         // if it triggers twice completer raises an exception.
         final onChange = new Completer();
         _store.listen(onChange.complete);
-        // deafults to false
+        // defaults to false
         expect(_store.isValidSelection, false);
         _extensionContext.selectionApi.didChangeSelectionsController.add([]);
         await new Future(() {});
         expect(_store.isValidSelection, false);
         _extensionContext.selectionApi.didChangeSelectionsController
-            .add([new cef.Selection(wuri: "foo", scope: "bar")]);
+            .add([new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope)]);
         await onChange.future;
         expect(_store.isValidSelection, true);
       });
@@ -1393,35 +1393,132 @@ void main() {
       });
 
       test('does nothing if isValidSelection is false', () async {
-        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
-            producerSelection: new cef.Selection(wuri: "selectionWuri", scope: "selectionScope")));
+        // Arrange
+        CreateAttachmentUsagePayload payload = new CreateAttachmentUsagePayload(
+            producerSelection:
+                new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
+
+        // Act
+        await _attachmentsActions.createAttachmentUsage(payload);
+
+        // Assert
         verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
         verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any));
       });
 
       test('does nothing if isValidSelection is false due to discontiguous selections', () async {
-        final contiguousSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
-        final aSecondContiguousSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+        // Arrange
+        final contiguousSelection =
+            new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope);
+        final aSecondContiguousSelection =
+            new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope);
         // make sure isValidSelection is false by discontiguity
         _extensionContext.selectionApi.didChangeSelectionsController
             .add([contiguousSelection, aSecondContiguousSelection]);
-        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
-            producerSelection: new cef.Selection(wuri: "selectionWuri", scope: "selectionScope")));
+        CreateAttachmentUsagePayload payload = new CreateAttachmentUsagePayload(
+            producerSelection:
+                new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
+
+        // Act
+        await _attachmentsActions.createAttachmentUsage(payload);
+
+        // Assert
         verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
         verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any));
       });
 
-      test('calls createAttachmentUsage with valid selection', () async {
-        final testSelection = new cef.Selection(wuri: "selectionWuri", scope: "selectionScope");
+      test('calls createAttachmentUsage with valid selection, adds new Anchor, AttachmentUsage and Attachment to store',
+          () async {
+        // Arrange
+        final testSelection =
+            new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope);
         // make sure isValidSelection is true
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
         when(_extensionContext.selectionApi.getCurrentSelections()).thenReturn([testSelection]);
-        when(_extensionContext.observedRegionApi.create(selection: testSelection))
-            .thenReturn(new cef.ObservedRegion(wuri: "regionWuri", scope: "regionScope"));
+        when(_extensionContext.observedRegionApi.create(selection: testSelection)).thenReturn(
+            new cef.ObservedRegion(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+        when(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any)).thenAnswer((_) => new Future.value(
+            new CreateAttachmentUsageResponse(
+                anchor: AttachmentTestConstants.mockAnchor,
+                attachmentUsage: AttachmentTestConstants.mockAttachmentUsage,
+                attachment: AttachmentTestConstants.mockAttachment)));
+
+        // Act
         await _attachmentsActions
             .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
-        verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: "regionWuri"));
+
+        // Assert
+        verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl));
+        expect(_store.anchorsByWurls.keys.length, 1);
+        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
+        expect(_store.attachmentUsages.length, 1);
+        expect(_store.attachments.length, 1);
+        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
+            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
+        expect(_store.attachmentUsages,
+            anyElement(predicate((AttachmentUsage u) => u.id == AttachmentTestConstants.mockAttachmentUsage.id)));
+        expect(_store.attachments,
+            anyElement(predicate((Attachment a) => a.id == AttachmentTestConstants.mockAttachment.id)));
+      });
+
+      test(
+          'calls createAttachmentUsage with valid selection, adds new Anchor, AttachmentUsage and replaces existing Attachment to store',
+          () async {
+        // Arrange
+        final testSelection =
+            new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope);
+        // make sure isValidSelection is true
+        _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+        when(_extensionContext.selectionApi.getCurrentSelections()).thenReturn([testSelection]);
+        when(_extensionContext.observedRegionApi.create(selection: testSelection)).thenReturn(
+            new cef.ObservedRegion(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
+        _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+        when(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any)).thenAnswer((_) => new Future.value(
+            new CreateAttachmentUsageResponse(
+                anchor: AttachmentTestConstants.mockAnchor,
+                attachmentUsage: AttachmentTestConstants.mockAttachmentUsage,
+                attachment: AttachmentTestConstants.mockAttachment)));
+        _store.attachments = [AttachmentTestConstants.mockAttachment];
+        expect(_store.attachments.length, 1);
+
+        // Act
+        await _attachmentsActions
+            .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
+
+        // Assert
+        verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl));
+        expect(_store.anchorsByWurls.keys.length, 1);
+        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
+        expect(_store.attachmentUsages.length, 1);
+        expect(_store.attachments.length, 1);
+        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
+            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
+        expect(_store.attachmentUsages,
+            anyElement(predicate((AttachmentUsage u) => u.id == AttachmentTestConstants.mockAttachmentUsage.id)));
+        expect(_store.attachments,
+            anyElement(predicate((Attachment a) => a.id == AttachmentTestConstants.mockAttachment.id)));
+      });
+
+      test('does nothing if service call returns null', () async {
+        // Arrange
+        test_utils.mockServiceMethod(() => _attachmentsServiceMock.createAttachmentUsage, null);
+        final testSelection =
+            new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope);
+        // make sure isValidSelection is true
+        _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
+
+        // Act
+        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
+            producerSelection:
+                new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope)));
+
+        // Assert
+        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
+        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any));
+        expect(_store.anchorsByWurls, isEmpty);
+        expect(_store.attachmentUsages, isEmpty);
+        expect(_store.attachments, isEmpty);
       });
     });
 
@@ -1467,7 +1564,7 @@ void main() {
 
         GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
 
-        await _store.attachmentsActions.getAttachmentUsagesByIds(payload);
+        await _attachmentsActions.getAttachmentUsagesByIds(payload);
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");
@@ -1490,7 +1587,7 @@ void main() {
 
         GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
 
-        await _store.attachmentsActions.getAttachmentUsagesByIds(payload);
+        await _attachmentsActions.getAttachmentUsagesByIds(payload);
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");
@@ -1518,7 +1615,7 @@ void main() {
                 u.label == AttachmentTestConstants.mockAttachmentUsage.label &&
                 u.accountResourceId == AttachmentTestConstants.mockAttachmentUsage.accountResourceId)));
 
-        await _store.attachmentsActions.getAttachmentUsagesByIds(payload);
+        await _attachmentsActions.getAttachmentUsagesByIds(payload);
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");

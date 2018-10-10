@@ -97,7 +97,6 @@ class AttachmentsStore extends Store {
         attachmentsActions);
 
     // Module Action Listeners
-    triggerOnActionV2(attachmentsActions.createAttachmentUsage, _createAttachmentUsage);
     triggerOnActionV2(attachmentsActions.setActionItemState, _setActionItemState);
     triggerOnActionV2(attachmentsActions.setGroups, _setGroups);
     triggerOnActionV2(attachmentsActions.setFilters, _setFilters);
@@ -110,6 +109,7 @@ class AttachmentsStore extends Store {
     triggerOnActionV2(attachmentsActions.selectAttachments, _selectAttachments);
 
     [
+      attachmentsActions.createAttachmentUsage.listen(_handleCreateAttachmentUsage),
       attachmentsActions.getAttachmentsByIds.listen(_handleGetAttachmentsByIds),
       attachmentsActions.getAttachmentsByProducers.listen(_handleGetAttachmentsByProducers),
       attachmentsActions.hoverOverAttachmentNode.listen(_hoverOverAttachmentNodes),
@@ -252,6 +252,7 @@ class AttachmentsStore extends Store {
       _rootNode.addChildren(_generateTreeNodes(_groups));
       _rootNode.triggerRoot();
     }
+    trigger();
   }
 
   List<GroupTreeNode> _generateTreeNodes(List<Group> groups) {
@@ -301,7 +302,7 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _createAttachmentUsage(CreateAttachmentUsagePayload payload) async {
+  _handleCreateAttachmentUsage(CreateAttachmentUsagePayload payload) async {
     if (!isValidSelection) {
       _logger.warning('_createAttachmentUsage without valid selection');
       return;
@@ -310,17 +311,19 @@ class AttachmentsStore extends Store {
     try {
       final region = await _extensionContext.observedRegionApi.create(selection: payload.producerSelection);
 
-      CreateAttachmentUsageResponse resp = await attachmentsService.createAttachmentUsage(producerWurl: region.wuri);
+      CreateAttachmentUsageResponse response =
+          await attachmentsService.createAttachmentUsage(producerWurl: region.wuri);
 
-      _anchorsByWurls[resp.anchor.producerWurl] ??= [];
-      _anchorsByWurls[resp.anchor.producerWurl].add(resp.anchor);
-      _attachmentUsages.add(resp.attachmentUsage);
-      // need to check if the attachment associated with this usage already exists, and if not, add it.
-      Attachment foundAttachment =
-          _attachments.firstWhere((Attachment existing) => (existing?.id == resp.attachment?.id), orElse: () => null);
-      if (foundAttachment == null) {
-        _attachments.add(resp.attachment);
+      if (response == null) {
+        _logger.warning('Something went wrong with CreateAttachmentUsage for ${payload.producerSelection}');
+        return;
       }
+
+      _anchorsByWurls[response.anchor.producerWurl] ??= [];
+      _anchorsByWurls[response.anchor.producerWurl].add(response.anchor);
+      _attachmentUsages.add(response.attachmentUsage);
+      // need to check if the attachment associated with this usage already exists, and if not, add it.
+      _attachments = removeAndAddType([response.attachment], _attachments, true);
 
       _rebuildAndRedrawGroups();
     } catch (e, stacktrace) {

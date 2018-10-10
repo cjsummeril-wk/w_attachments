@@ -102,7 +102,6 @@ class AttachmentsService extends Disposable {
     super.onDispose();
   }
 
-  // TODO RAM-668 clean this up to work properly, catch FAnnotationError, etc.
   Future<CreateAttachmentUsageResponse> createAttachmentUsage({@required String producerWurl, int attachmentId}) async {
     try {
       FCreateAttachmentUsageRequest request = new FCreateAttachmentUsageRequest()..producerWurl = producerWurl;
@@ -115,10 +114,10 @@ class AttachmentsService extends Disposable {
           attachmentUsage: new AttachmentUsage.fromFAttachmentUsage(response.attachmentUsage),
           anchor: new Anchor.fromFAnchor(response.anchor));
     } on FAnnotationError catch (e, stacktrace) {
-      _logger.warning(e, stacktrace);
+      _logger.warning('${ServiceConstants.genericAnnoError}', e, stacktrace);
       return null;
-    } catch (e, stacktrace) {
-      _logger.severe(e, stacktrace);
+    } on Exception catch (e, stacktrace) {
+      _logger.severe('${ServiceConstants.transportError}', e, stacktrace);
       rethrow;
     }
   }
@@ -158,10 +157,10 @@ class AttachmentsService extends Disposable {
       }
       return returnAttachmentUsages;
     } on FAnnotationError catch (e, stacktrace) {
-      _logger.warning(e, stacktrace);
+      _logger.warning('${ServiceConstants.genericAnnoError}', e, stacktrace);
       return null;
     } on Exception catch (e, stacktrace) {
-      _logger.warning(e, stacktrace);
+      _logger.severe('${ServiceConstants.transportError}', e, stacktrace);
       rethrow;
     }
   }
@@ -193,10 +192,10 @@ class AttachmentsService extends Disposable {
       return new GetAttachmentsByProducersResponse(
           attachments: returnAttachments, attachmentUsages: returnAttachmentUsages, anchors: returnAnchors);
     } on FAnnotationError catch (e, stacktrace) {
-      _logger.warning(e, stacktrace);
+      _logger.warning('${ServiceConstants.genericAnnoError}', e, stacktrace);
       return null;
-    } catch (e, stacktrace) {
-      _logger.severe(e, stacktrace);
+    } on Exception catch (e, stacktrace) {
+      _logger.severe('${ServiceConstants.transportError}', e, stacktrace);
       rethrow;
     }
   }

@@ -14,8 +14,9 @@ class AttachmentTestConstants {
   static int attachmentIdOne = 1234;
   static int attachmentIdTwo = 4567;
 
-  static String existingWurl = "wurl://existing";
-  static String testWurl = "wurl://test";
+  static String existingWurl = "wurl://scope/existing";
+  static String testWurl = "wurl://scope/test";
+  static String testScope = "wurl://scope";
 
   static Anchor mockAnchor = new Anchor()
     ..id = anchorIdOne
