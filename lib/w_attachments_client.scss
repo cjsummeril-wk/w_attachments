@@ -1,0 +1,13 @@
+// -------------------------------------
+//   Web Skin Sass API
+//   @see http://bit.ly/webskin-api
+// -------------------------------------
+
+@import 'package:web_skin/sass/core/api';
+
+.w_attachments_client {
+  @import "./sass/general.scss";
+  @import "./sass/reference_view.scss";
+}
+
+
