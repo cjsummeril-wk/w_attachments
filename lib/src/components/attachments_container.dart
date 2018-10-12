@@ -19,9 +19,11 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
 
   // if any groups have childGroups, render as Tree, else render as regions
   @override
-  render() => props.store.groups.any((Group group) => group.childGroups?.isNotEmpty == true)
+  render() => (Dom.div()
+    ..className = 'w_attachments_client'
+    ..addTestId('w_attachments_client'))(props.store.groups.any((Group group) => group.childGroups?.isNotEmpty == true)
       ? _renderAsVirtualTree()
-      : _renderAsRegions();
+      : _renderAsRegions());
 
   _renderAsVirtualTree() => (Dom.div()
     ..className = 'w-attachments attachments-container'
