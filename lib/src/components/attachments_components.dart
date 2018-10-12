@@ -8,10 +8,10 @@ class AttachmentsComponents extends ModuleComponents {
   AttachmentsComponents({@required this.attachmentsActions, @required this.store, @required this.actionProvider});
 
   @override
-  content() => (Dom.div()..className = 'w_attachments_client')((AttachmentsContainer()
+  content() => (AttachmentsContainer()
     ..store = store
     ..actionProvider = actionProvider
-    ..actions = attachmentsActions)());
+    ..actions = attachmentsActions)();
 
   icon() => (Icon()
     ..glyph = IconGlyph.ATTACHMENT
@@ -19,9 +19,7 @@ class AttachmentsComponents extends ModuleComponents {
 
   /// __Deprecated.__ Use [titleV2] instead.
   @deprecated
-  title() => (AttachmentsHeader()
-    ..headingLabel = 'Attachments'
-    ..className = '')();
+  title() => (AttachmentsHeader()..headingLabel = 'Attachments')();
 
   PanelTitleProps titleV2() => PanelTitle()
     ..addTestId('attachment.AttachmentViewComponent.Heading')
