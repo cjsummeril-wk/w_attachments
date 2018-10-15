@@ -4,6 +4,8 @@ import 'package:w_flux/w_flux.dart';
 import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_config.dart';
 
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_payloads.dart';
+
 class AttachmentsActions extends Disposable {
   final addAttachment = new Action<AddAttachmentPayload>();
   final dropFiles = new Action<DropFilesPayload>();

@@ -7,7 +7,7 @@ import 'package:react/react_client.dart';
 import 'package:web_skin_dart/ui_components.dart';
 
 import 'package:w_attachments_client/src/models/group.dart';
-import 'package:w_attachments_client/src/service_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
 
 part 'action_item/action_item.dart';
 part 'action_item/panel_action_item.dart';

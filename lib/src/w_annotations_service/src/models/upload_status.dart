@@ -1,4 +1,4 @@
-part of w_attachments_client.models.service;
+part of w_attachments_client.w_annotations_service.models;
 
 enum Status { Pending, Started, Complete, Failed, Progress, Cancelled }
 

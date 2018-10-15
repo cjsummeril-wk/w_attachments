@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:w_attachments_client/src/models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
 
 timestampStringFromMsSinceEpoch(int msSinceEpoch) {
   var newDateTime = new DateTime.fromMillisecondsSinceEpoch(msSinceEpoch);

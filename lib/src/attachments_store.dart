@@ -5,6 +5,10 @@ import 'package:w_flux/w_flux.dart';
 import 'package:w_module/w_module.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_api.dart';
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_payloads.dart';
+
 import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/utils.dart';
@@ -19,7 +23,7 @@ class AttachmentsStore extends Store {
   final ActionProviderFactory actionProviderFactory;
   final AttachmentsActions attachmentsActions;
   final AttachmentsEvents attachmentsEvents;
-  final AttachmentsService attachmentsService;
+  final AnnotationsServiceApi _annotationsServiceApi;
   final cef.ExtensionContext _extensionContext;
 
   final Logger _logger = new Logger('w_attachments_client.attachments_store');
@@ -67,9 +71,9 @@ class AttachmentsStore extends Store {
       {@required this.actionProviderFactory,
       @required this.attachmentsActions,
       @required this.attachmentsEvents,
-      @required this.attachmentsService,
       @required this.dispatchKey,
       @required extensionContext,
+      @required AnnotationsServiceApi annotationServiceApi,
       AttachmentsConfig moduleConfig,
       List<Attachment> attachments,
       List<ContextGroup> groups,
@@ -77,6 +81,7 @@ class AttachmentsStore extends Store {
       : _attachments = attachments,
         _extensionContext = extensionContext,
         _groups = groups,
+        _annotationsServiceApi = annotationServiceApi,
         this._moduleConfig = moduleConfig ?? new AttachmentsConfig() {
     _rebuildAndRedrawGroups();
     _api = new AttachmentsApi(attachmentsActions, this);
@@ -120,7 +125,7 @@ class AttachmentsStore extends Store {
     ].forEach(manageActionSubscription);
 
     // Service Stream Listeners
-    listenToStream(attachmentsService.uploadStatusStream, _handleUploadStatus);
+    listenToStream(_annotationsServiceApi.uploadStatusStream, _handleUploadStatus);
 
     // Event Listeners
     listenToStream(attachmentsEvents.attachmentRemoved, _handleAttachmentRemoved);
@@ -311,7 +316,7 @@ class AttachmentsStore extends Store {
       final region = await _extensionContext.observedRegionApi.create(selection: payload.producerSelection);
 
       CreateAttachmentUsageResponse response =
-          await attachmentsService.createAttachmentUsage(producerWurl: region.wuri);
+          await _annotationsServiceApi.createAttachmentUsage(producerWurl: region.wuri);
 
       if (response == null) {
         _logger.warning('Something went wrong with CreateAttachmentUsage for ${payload.producerSelection}');
@@ -332,7 +337,7 @@ class AttachmentsStore extends Store {
 
   _handleGetAttachmentsByProducers(GetAttachmentsByProducersPayload payload) async {
     GetAttachmentsByProducersResponse response =
-        await attachmentsService.getAttachmentsByProducers(producerWurls: payload.producerWurls);
+        await _annotationsServiceApi.getAttachmentsByProducers(producerWurls: payload.producerWurls);
 
     if (response == null) {
       _logger.warning('No associated data for wurls ${payload.producerWurls}.');
@@ -364,7 +369,7 @@ class AttachmentsStore extends Store {
   _getAttachmentUsagesByIds(GetAttachmentUsagesByIdsPayload payload) async {
     if (payload.attachmentUsageIds != null && payload.attachmentUsageIds.isNotEmpty) {
       List<AttachmentUsage> response =
-          await attachmentsService.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
+          await _annotationsServiceApi.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
 
       if (response == null) {
         _logger.warning("Invalid attachment usage ids: ", payload.attachmentUsageIds);
@@ -468,7 +473,7 @@ class AttachmentsStore extends Store {
   _handleGetAttachmentsByIds(GetAttachmentsByIdsPayload payload) async {
     if (payload.attachmentIds?.isNotEmpty == true) {
       List<Attachment> attachmentsResult =
-          await attachmentsService.getAttachmentsByIds(idsToLoad: payload.attachmentIds);
+          await _annotationsServiceApi.getAttachmentsByIds(idsToLoad: payload.attachmentIds);
 
       if (attachmentsResult?.isNotEmpty == true) {
         // only replace attachments that are currently tracked by usages

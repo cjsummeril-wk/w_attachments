@@ -6,7 +6,7 @@ import 'dart:html' show File, Window;
 import 'package:frugal/frugal.dart' as frugal;
 import 'package:mockito/mockito.dart';
 import 'package:messaging_sdk/messaging_sdk.dart';
-import 'package:w_attachments_client/src/service_models.dart';
+import 'package:w_attachments_client/service/models/service_models.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/service_adapters/attachments_service_library.dart';

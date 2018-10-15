@@ -5,4 +5,3 @@ export 'models/attachment_constants.dart';
 export 'models/filter.dart';
 export 'models/group.dart';
 export 'models/tree_node.dart';
-export 'service_models.dart';

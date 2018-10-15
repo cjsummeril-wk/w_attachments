@@ -12,6 +12,9 @@ import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_api.dart';
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
+
 typedef ActionProvider ActionProviderFactory(AttachmentsApi api);
 
 DispatchKey attachmentsModuleDispatchKey = new DispatchKey('AttachmentsModule');
@@ -26,7 +29,7 @@ class AttachmentsModule extends Module {
   AttachmentsEvents _events;
   AttachmentsComponents _components;
   AttachmentsStore _store;
-  AttachmentsService _attachmentsService;
+  AnnotationsServiceApi _annotationsServiceApi;
 
   AttachmentsModule({
     @required cef.ExtensionContext extensionContext,
@@ -47,8 +50,8 @@ class AttachmentsModule extends Module {
     attachmentsActions = manageAndReturnDisposable(new AttachmentsActions());
     _staticAssetLoader = staticAssetLoader ?? manageAndReturnDisposable(new StaticAssetLoader());
 
-    _attachmentsService = manageAndReturnDisposable(
-        new AttachmentsService(appIntelligence: appIntelligence, messagingClient: messagingClient));
+    _annotationsServiceApi = manageAndReturnDisposable(
+        new AnnotationsServiceApi(messagingClient: messagingClient, appIntelligence: appIntelligence));
 
     _events = manageAndReturnDisposable(new AttachmentsEvents());
     _store = manageAndReturnDisposable(new AttachmentsStore(
@@ -56,7 +59,7 @@ class AttachmentsModule extends Module {
         attachmentsActions: attachmentsActions,
         attachmentsEvents: _events,
         dispatchKey: attachmentsModuleDispatchKey,
-        attachmentsService: _attachmentsService,
+        annotationServiceApi: _annotationsServiceApi,
         extensionContext: extensionContext,
         attachments: initialAttachments ?? [],
         groups: initialGroups ?? [],
@@ -78,7 +81,7 @@ class AttachmentsModule extends Module {
   @override
   onLoad() async {
     // Frugal setup
-    await _attachmentsService.initialize();
+    await _annotationsServiceApi.initialize();
     await _staticAssetLoader.loadAll([
       'packages/web_skin/dist/css/peripherals/icons-xbrl.min.css',
       'packages/web_skin/dist/css/peripherals/form-click-to-edit.min.css'

@@ -1,4 +1,4 @@
-part of w_attachments_client.service;
+part of w_attachments_client.w_annotations_service.attachments;
 
 class AttachmentsService extends Disposable {
   FWAnnotationsServiceClient _fClient;
@@ -7,7 +7,6 @@ class AttachmentsService extends Disposable {
 
   AppIntelligence _appIntelligence;
   msg.NatsMessagingClient _msgClient;
-  ModalManager _modalManager;
   UploadManager _uploadManager;
 
   StreamController<UploadStatus> _uploadStatusStreamController;
@@ -36,7 +35,6 @@ class AttachmentsService extends Disposable {
   AttachmentsService(
       {@required msg.NatsMessagingClient messagingClient,
       AppIntelligence appIntelligence,
-      ModalManager modalManager,
       FWAnnotationsService fClient: null})
       : _uploadStatusStreamController = new StreamController<UploadStatus>.broadcast() {
     _appIntelligence = (appIntelligence != null)
@@ -46,7 +44,6 @@ class AttachmentsService extends Disposable {
 
     _msgClient = messagingClient;
     _uploadManager = manageAndReturnDisposable(new UploadManager());
-    _modalManager = modalManager;
     if (fClient != null) {
       _fClient = fClient;
     }
