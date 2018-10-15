@@ -9,7 +9,7 @@ class _MockUploadStatusStream extends Mock implements Stream<UploadStatus> {
       new _MockStreamSubscription();
 }
 
-class AttachmentsServiceMock extends Mock implements AttachmentsService {
+class AnnotationsApiMock extends Mock implements AnnotationsApi {
   @override
   Stream<UploadStatus> get uploadStatusStream => new _MockUploadStatusStream();
 }

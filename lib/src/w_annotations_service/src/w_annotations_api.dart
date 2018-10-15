@@ -11,12 +11,12 @@ import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations
 import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
 import 'package:w_attachments_client/src/w_annotations_service/src/service_adapters/attachments_service.dart';
 
-class AnnotationsServiceApi extends Disposable {
+class AnnotationsApi extends Disposable {
   AttachmentsService _attachmentService;
 
   Stream<UploadStatus> get uploadStatusStream => _attachmentService.uploadStatusStream;
 
-  AnnotationsServiceApi(
+  AnnotationsApi(
       {@required msg.NatsMessagingClient messagingClient,
       AppIntelligence appIntelligence,
       FWAnnotationsService fClient: null}) {

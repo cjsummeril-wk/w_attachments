@@ -1,13 +1,15 @@
 library w_attachments_client.test.models.tree_node;
 
 import 'package:test/test.dart';
-import 'package:uuid/uuid.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
+
+import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/src/service_adapters/attachments_service.dart';
 
 import '../mocks/mocks_library.dart';
 
@@ -17,7 +19,7 @@ void main() {
     AttachmentsActions _attachmentsActions;
     AttachmentsEvents _attachmentsEvents;
     cef.ExtensionContext _extensionContext;
-    AttachmentsService _attachmentsService;
+    AnnotationsApiMock _annotationsApiMock;
     String validWurl = 'wurl://docs.v1/doc:962DD25A85142FBBD7AC5AC84BAE9BD6';
 
     group('Group Tree Node', () {
@@ -25,14 +27,14 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
+            annotationsApi: _annotationsApiMock,
             attachments: [],
             groups: []);
 
@@ -62,7 +64,7 @@ void main() {
         _attachmentsActions.dispose();
         _attachmentsEvents.dispose();
         _extensionContext.dispose();
-        _attachmentsService.dispose();
+        _annotationsApiMock.dispose();
         _store.dispose();
       });
 
@@ -142,14 +144,14 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsService,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
+            annotationsApi: _annotationsApiMock,
             attachments: [],
             groups: []);
 
@@ -172,7 +174,7 @@ void main() {
         _attachmentsActions.dispose();
         _attachmentsEvents.dispose();
         _extensionContext.dispose();
-        _attachmentsService.dispose();
+        _annotationsApiMock.dispose();
         _store.dispose();
       });
 

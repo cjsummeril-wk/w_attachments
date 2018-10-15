@@ -23,7 +23,7 @@ class AttachmentsStore extends Store {
   final ActionProviderFactory actionProviderFactory;
   final AttachmentsActions attachmentsActions;
   final AttachmentsEvents attachmentsEvents;
-  final AnnotationsServiceApi _annotationsServiceApi;
+  final AnnotationsApi _annotationsApi;
   final cef.ExtensionContext _extensionContext;
 
   final Logger _logger = new Logger('w_attachments_client.attachments_store');
@@ -73,7 +73,7 @@ class AttachmentsStore extends Store {
       @required this.attachmentsEvents,
       @required this.dispatchKey,
       @required extensionContext,
-      @required AnnotationsServiceApi annotationServiceApi,
+      @required AnnotationsApi annotationsApi,
       AttachmentsConfig moduleConfig,
       List<Attachment> attachments,
       List<ContextGroup> groups,
@@ -81,7 +81,7 @@ class AttachmentsStore extends Store {
       : _attachments = attachments,
         _extensionContext = extensionContext,
         _groups = groups,
-        _annotationsServiceApi = annotationServiceApi,
+        _annotationsApi = annotationsApi,
         this._moduleConfig = moduleConfig ?? new AttachmentsConfig() {
     _rebuildAndRedrawGroups();
     _api = new AttachmentsApi(attachmentsActions, this);
@@ -125,7 +125,7 @@ class AttachmentsStore extends Store {
     ].forEach(manageActionSubscription);
 
     // Service Stream Listeners
-    listenToStream(_annotationsServiceApi.uploadStatusStream, _handleUploadStatus);
+    listenToStream(_annotationsApi.uploadStatusStream, _handleUploadStatus);
 
     // Event Listeners
     listenToStream(attachmentsEvents.attachmentRemoved, _handleAttachmentRemoved);
@@ -315,8 +315,7 @@ class AttachmentsStore extends Store {
     try {
       final region = await _extensionContext.observedRegionApi.create(selection: payload.producerSelection);
 
-      CreateAttachmentUsageResponse response =
-          await _annotationsServiceApi.createAttachmentUsage(producerWurl: region.wuri);
+      CreateAttachmentUsageResponse response = await _annotationsApi.createAttachmentUsage(producerWurl: region.wuri);
 
       if (response == null) {
         _logger.warning('Something went wrong with CreateAttachmentUsage for ${payload.producerSelection}');
@@ -337,7 +336,7 @@ class AttachmentsStore extends Store {
 
   _handleGetAttachmentsByProducers(GetAttachmentsByProducersPayload payload) async {
     GetAttachmentsByProducersResponse response =
-        await _annotationsServiceApi.getAttachmentsByProducers(producerWurls: payload.producerWurls);
+        await _annotationsApi.getAttachmentsByProducers(producerWurls: payload.producerWurls);
 
     if (response == null) {
       _logger.warning('No associated data for wurls ${payload.producerWurls}.');
@@ -369,7 +368,7 @@ class AttachmentsStore extends Store {
   _getAttachmentUsagesByIds(GetAttachmentUsagesByIdsPayload payload) async {
     if (payload.attachmentUsageIds != null && payload.attachmentUsageIds.isNotEmpty) {
       List<AttachmentUsage> response =
-          await _annotationsServiceApi.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
+          await _annotationsApi.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
 
       if (response == null) {
         _logger.warning("Invalid attachment usage ids: ", payload.attachmentUsageIds);
@@ -472,8 +471,7 @@ class AttachmentsStore extends Store {
 
   _handleGetAttachmentsByIds(GetAttachmentsByIdsPayload payload) async {
     if (payload.attachmentIds?.isNotEmpty == true) {
-      List<Attachment> attachmentsResult =
-          await _annotationsServiceApi.getAttachmentsByIds(idsToLoad: payload.attachmentIds);
+      List<Attachment> attachmentsResult = await _annotationsApi.getAttachmentsByIds(idsToLoad: payload.attachmentIds);
 
       if (attachmentsResult?.isNotEmpty == true) {
         // only replace attachments that are currently tracked by usages

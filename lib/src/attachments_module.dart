@@ -29,29 +29,30 @@ class AttachmentsModule extends Module {
   AttachmentsEvents _events;
   AttachmentsComponents _components;
   AttachmentsStore _store;
-  AnnotationsServiceApi _annotationsServiceApi;
+  AnnotationsApi _annotationsApi;
 
-  AttachmentsModule({
-    @required cef.ExtensionContext extensionContext,
-    @required msg.NatsMessagingClient messagingClient,
-    // TODO: remove in RAM-681
-    Session session,
-    AppIntelligence appIntelligence,
-    ActionProviderFactory actionProviderFactory,
-    List<Attachment> initialAttachments,
-    List<ContextGroup> initialGroups,
-    List<Filter> initialFilters,
-    AttachmentsConfig config,
-    StaticAssetLoader staticAssetLoader,
-  }) {
+  AttachmentsModule(
+      {@required cef.ExtensionContext extensionContext,
+      @required msg.NatsMessagingClient messagingClient,
+      // TODO: remove in RAM-681
+      Session session,
+      AppIntelligence appIntelligence,
+      ActionProviderFactory actionProviderFactory,
+      List<Attachment> initialAttachments,
+      List<ContextGroup> initialGroups,
+      List<Filter> initialFilters,
+      AttachmentsConfig config,
+      StaticAssetLoader staticAssetLoader,
+      AnnotationsApi annotationsApi}) {
     // Default the config if one wasn't provided
     config ??= new AttachmentsConfig();
 
     attachmentsActions = manageAndReturnDisposable(new AttachmentsActions());
     _staticAssetLoader = staticAssetLoader ?? manageAndReturnDisposable(new StaticAssetLoader());
 
-    _annotationsServiceApi = manageAndReturnDisposable(
-        new AnnotationsServiceApi(messagingClient: messagingClient, appIntelligence: appIntelligence));
+    _annotationsApi = annotationsApi ??
+        manageAndReturnDisposable(
+            new AnnotationsApi(messagingClient: messagingClient, appIntelligence: appIntelligence));
 
     _events = manageAndReturnDisposable(new AttachmentsEvents());
     _store = manageAndReturnDisposable(new AttachmentsStore(
@@ -59,7 +60,7 @@ class AttachmentsModule extends Module {
         attachmentsActions: attachmentsActions,
         attachmentsEvents: _events,
         dispatchKey: attachmentsModuleDispatchKey,
-        annotationServiceApi: _annotationsServiceApi,
+        annotationsApi: _annotationsApi,
         extensionContext: extensionContext,
         attachments: initialAttachments ?? [],
         groups: initialGroups ?? [],
@@ -81,7 +82,7 @@ class AttachmentsModule extends Module {
   @override
   onLoad() async {
     // Frugal setup
-    await _annotationsServiceApi.initialize();
+    await _annotationsApi.initialize();
     await _staticAssetLoader.loadAll([
       'packages/web_skin/dist/css/peripherals/icons-xbrl.min.css',
       'packages/web_skin/dist/css/peripherals/form-click-to-edit.min.css'
