@@ -10,7 +10,6 @@ class AttachmentsTestService extends AttachmentsService {
   static const putBundleError = 'putBundleError';
   static const purgeCache = 'purgeCache';
   static const fetchAttachmentsError = 'fetchAttachmentsError';
-  static const exampleApp = 'exampleApp';
   static const resourcePath = '/api/v0.1/annotation/service/';
   static const maxRetryAttempts = 9;
   static const retryPollingInterval = const Duration(seconds: 1);
@@ -22,8 +21,7 @@ class AttachmentsTestService extends AttachmentsService {
     postBundleError: false,
     putBundleError: false,
     fetchAttachmentsError: false,
-    purgeCache: false,
-    exampleApp: false
+    purgeCache: false
   };
 
   // Cache of anchors keyed by the producerWurl

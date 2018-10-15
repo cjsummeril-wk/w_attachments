@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:logging/logging.dart';
 
 import 'package:mockito/mockito.dart';
 import 'package:over_react_test/over_react_test.dart';

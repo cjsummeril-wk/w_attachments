@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:html' hide Selection;
 
-import 'package:mockito/mirrors.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';

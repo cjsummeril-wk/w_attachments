@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
 
-import 'package:w_annotations_api/annotations_api_v1.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/action_payloads.dart';

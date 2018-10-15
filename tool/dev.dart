@@ -17,11 +17,11 @@ main(List<String> args) async {
   // config.docs
   config.examples;
   config.format
-    ..paths = ['example/', 'lib/', 'test/', 'tool/']
+    ..paths = ['lib/', 'test/', 'tool/']
     ..exclude = ['test/generated_runner_test.dart']
     ..lineLength = 120;
   config.test
-    ..platforms = ['dartium']
+    ..platforms = ['content-shell', 'vm']
     ..unitTests = ['test/generated_runner_test.dart']
     ..pubServe = true;
 
