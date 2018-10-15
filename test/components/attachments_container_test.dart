@@ -28,7 +28,7 @@ void main() {
 
         _session = new Session();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = new AttachmentsTestService();
+        _attachmentsService = new AttachmentsServiceMock();
         _msgClient = new MockMessagingClient();
 
         _module = new AttachmentsModule(

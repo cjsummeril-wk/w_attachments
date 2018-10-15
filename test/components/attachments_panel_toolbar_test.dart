@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:html' hide Selection;
 
-import 'package:mockito/mirrors.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';
@@ -54,7 +53,7 @@ void main() {
       _attachmentsActions = new AttachmentsActions();
       _attachmentsEvents = new AttachmentsEvents();
       _extensionContext = new ExtensionContextMock();
-      _attachmentsService = new AttachmentsTestService();
+      _attachmentsService = new AttachmentsServiceMock();
       _store = new AttachmentsStore(
           actionProviderFactory: StandardActionProvider.actionProviderFactory,
           attachmentsActions: _attachmentsActions,

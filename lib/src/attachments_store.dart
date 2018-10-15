@@ -1,6 +1,5 @@
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
-import 'package:w_annotations_api/annotations_api_v1.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:w_module/w_module.dart';

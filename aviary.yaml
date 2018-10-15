@@ -1,7 +1,6 @@
 version: 1
 
 exclude:
-  - example/
   - test/
   - tool/
 
