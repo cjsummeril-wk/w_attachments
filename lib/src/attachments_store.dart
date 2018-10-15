@@ -16,6 +16,7 @@ import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_config.dart';
 import 'package:w_attachments_client/src/attachments_events.dart';
+import 'package:w_attachments_client/src/constants.dart';
 import 'package:w_attachments_client/src/models/models.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/src/utils.dart';
@@ -40,18 +41,18 @@ class AttachmentsStore extends Store {
   ActionProvider _actionProvider;
   DispatchKey dispatchKey;
 
-  List<Attachment> _attachments = [];
+  List<Attachment> _attachments = <Attachment>[];
   @visibleForTesting
   set attachments(List<Attachment> attachments) => _attachments = attachments;
 
-  List<AttachmentUsage> _attachmentUsages = [];
+  List<AttachmentUsage> _attachmentUsages = <AttachmentUsage>[];
   @visibleForTesting
   set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
 
-  Map<String, List<Anchor>> _anchorsByWurls = {};
+  List<Anchor> _anchors = <Anchor>[];
   @visibleForTesting
-  set anchorsByWurls(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
-  Map<String, List<Anchor>> get anchorsByWurls => _anchorsByWurls;
+  set anchors(List<Anchor> anchors) => _anchors = anchors;
+  List<Anchor> get anchors => _anchors;
 
   // CEF-specific properties
   cef.Selection _currentSelection;
@@ -68,6 +69,7 @@ class AttachmentsStore extends Store {
   // content extension framework properties
   Iterable<String> _currentScopes = [];
   Set<int> _currentlySelectedAttachments = new Set<int>();
+  Set<int> _currentlySelectedAttachmentUsages = new Set<int>();
 
   AttachmentsStore(
       {@required this.actionProviderFactory,
@@ -127,6 +129,8 @@ class AttachmentsStore extends Store {
     // CEF Listeners
     listenToStream(_extensionContext.observedRegionApi.didChangeScopes, _onDidChangeScopes);
     listenToStream(_extensionContext.selectionApi.didChangeSelections, _onDidChangeSelection);
+    listenToStream(_extensionContext.observedRegionApi.didChangeVisibleRegions, _onDidChangeVisibleRegions);
+    listenToStream(_extensionContext.observedRegionApi.didChangeSelectedRegions, _onDidChangeSelectedRegions);
   }
 
   AttachmentsConfig get moduleConfig => _moduleConfig;
@@ -140,6 +144,8 @@ class AttachmentsStore extends Store {
   String get primarySelection => _moduleConfig.primarySelection;
 
   Set<int> get currentlySelectedAttachments => _currentlySelectedAttachments;
+
+  Set<int> get currentlySelectedAttachmentUsages => _currentlySelectedAttachmentUsages;
 
   bool get enableClickToSelect => _moduleConfig.enableClickToSelect;
 
@@ -163,12 +169,18 @@ class AttachmentsStore extends Store {
 
   // attachment getters/setters
   List<Attachment> get attachments => new List<Attachment>.unmodifiable(_attachments);
-  List<String> get attachmentKeys => new List<String>.unmodifiable(_attachments.map((attachment) => attachment?.id));
+  List<int> get attachmentIds => new List<int>.unmodifiable(_attachments.map((attachment) => attachment?.id));
+
   List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
+
   List<Anchor> anchorsByWurl(String wurl) =>
-      _anchorsByWurls[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchorsByWurls[wurl]);
+    new List<Anchor>.unmodifiable(_anchors.where((anchor) => anchor?.producerWurl == wurl));
+
+  List<int> get anchorIds => new List<int>.unmodifiable(_anchors.map((anchor) => anchor?.id));
+
   List<AttachmentUsage> attachmentUsagesByAnchorId(int anchorId) =>
       new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
+
   List<AttachmentUsage> attachmentUsagesByAnchors(List<Anchor> anchors) {
     List<AttachmentUsage> attachmentUsagesToReturn = [];
     List<int> attachmentUsagesToGet = new List<int>.from(anchors.map((Anchor anchor) => anchor.id));
@@ -275,8 +287,7 @@ class AttachmentsStore extends Store {
         return;
       }
 
-      _anchorsByWurls[response.anchor.producerWurl] ??= [];
-      _anchorsByWurls[response.anchor.producerWurl].add(response.anchor);
+      _anchors.add(response.anchor);
       _attachmentUsages.add(response.attachmentUsage);
       // need to check if the attachment associated with this usage already exists, and if not, add it.
       _attachments = removeAndAddType([response.attachment], _attachments, true);
@@ -297,7 +308,7 @@ class AttachmentsStore extends Store {
     }
 
     if (!payload.maintainAttachments) {
-      _anchorsByWurls.clear();
+      _anchors.clear();
       _attachmentUsages.clear();
       _attachments.clear();
     }
@@ -305,8 +316,7 @@ class AttachmentsStore extends Store {
     for (String wurl in payload.producerWurls) {
       List<Anchor> responseAnchors = response.anchors.where((Anchor a) => a.producerWurl.startsWith(wurl)).toList();
       if (responseAnchors?.isNotEmpty == true) {
-        _anchorsByWurls[wurl] ??= <Anchor>[];
-        _anchorsByWurls[wurl] = removeAndAddType(responseAnchors, _anchorsByWurls[wurl], payload.maintainAttachments);
+        _anchors = removeAndAddType(responseAnchors, _anchors, payload.maintainAttachments);
       } else {
         _logger.warning('Wurl $wurl was not associated with any anchors.');
       }
@@ -382,6 +392,7 @@ class AttachmentsStore extends Store {
     if (attachmentIds != null) {
       for (int id in attachmentIds) {
         if (currentlySelectedAttachments.add(id)) {
+          print('setting attachment $id to selected');
           attachmentsEvents.attachmentSelected(
               new AttachmentSelectedEventPayload(selectedAttachmentId: id), dispatchKey);
         }
@@ -457,10 +468,25 @@ class AttachmentsStore extends Store {
     }
     if (valid) {
       _currentSelection = currentSelections.firstWhere((s) => !s.isEmpty);
+      print('new selection $_currentSelection');
     } else {
       _currentSelection = null;
     }
   }
+
+  /// Map of all current highlights for visible active and selected comment
+  /// threads orginized by threadId.
+  Map<int, cef.Highlight> _highlights = <int, cef.Highlight>{};
+
+  /// Keeps a cache of regions around so when an attachment or reference becomes active, we don't have
+  /// to rebuild the region payload in order to set active on ObservedRegionApi.
+  Map<String, cef.ObservedRegion> _regionCache = <String, cef.ObservedRegion>{};
+
+  // converts a string wuri to an ObservedRegion object
+  cef.ObservedRegion _fetchRegion(String wuri) => _regionCache[wuri];
+
+  // adds an observed region to the local cache, used for lookup later
+  cef.ObservedRegion _cacheRegion(cef.ObservedRegion region) => _regionCache[region.wuri] = region;
 
   void _onDidChangeScopes(Null _) {
     var allScopes = _extensionContext.observedRegionApi.getScopes();
@@ -476,5 +502,124 @@ class AttachmentsStore extends Store {
     // set _currentScopes to the new list of scopes
     _currentScopes = allScopes;
     trigger();
+  }
+
+  // called when the content provider tells us the selected regions changed
+  _onDidChangeSelectedRegions(_) {
+    _logger.fine("Selected regions changed");
+    // get the currently selected regions
+    Set<cef.ObservedRegion> regions = _extensionContext.observedRegionApi.getSelectedRegionsV2();
+    print("Selected regions changed to $regions");
+
+    // convert the set of ObservedRegion to a set of usages that are
+    // paired to a selected region
+    final usages = regions
+      .expand((region) => attachmentUsagesByAnchors(anchorsByWurl(region.wuri)).toSet());
+    final attachments = attachmentsOfUsages(usages);
+
+    // update the list of selected threads in our store
+    attachmentsActions.selectAttachments(new SelectAttachmentsPayload(
+      attachmentIds: attachments.map((a) => a.id),
+      usageIds: usages.map((usage) => usage.id)
+    ));
+    _refreshHighlights();
+  }
+
+  // when visible regions change update our highlights
+  _onDidChangeVisibleRegions(_) {
+    _logger.fine("Visible regions changed");
+    print('visible regions changed');
+    _extensionContext.observedRegionApi.getVisibleRegions().forEach(_cacheRegion);
+    _refreshHighlights();
+  }
+
+  // if the active thread changes in our store call cef.changeActiveRegion
+  // and update the highlights
+//  void _activeChanged(SubstateChange<String> change) {
+//    final activeThread = _store.state.threads.map[change.next];
+//    String nextRegionId = activeThread?.regionId;
+//    _extensionContext.observedRegionApi.changeActiveRegion(activeRegion: _fetchRegion(nextRegionId));
+//    _updateHighlightStyle(change.prev, change.next);
+//  }
+
+//  // if the hovered thread changes in our store update the highlights
+//  void _hoverChanged(SubstateChange<String> change) {
+//    _logger.fine("Thread hovered, updating highlights");
+//    _updateHighlightStyle(change.prev, change.next);
+//  }
+
+  /// Make sure only have highlights for Threads in our ThreadList that are visible and unfiltered.
+  void _refreshHighlights() {
+    final visibleRegionWuris = _extensionContext.observedRegionApi.getVisibleRegions().map((region) => region.wuri).toSet();
+    final visibleAnchorIds = _anchors.where((anchor) => visibleRegionWuris.contains(anchor.producerWurl)).map((a) => a.id);
+    print(visibleRegionWuris);
+    print('visible anchor ids $visibleAnchorIds');
+
+    final currentHighlightKeys = new Set<int>.from(_highlights.keys);
+    final futureHighlightKeys = new Set<int>.from(anchorIds);
+    print(currentHighlightKeys);
+    print(futureHighlightKeys);
+    futureHighlightKeys.retainWhere(visibleAnchorIds.contains);
+    print('after retaining $futureHighlightKeys');
+
+    for (int id in futureHighlightKeys.difference(currentHighlightKeys)) {
+      Anchor anchorToHighlight = _anchors.firstWhere((anchor) => anchor.id == id, orElse: () => null);
+      print(anchorToHighlight);
+      if (anchorToHighlight != null && anchorToHighlight.producerWurl != null) {
+        _addHighlight(id, anchorToHighlight.producerWurl);
+      }
+    }
+
+    currentHighlightKeys.difference(futureHighlightKeys).forEach(_removeHighlight);
+  }
+
+  void _addHighlight(int id, String wuri) {
+    print('adding highlights');
+    if (_highlights.containsKey(id)) return;
+    cef.Highlight newHighlight = _extensionContext.highlightApi.createV3(
+      key: id.toString(),
+      wuri: wuri,
+      styles: _highlightStyle(id),
+    );
+
+    // keep highlight and subscribe to didChangeSelected for selection.
+    if (newHighlight == null) return;
+
+    _highlights[id] = newHighlight;
+    newHighlight.wasRemoved.then((_) => _highlightWasRemoved(id));
+    _logger.fine('Added highlight for $id');
+  }
+
+  void _updateHighlightStyle(int prev, int next) {
+    _highlights[prev]?.updateV2(styles: _highlightStyle(prev));
+    _highlights[next]?.updateV2(styles: _highlightStyle(next));
+  }
+
+  // Warning, changing these will break the example app
+  cef.HighlightStyles _highlightStyle(int id) {
+    bool isActive = _currentlySelectedAttachments.contains(id);
+    bool isHovered = false;
+//      id == _store.state.wCommentsApp.panelCommon.hovered || id == _store.state.wCommentsApp.popoverCommon.hovered;
+    if (isActive && isHovered) {
+      return activePanelHoverStyles;
+    } else if (isActive) {
+      print('active');
+      return activeHighlightStyles;
+    } else if (isHovered) {
+      return normalPanelHoverStyles;
+    } else {
+      print('normal');
+      return normalHighlightStyles;
+    }
+  }
+
+  void _removeHighlight(int id) {
+    _highlights[id]?.remove();
+  }
+
+  void _highlightWasRemoved(int id) {
+    if (!_highlights.containsKey(id)) return;
+    _highlights.remove(id);
+    _logger.fine('Removed highlight for $id');
   }
 }
