@@ -1,7 +1,7 @@
 import 'package:w_common/disposable.dart';
 import 'package:w_flux/w_flux.dart';
 
-import 'package:w_attachments_client/src/action_payloads.dart';
+import 'package:w_attachments_client/src/payloads/module_actions.dart';
 import 'package:w_attachments_client/src/attachments_config.dart';
 
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';

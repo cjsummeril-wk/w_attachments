@@ -1,4 +1,4 @@
-part of w_attachments_client.action_payloads;
+part of w_attachments_client.payloads.attachments_module_actions;
 
 class UpdateFilenamePayload {
   final String keyToUpdate;

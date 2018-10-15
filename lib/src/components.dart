@@ -14,7 +14,7 @@ import 'package:web_skin_dart/ui_components.dart';
 import 'package:web_skin_dart/ui_core.dart';
 
 import 'package:w_attachments_client/src/components/utils.dart' as utils;
-import 'package:w_attachments_client/src/action_payloads.dart';
+import 'package:w_attachments_client/src/payloads/module_actions.dart';
 import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';

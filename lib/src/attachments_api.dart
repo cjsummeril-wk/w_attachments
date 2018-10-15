@@ -6,7 +6,7 @@ import 'package:w_attachments_client/src/attachments_config.dart';
 import 'package:w_attachments_client/src/models/action_item.dart';
 import 'package:w_attachments_client/src/models/filter.dart';
 import 'package:w_attachments_client/src/models/group.dart';
-import 'package:w_attachments_client/src/action_payloads.dart';
+import 'package:w_attachments_client/src/payloads/module_actions.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 

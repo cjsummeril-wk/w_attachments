@@ -1,7 +1,7 @@
 import 'package:dnd/dnd.dart';
 import 'package:w_module/w_module.dart';
 
-import 'package:w_attachments_client/src/event_payloads.dart';
+import 'package:w_attachments_client/src/payloads/module_events.dart';
 import 'package:w_attachments_client/src/attachments_module.dart' show attachmentsModuleDispatchKey;
 
 class AttachmentsEvents extends EventsCollection {

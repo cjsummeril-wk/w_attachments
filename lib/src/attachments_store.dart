@@ -9,8 +9,14 @@ import 'package:w_attachments_client/src/w_annotations_service/w_annotations_api
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
 
-import 'package:w_attachments_client/src/action_payloads.dart';
+import 'package:w_attachments_client/src/payloads/module_actions.dart';
+
+import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
+import 'package:w_attachments_client/src/attachments_config.dart';
+import 'package:w_attachments_client/src/attachments_events.dart';
+import 'package:w_attachments_client/src/models.dart';
+import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/src/utils.dart';
 
 typedef ActionProvider ActionProviderFactory(AttachmentsApi api);

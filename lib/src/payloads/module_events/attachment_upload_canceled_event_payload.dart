@@ -1,4 +1,4 @@
-part of w_attachments_client.event_payloads;
+part of w_attachments_client.payloads.attachments_module_events;
 
 class AttachmentUploadCanceledEventPayload {
   final List<String> canceledSelectionKeys;

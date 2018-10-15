@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:test/test.dart';
 
-import 'package:w_attachments_client/src/thread_pool.dart';
+import 'package:w_attachments_client/src/tools/thread_pool.dart';
 
 void main() {
   group('ThreadPool', () {

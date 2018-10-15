@@ -9,8 +9,12 @@ import 'package:w_session/w_session.dart';
 import 'package:wdesk_sdk/experience_framework.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
+import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
+import 'package:w_attachments_client/src/attachments_config.dart';
+import 'package:w_attachments_client/src/attachments_events.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
+import 'package:w_attachments_client/src/models.dart';
 
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_api.dart';
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';

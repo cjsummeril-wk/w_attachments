@@ -8,11 +8,13 @@ import 'package:truss/truss.dart' show PanelToolbarComponent;
 import 'package:web_skin_dart/ui_components.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
+import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
+import 'package:w_attachments_client/src/attachments_events.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 import 'package:w_attachments_client/src/components.dart';
+import 'package:w_attachments_client/src/models.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
-import 'package:w_attachments_client/w_attachments_client.dart';
 
 import '../mocks/mocks_library.dart';
 
