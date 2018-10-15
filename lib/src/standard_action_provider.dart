@@ -7,7 +7,7 @@ import 'package:w_attachments_client/src/models/group.dart';
 import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_api.dart';
 
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
 
 class StandardActionProvider implements ActionProvider {
   AttachmentsApi _api;

@@ -15,9 +15,9 @@ import 'package:w_common/disposable.dart';
 import 'package:w_attachments_client/src/components/utils.dart' as component_utils;
 import 'package:w_attachments_client/src/upload.dart';
 
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_payloads.dart';
-import 'package:w_attachments_client/src/w_annotations_service/src/service_adapters/service_constants.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
+import 'package:w_attachments_client/src/w_annotations_service/service_adapters/service_constants.dart';
 
 class AttachmentsService extends Disposable {
   FWAnnotationsServiceClient _fClient;

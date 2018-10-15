@@ -1,5 +1,5 @@
 import 'package:w_annotations_api/annotations_api_v1.dart';
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
 
 /// Class designated Attachments service and frugal based test constants.
 /// Any other constants not associated with the attachments service should be defined in their own TestConstants file.

@@ -5,9 +5,9 @@ import 'package:w_flux/w_flux.dart';
 import 'package:w_module/w_module.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_api.dart';
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_payloads.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_api.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
 
 import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';

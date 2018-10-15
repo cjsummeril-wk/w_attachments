@@ -10,8 +10,8 @@ import 'package:w_attachments_client/src/action_payloads.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_payloads.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
 
 class AttachmentsApi {
   final AttachmentsActions _attachmentsActions;

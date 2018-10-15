@@ -7,9 +7,9 @@ import 'package:messaging_sdk/messaging_sdk.dart' as msg;
 
 import 'package:w_annotations_api/annotations_api_v1.dart';
 
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_payloads.dart';
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
-import 'package:w_attachments_client/src/w_annotations_service/src/service_adapters/attachments_service.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/service_adapters/attachments_service.dart';
 
 class AnnotationsApi extends Disposable {
   AttachmentsService _attachmentService;

@@ -10,7 +10,7 @@ import 'package:w_attachments_client/src/models/group.dart';
 import 'package:w_attachments_client/src/models/filter.dart';
 import 'package:w_attachments_client/src/models/tree_node.dart';
 
-import 'package:w_attachments_client/src/w_annotations_service/src/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
 
 part 'action_payloads/action_state_change_payload.dart';
 part 'action_payloads/add_attachment_payload.dart';
