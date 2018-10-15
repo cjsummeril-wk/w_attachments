@@ -53,6 +53,7 @@ void main() {
       _attachmentsActions = new AttachmentsActions();
       _attachmentsEvents = new AttachmentsEvents();
       _extensionContext = new ExtensionContextMock();
+      _attachmentsService = new AttachmentsServiceMock();
       _store = new AttachmentsStore(
           actionProviderFactory: StandardActionProvider.actionProviderFactory,
           attachmentsActions: _attachmentsActions,
