@@ -18,6 +18,9 @@ Run the following from the root w_attachments_client directory.
 pub get
 ```
 
+#### Running in Spreadsheets
+[Instructions here.](docs/build_run.md)
+
 #### Running tests
 
 - run `pub run dart_dev test` in the root or app directory to run all the tests at those levels

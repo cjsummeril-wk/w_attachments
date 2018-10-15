@@ -15,7 +15,6 @@ main(List<String> args) async {
   config.coverage
     ..checkedMode = true
     ..pubServe = true;
-  config.examples;
   config.format
     ..paths = ['lib/', 'test/', 'tool/']
     ..exclude = ['test/generated_runner_test.dart']
