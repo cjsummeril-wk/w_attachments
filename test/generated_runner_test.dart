@@ -12,8 +12,9 @@ import './components/utils_test.dart' as components_utils_test;
 import './models/group_test.dart' as models_group_test;
 import './models/tree_node_test.dart' as models_tree_node_test;
 import './thread_pool/thread_pool_test.dart' as thread_pool_thread_pool_test;
-import './w_annotations_service/service_impl/attachments_service_test.dart' as w_annotations_service_service_impl_attachments_service_test;
+import './w_annotations_service/service_adapters/attachments_service_test.dart' as w_annotations_service_service_adapters_attachments_service_test;
 import 'package:test/test.dart';
+import 'package:dart_dev/checked_mode.dart';
 import 'package:react/react_client.dart' as react_client;
 import 'package:web_skin_dart/ui_core.dart';
 import 'package:w_transport/mock.dart';
@@ -31,5 +32,5 @@ void main() {
   models_group_test.main();
   models_tree_node_test.main();
   thread_pool_thread_pool_test.main();
-  w_annotations_service_service_impl_attachments_service_test.main();
+  w_annotations_service_service_adapters_attachments_service_test.main();
 }

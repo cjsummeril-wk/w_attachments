@@ -11,10 +11,9 @@ import 'package:w_attachments_client/src/w_annotations_service/w_annotations_mod
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
 import 'package:w_attachments_client/src/w_annotations_service/service_adapters/attachments_service.dart';
 
-import '../../mocks/client_adapter_mocks/client_adapter_mocks_library.dart';
 import '../../test_utils.dart' as test_utils;
 
-import '../mocks/mocks_library.dart' show AttachmentsServiceMock;
+import '../mocks/mocks_library.dart';
 
 void main() {
   // Test Constants
