@@ -12,16 +12,16 @@ main(List<String> args) async {
   config.analyze
     ..entryPoints = ['lib/', 'test/generated_runner_test.dart', 'tool/']
     ..strong = true;
-  // config.copyLicense
-  config.coverage..pubServe = true;
-  // config.docs
+  config.coverage
+    ..checkedMode = true
+    ..pubServe = true;
   config.examples;
   config.format
     ..paths = ['lib/', 'test/', 'tool/']
     ..exclude = ['test/generated_runner_test.dart']
     ..lineLength = 120;
   config.test
-    ..platforms = ['content-shell', 'vm']
+    ..platforms = ['dartium']
     ..unitTests = ['test/generated_runner_test.dart']
     ..pubServe = true;
 
@@ -36,6 +36,7 @@ class UnitTestRunnerConfig extends TestRunnerConfig {
     env = Environment.browser;
     filename = 'generated_runner_test';
     dartHeaders = [
+      "import 'package:dart_dev/checked_mode.dart';",
       "import 'package:react/react_client.dart' as react_client;",
       "import 'package:web_skin_dart/ui_core.dart';",
       "import 'package:w_transport/mock.dart';"

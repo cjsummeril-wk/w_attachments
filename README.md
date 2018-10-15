@@ -18,12 +18,6 @@ Run the following from the root w_attachments_client directory.
 pub get
 ```
 
-#### Running
-
-  - Run the example application inside the `example` directory to see a basic implementation of w_attachments_client
-  - `pub run dart_dev examples` in the root, with dartium running.
-
-
 #### Running tests
 
 - run `pub run dart_dev test` in the root or app directory to run all the tests at those levels
@@ -40,7 +34,6 @@ corresponding top level group so that all tests in file can be run easily.
 ### Contributing
 - Follow [Effective Dart](https://www.dartlang.org/effective-dart/).
 - Format code using `dartformat` with 120 characters: `pub run dart_dev format`
-- Verify that the example app still works correctly
 
 ## Consuming
 
@@ -252,9 +245,6 @@ static ActionProvider actionProviderFactory(AttachmentsApi api) {
 actionProviderFactory: CustomActionProvider.actionProviderFactory
 ```
 
-- See [SampleReaderPermissionsActionProvider](https://github.com/Workiva/w_attachments_client/blob/master/example/src/sample_reader_permissions_action_provider.dart)
-and its implementation in [index.dart](https://github.com/Workiva/w_attachments_client/blob/master/example/index.dart) for an example of custom implementation.
-
 #### Drag and Drop
 ##### Draggable Attachments
 - This feature utilizes the [dnd library](https://pub.dartlang.org/packages/dnd).
@@ -331,15 +321,4 @@ Performing QA plus one...
   - [ ] Unit Tests added
 ```
 
-### Known Issues
-- *2016-10-05 (ghmulli):* subcomponents are constantly re-rendering when they really don't need to. add checkRender override...
-- *2016-10-10 (ghmulli):* loading the example page takes an average of 1.48e+12ms when new updates are transpiled. this is most likely because of the bloated import file. figure out why it jumped so high when it was so low during the jam...
-- *2016-10-10 (ghmulli):* modify GroupPivot so that it more closely aligns with the current Selection back-end model
-- *2016-10-13 (ghmulli):* on the Example page, if you select an attachment and then change to another region, you can't add a new attachment because the hidden attachment row is now selected...
-- *2016-10-24 (ghmulli):* use a Makefile to generate the SASS files (see w_filing)
-- *2016-10-26 (ghmulli):* need unit tests for: mixins
-- *2016-11-21 (pankenman):* need to add logging as appropriate
-- *2016-11-21 (pankenman):* need to change all scss to be name-spaced: for example, changing the className 'attachment-controls' to 'wattachments-attachment-controls'
-- *2016-11-21 (pankenman):* should componentize the example page and move business logic to a more flux-y pattern, with an example store and actions, etc. This will eliminate redraw calls, etc.
-
-Please contact ATEAM via Hipchat if you have any questions
+Please contact us in the RAM Public Hipchat room if you have any questions
