@@ -1,5 +1,7 @@
 import 'package:web_skin_dart/ui_components.dart';
 
+enum ViewModeSettings {Groups, Headerless, References}
+
 class AttachmentsConfig {
   static const defaultZipName = 'AttachmentPackage';
 
@@ -13,6 +15,7 @@ class AttachmentsConfig {
   final String primarySelection;
   final bool showFilenameAsLabel;
   final String zipSelection;
+  final ViewModeSettings viewModeSetting;
 
   AttachmentsConfig({
     this.emptyViewIcon: IconGlyph.FOLDER_ATTACHMENTS_G2,
@@ -25,5 +28,6 @@ class AttachmentsConfig {
     this.primarySelection,
     this.showFilenameAsLabel: false,
     this.zipSelection,
+    this.viewModeSetting : ViewModeSettings.References
   });
 }
