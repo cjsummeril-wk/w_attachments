@@ -20,12 +20,9 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
   @override
   render() => (Dom.div()
     ..className = 'w_attachments_client'
-    ..addTestId('w_attachments_client'))
-    (
-      _renderAttachmentsView()
-    );
+    ..addTestId('w_attachments_client'))(_renderAttachmentsView());
 
-  ReactElement _renderAttachmentsView(){
+  _renderAttachmentsView() {
     switch (props.store.moduleConfig.viewModeSetting) {
       case ViewModeSettings.References:
         return _renderReferenceView();
@@ -44,32 +41,29 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     }
   }
 
-  _renderReferenceView(){
-    List<Attachment> attachmentsList = [];
-    props.store.groups.forEach((Group group){
-      group.attachments.forEach((Attachment attachment){
-        attachmentsList.add(attachment);
-      });
-    });
+  _renderReferenceView() {
+    List<ReactElement> attachmentsToRender = props.store.attachments.map((Attachment attachment) {
+      return (AttachmentRegion()
+        ..addProps(copyUnconsumedProps())
+        ..key = attachment.id
+        ..attachment = attachment
+        ..actions = props.actions
+        ..store = props.store
+        ..targetKey = attachment.id)();
+    }).toList();
 
-    print(attachmentsList);
+    return (RegionCollapse()
+      ..className = 'reference-view__region-container'
+      ..addTestId('reference-view__region-container')
+      ..defaultExpandedTargetKeys = []
+      ..onRegionSelect = _handleAttachmentRegionSelect)(attachmentsToRender);
+  }
 
-    List<ReactElement> attachmentsToRender = attachmentsList.map((Attachment attachment){
-      return (
-        (Region())('hey')
-      );
-    });
-
-    return (BlockContent()
-      ..shrink = true
-      ..collapse = BlockCollapse.ALL
-      ..className = 'attachments-container'
-    )(
-      (RegionCollapse()
-  //        ..defaultExpandedTargetKeys = [props.group]
-          ..className = 'attachments-container'
-          ..ref = ((RegionCollapseComponent ref) => _regionCollapse = ref))(attachmentsToRender)
-    );
+  bool _handleAttachmentRegionSelect(SyntheticEvent event, Object selectedRegionTargetKey) {
+    Attachment expandAttachmentRegion = props.store.attachments
+        .firstWhere((Attachment attachment) => attachment.id == selectedRegionTargetKey, orElse: () => null);
+    if (expandAttachmentRegion != null) {}
+    return true;
   }
 
   _renderAsRegions() {

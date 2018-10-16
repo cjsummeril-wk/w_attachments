@@ -1,6 +1,6 @@
 import 'package:web_skin_dart/ui_components.dart';
 
-enum ViewModeSettings {Groups, Headerless, References}
+enum ViewModeSettings { Groups, Headerless, References }
 
 class AttachmentsConfig {
   static const defaultZipName = 'AttachmentPackage';
@@ -17,17 +17,16 @@ class AttachmentsConfig {
   final String zipSelection;
   final ViewModeSettings viewModeSetting;
 
-  AttachmentsConfig({
-    this.emptyViewIcon: IconGlyph.FOLDER_ATTACHMENTS_G2,
-    this.emptyViewText: 'No Attachments Found',
-    this.enableClickToSelect: true,
-    this.enableDraggable: true,
-    this.enableLabelEdit: true,
-    this.enableUploadDropzones: true,
-    this.label: defaultZipName,
-    this.primarySelection,
-    this.showFilenameAsLabel: false,
-    this.zipSelection,
-    this.viewModeSetting : ViewModeSettings.References
-  });
+  AttachmentsConfig(
+      {this.emptyViewIcon: IconGlyph.FOLDER_ATTACHMENTS_G2,
+      this.emptyViewText: 'No Attachments Found',
+      this.enableClickToSelect: true,
+      this.enableDraggable: true,
+      this.enableLabelEdit: true,
+      this.enableUploadDropzones: true,
+      this.label: defaultZipName,
+      this.primarySelection,
+      this.showFilenameAsLabel: false,
+      this.zipSelection,
+      this.viewModeSetting: ViewModeSettings.References});
 }
