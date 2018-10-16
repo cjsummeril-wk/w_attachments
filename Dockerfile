@@ -13,7 +13,7 @@ ARG GIT_MERGE_HEAD
 ARG GIT_MERGE_BRANCH
 WORKDIR /build/
 ADD . /build/
-ENV CODECOV_TOKEN='bQ4MgjJ0G2Y73v8JNX6L7yMK9679nbYB'
+ENV CODECOV_TOKEN='f2da64f7-7b5c-47f3-8aa0-ed58f961f772'
 RUN echo "Starting the script sections" && \
 		pub get && \
 		pub run dart_dev format --check && \

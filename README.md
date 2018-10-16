@@ -1,3 +1,5 @@
+![codecov](https://codecov.workiva.net/gh/Workiva/w_attachments_client/branch/master/graph/badge.svg?token=QoaNfoS9ci)
+
 w_attachments_client
 =========
 
