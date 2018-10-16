@@ -1,4 +1,4 @@
-import '../attachment_test_constants.dart';
+import '../../attachment_test_constants.dart';
 import 'package:mockito/mirrors.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -7,12 +7,13 @@ import 'package:uuid/uuid.dart';
 import 'package:app_intelligence/app_intelligence_browser.dart';
 import 'package:w_annotations_api/annotations_api_v1.dart';
 
-import 'package:w_attachments_client/src/models.dart';
-import 'package:w_attachments_client/src/service_adapters/attachments_service_library.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
+import 'package:w_attachments_client/src/w_annotations_service/service_adapters/attachments_service.dart';
 
-import '../mocks/client_adapter_mocks/client_adapter_mocks_library.dart';
-import '../mocks/mocks_library.dart' show AttachmentsServiceMock;
-import '../test_utils.dart' as test_utils;
+import '../../test_utils.dart' as test_utils;
+
+import '../mocks/mocks_library.dart';
 
 void main() {
   // Test Constants

@@ -22,7 +22,7 @@ void main() {
     AttachmentsActions _attachmentsActions;
     AttachmentsEvents _attachmentsEvents;
     ExtensionContextMock _extensionContext;
-    AttachmentsService _attachmentsService;
+    AnnotationsApiMock _annotationsApiMock;
 
     Element mockShellBodyElement;
     TestJacket<AttachmentsPanelToolbarComponent> testJacket;
@@ -53,14 +53,14 @@ void main() {
       _attachmentsActions = new AttachmentsActions();
       _attachmentsEvents = new AttachmentsEvents();
       _extensionContext = new ExtensionContextMock();
-      _attachmentsService = new AttachmentsServiceMock();
+      _annotationsApiMock = new AnnotationsApiMock();
       _store = new AttachmentsStore(
           actionProviderFactory: StandardActionProvider.actionProviderFactory,
           attachmentsActions: _attachmentsActions,
           attachmentsEvents: _attachmentsEvents,
-          attachmentsService: _attachmentsService,
           extensionContext: _extensionContext,
           dispatchKey: attachmentsModuleDispatchKey,
+          annotationsApi: _annotationsApiMock,
           attachments: [],
           groups: []);
 

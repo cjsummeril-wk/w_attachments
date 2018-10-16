@@ -1,4 +1,4 @@
-part of w_attachments_client.service;
+part of w_attachments_client.w_annotations_service.payloads;
 
 class CreateAttachmentUsageResponse {
   final Attachment attachment;

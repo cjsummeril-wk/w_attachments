@@ -1,4 +1,23 @@
-part of w_attachments_client.service;
+library w_attachments_client.w_annotations_service.attachments;
+
+import 'dart:async';
+import 'dart:core';
+import 'dart:html' hide Client, Selection;
+
+import 'package:app_intelligence/app_intelligence_browser.dart';
+import 'package:frugal/frugal.dart' as frugal;
+import 'package:logging/logging.dart';
+import 'package:messaging_sdk/messaging_sdk.dart' as msg;
+import 'package:meta/meta.dart';
+import 'package:w_annotations_api/annotations_api_v1.dart';
+import 'package:w_common/disposable.dart';
+
+import 'package:w_attachments_client/src/components/utils.dart' as component_utils;
+import 'package:w_attachments_client/src/upload.dart';
+
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
+import 'package:w_attachments_client/src/w_annotations_service/service_adapters/service_constants.dart';
 
 class AttachmentsService extends Disposable {
   FWAnnotationsServiceClient _fClient;
@@ -7,7 +26,6 @@ class AttachmentsService extends Disposable {
 
   AppIntelligence _appIntelligence;
   msg.NatsMessagingClient _msgClient;
-  ModalManager _modalManager;
   UploadManager _uploadManager;
 
   StreamController<UploadStatus> _uploadStatusStreamController;
@@ -36,7 +54,6 @@ class AttachmentsService extends Disposable {
   AttachmentsService(
       {@required msg.NatsMessagingClient messagingClient,
       AppIntelligence appIntelligence,
-      ModalManager modalManager,
       FWAnnotationsService fClient: null})
       : _uploadStatusStreamController = new StreamController<UploadStatus>.broadcast() {
     _appIntelligence = (appIntelligence != null)
@@ -46,7 +63,6 @@ class AttachmentsService extends Disposable {
 
     _msgClient = messagingClient;
     _uploadManager = manageAndReturnDisposable(new UploadManager());
-    _modalManager = modalManager;
     if (fClient != null) {
       _fClient = fClient;
     }
@@ -58,16 +74,16 @@ class AttachmentsService extends Disposable {
   frugal.Middleware get logCorrelationIdMiddleware =>
       (frugal.InvocationHandler next) => (String serviceName, String methodName, List<Object> args) async {
             _logger.info("Starting $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
-        .correlationId})");
+            .correlationId})");
             try {
               final res = await next(serviceName, methodName, args);
               _logger.info("Finished $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
-        .correlationId})");
+              .correlationId})");
               return res;
             } catch (e, s) {
               _logger.severe(
                   "Execption raised by $serviceName.$methodName(correlation ID: ${(args.first as frugal.FContext)
-        .correlationId})",
+                  .correlationId})",
                   e,
                   s);
               rethrow;

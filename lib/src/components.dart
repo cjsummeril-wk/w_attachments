@@ -19,7 +19,7 @@ import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
 import 'package:w_attachments_client/src/models.dart';
-import 'package:w_attachments_client/src/service_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
 
 part 'components/attachment_action_renderer.dart';
 part 'components/attachment_avatar_handler.dart';

@@ -1,4 +1,4 @@
-part of w_attachments_client.test.client_adapter_mocks;
+part of w_attachments_client.test.w_annotations_service.mocks;
 
 class _FAnnotationsClientMock extends Mock implements FWAnnotationsServiceClient {}
 

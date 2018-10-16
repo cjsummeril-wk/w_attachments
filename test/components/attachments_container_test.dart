@@ -17,7 +17,7 @@ void main() {
     AttachmentsModule _module;
     Session _session;
     ExtensionContextMock _extensionContext;
-    AttachmentsService _attachmentsService;
+    AnnotationsApiMock _annotationsApiMock;
     MockMessagingClient _msgClient;
 
     Object renderedModule;
@@ -28,14 +28,15 @@ void main() {
 
         _session = new Session();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsService = new AttachmentsServiceMock();
         _msgClient = new MockMessagingClient();
+        _annotationsApiMock = new AnnotationsApiMock();
 
         _module = new AttachmentsModule(
             config: new AttachmentsConfig(),
             session: _session,
             messagingClient: _msgClient,
             extensionContext: _extensionContext,
+            annotationsApi: _annotationsApiMock,
             actionProviderFactory: StandardActionProvider.actionProviderFactory);
 
         await _module.load();
@@ -46,7 +47,7 @@ void main() {
       tearDown(() async {
         await _session.dispose();
         await _extensionContext.dispose();
-        await _attachmentsService.dispose();
+        await _annotationsApiMock.dispose();
         await _module.unload();
         await _msgClient.dispose();
 

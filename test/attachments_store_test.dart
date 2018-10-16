@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
 
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
+import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/action_payloads.dart';
@@ -19,7 +21,7 @@ import 'test_utils.dart' as test_utils;
 void main() {
   group('AttachmentsStore', () {
     // Mocks
-    AttachmentsServiceMock _attachmentsServiceMock;
+    AnnotationsApiMock _annotationsApiMock;
 
     // Subject
     AttachmentsStore _store;
@@ -40,7 +42,7 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
       });
 
       tearDown(() {
@@ -55,7 +57,7 @@ void main() {
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsServiceMock,
+                annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -77,7 +79,7 @@ void main() {
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsServiceMock,
+            annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -93,7 +95,7 @@ void main() {
             moduleConfig: new AttachmentsConfig(enableUploadDropzones: false, label: 'AttachmentPackage'),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsServiceMock,
+            annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -108,7 +110,7 @@ void main() {
             moduleConfig: new AttachmentsConfig(enableClickToSelect: false, label: 'AttachmentPackage'),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsServiceMock,
+            annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -122,7 +124,7 @@ void main() {
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsServiceMock,
+            annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -140,7 +142,7 @@ void main() {
             moduleConfig: new AttachmentsConfig(enableDraggable: false, label: 'AttachmentPackage'),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsServiceMock,
+            annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -155,7 +157,7 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
@@ -163,7 +165,7 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsServiceMock,
+                annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -744,7 +746,7 @@ void main() {
 
       setUp(() {
         // Mocks
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
 
         // Client
         _attachmentsActions = new AttachmentsActions();
@@ -759,7 +761,7 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsServiceMock,
+                annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -844,7 +846,7 @@ void main() {
           // Arrange
           List<int> getIds = [1, 2, 3];
           _store.attachmentUsages = happyPathUsages;
-          when(_attachmentsServiceMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(happyPathAttachments);
+          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(happyPathAttachments);
 
           // Act
           await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
@@ -857,7 +859,7 @@ void main() {
           // Arrange
           List<int> getIds = [1, 2, 97];
           _store.attachmentUsages = happyPathUsages;
-          when(_attachmentsServiceMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(twoMatchAttachments);
+          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(twoMatchAttachments);
 
           // Act
           await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
@@ -870,7 +872,7 @@ void main() {
           // Arrange
           List<int> getIds = [97, 98, 99];
           _store.attachmentUsages = happyPathUsages;
-          when(_attachmentsServiceMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(noMatchAttachments);
+          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(noMatchAttachments);
 
           // Act
           await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
@@ -882,17 +884,17 @@ void main() {
         test('does not perform any action if the payload is empty or null', () async {
           // Arrange
           _store.attachmentUsages = happyPathUsages;
-          when(_attachmentsServiceMock.getAttachmentsByIds).thenReturn(happyPathAttachments);
+          when(_annotationsApiMock.getAttachmentsByIds).thenReturn(happyPathAttachments);
 
           // Act (1/2)
           await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: null));
           // Assert (1/2)
-          verifyNever(_attachmentsServiceMock.getAttachmentsByIds);
+          verifyNever(_annotationsApiMock.getAttachmentsByIds);
 
           // Act (2/2)
           await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: []));
           // Assert (2/2)
-          verifyNever(_attachmentsServiceMock.getAttachmentsByIds);
+          verifyNever(_annotationsApiMock.getAttachmentsByIds);
         });
 
         // TODO RAM-732 App Intelligence
@@ -907,7 +909,7 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
@@ -915,7 +917,7 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsServiceMock,
+                annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -1236,7 +1238,7 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
       });
 
       test('properties from config are exposed properly', () {
@@ -1254,7 +1256,7 @@ void main() {
             moduleConfig: config,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsServiceMock,
+            annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -1285,7 +1287,7 @@ void main() {
             moduleConfig: config,
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
-            attachmentsService: _attachmentsServiceMock,
+            annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
@@ -1325,14 +1327,14 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsServiceMock,
+                annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -1367,14 +1369,14 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsServiceMock,
+                annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -1401,8 +1403,8 @@ void main() {
         await _attachmentsActions.createAttachmentUsage(payload);
 
         // Assert
-        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
-        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any));
+        verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
+        verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any));
       });
 
       test('does nothing if isValidSelection is false due to discontiguous selections', () async {
@@ -1422,8 +1424,8 @@ void main() {
         await _attachmentsActions.createAttachmentUsage(payload);
 
         // Assert
-        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
-        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any));
+        verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
+        verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any));
       });
 
       test('calls createAttachmentUsage with valid selection, adds new Anchor, AttachmentUsage and Attachment to store',
@@ -1437,7 +1439,7 @@ void main() {
         when(_extensionContext.observedRegionApi.create(selection: testSelection)).thenReturn(
             new cef.ObservedRegion(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
-        when(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any)).thenAnswer((_) => new Future.value(
+        when(_annotationsApiMock.createAttachmentUsage(producerWurl: any)).thenAnswer((_) => new Future.value(
             new CreateAttachmentUsageResponse(
                 anchor: AttachmentTestConstants.mockAnchor,
                 attachmentUsage: AttachmentTestConstants.mockAttachmentUsage,
@@ -1448,7 +1450,7 @@ void main() {
             .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
 
         // Assert
-        verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl));
+        verify(_annotationsApiMock.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl));
         expect(_store.anchorsByWurls.keys.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);
@@ -1473,7 +1475,7 @@ void main() {
         when(_extensionContext.observedRegionApi.create(selection: testSelection)).thenReturn(
             new cef.ObservedRegion(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
-        when(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any)).thenAnswer((_) => new Future.value(
+        when(_annotationsApiMock.createAttachmentUsage(producerWurl: any)).thenAnswer((_) => new Future.value(
             new CreateAttachmentUsageResponse(
                 anchor: AttachmentTestConstants.mockAnchor,
                 attachmentUsage: AttachmentTestConstants.mockAttachmentUsage,
@@ -1486,7 +1488,7 @@ void main() {
             .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
 
         // Assert
-        verify(_attachmentsServiceMock.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl));
+        verify(_annotationsApiMock.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl));
         expect(_store.anchorsByWurls.keys.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);
@@ -1501,7 +1503,7 @@ void main() {
 
       test('does nothing if service call returns null', () async {
         // Arrange
-        test_utils.mockServiceMethod(() => _attachmentsServiceMock.createAttachmentUsage, null);
+        test_utils.mockServiceMethod(() => _annotationsApiMock.createAttachmentUsage, null);
         final testSelection =
             new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope);
         // make sure isValidSelection is true
@@ -1513,8 +1515,8 @@ void main() {
                 new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope)));
 
         // Assert
-        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
-        verifyNever(_attachmentsServiceMock.createAttachmentUsage(producerWurl: any));
+        verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
+        verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any));
         expect(_store.anchorsByWurls, isEmpty);
         expect(_store.attachmentUsages, isEmpty);
         expect(_store.attachments, isEmpty);
@@ -1526,14 +1528,14 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsServiceMock,
+                annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -1558,7 +1560,7 @@ void main() {
         Completer getAttachmentUsagesByIdsCompleter =
             test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
 
-        when(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: any))
+        when(_annotationsApiMock.getAttachmentUsagesByIds(usageIdsToLoad: any))
             .thenReturn(AttachmentTestConstants.mockAttachmentUsageList);
 
         GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
@@ -1567,7 +1569,7 @@ void main() {
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");
-        verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
+        verify(_annotationsApiMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
         expect(_store.attachmentUsages, isNotEmpty);
         expect(
             _store.attachmentUsages,
@@ -1590,7 +1592,7 @@ void main() {
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");
-        verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
+        verify(_annotationsApiMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
 
         expect(_store.attachmentUsages, isEmpty);
       });
@@ -1603,7 +1605,7 @@ void main() {
         Completer getAttachmentUsagesByIdsCompleter =
             test_utils.hookinActionVerifier(_store.attachmentsActions.getAttachmentUsagesByIds);
 
-        when(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: any))
+        when(_annotationsApiMock.getAttachmentUsagesByIds(usageIdsToLoad: any))
             .thenReturn(AttachmentTestConstants.mockAttachmentUsageList);
 
         GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
@@ -1618,7 +1620,7 @@ void main() {
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");
-        verify(_attachmentsServiceMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
+        verify(_annotationsApiMock.getAttachmentUsagesByIds(usageIdsToLoad: usageIds)).called(1);
 
         expect(
             _store.attachmentUsages,
@@ -1638,14 +1640,14 @@ void main() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
-        _attachmentsServiceMock = new AttachmentsServiceMock();
+        _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
-                attachmentsService: _attachmentsServiceMock,
+                annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
@@ -1670,7 +1672,7 @@ void main() {
       test('gracefull null return', () async {
         List<String> producerWurls = [AttachmentTestConstants.testWurl];
 
-        when(_attachmentsServiceMock.getAttachmentsByProducers(producerWurls: producerWurls)).thenReturn(null);
+        when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls)).thenReturn(null);
 
         Map<String, List<Anchor>> _previous = new Map<String, List<Anchor>>.from(_store.anchorsByWurls);
 
@@ -1682,7 +1684,7 @@ void main() {
       test('calls getAttachmentsByProducers preserving', () async {
         List<String> producerWurls = [AttachmentTestConstants.testWurl];
 
-        when(_attachmentsServiceMock.getAttachmentsByProducers(producerWurls: producerWurls))
+        when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls))
             .thenReturn(getAttachmentsByProducersHappyResponse);
 
         await _attachmentsActions.getAttachmentsByProducers(
@@ -1698,7 +1700,7 @@ void main() {
       test('calls getAttachmentsByProducers overriding', () async {
         List<String> producerWurls = [AttachmentTestConstants.testWurl];
 
-        when(_attachmentsServiceMock.getAttachmentsByProducers(producerWurls: producerWurls))
+        when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls))
             .thenReturn(getAttachmentsByProducersHappyResponse);
 
         await _attachmentsActions
