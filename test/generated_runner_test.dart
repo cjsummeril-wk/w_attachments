@@ -10,7 +10,6 @@ import './components/attachments_container_test.dart' as components_attachments_
 import './components/attachments_panel_toolbar_test.dart' as components_attachments_panel_toolbar_test;
 import './components/utils_test.dart' as components_utils_test;
 import './models/group_test.dart' as models_group_test;
-import './models/tree_node_test.dart' as models_tree_node_test;
 import './thread_pool/thread_pool_test.dart' as thread_pool_thread_pool_test;
 import './w_annotations_service/service_adapters/attachments_service_test.dart' as w_annotations_service_service_adapters_attachments_service_test;
 import 'package:test/test.dart';
@@ -30,7 +29,6 @@ void main() {
   components_attachments_panel_toolbar_test.main();
   components_utils_test.main();
   models_group_test.main();
-  models_tree_node_test.main();
   thread_pool_thread_pool_test.main();
   w_annotations_service_service_adapters_attachments_service_test.main();
 }

@@ -15,32 +15,11 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
   static final utils.TestIdGenerator _testId = utils.buildTestIdGenerator(containerPrefix: 'attachmentsContainer');
 
   static final String emptyViewTestId = _testId('empty-view');
-  static final String virtualTreeTestId = _testId('virtual-tree-container');
 
-  // if any groups have childGroups, render as Tree, else render as regions
   @override
   render() => (Dom.div()
     ..className = 'w_attachments_client'
-    ..addTestId('w_attachments_client'))(props.store.groups.any((Group group) => group.childGroups?.isNotEmpty == true)
-      ? _renderAsVirtualTree()
-      : _renderAsRegions());
-
-  _renderAsVirtualTree() => (Dom.div()
-    ..className = 'w-attachments attachments-container'
-    ..addTestId(virtualTreeTestId))((w_virtual_components.VirtualTree()
-    ..hideRootNode = true
-    ..nodeRenderer = attachmentTreeNodeRenderer
-    ..root = props.store.rootNode
-    ..nodeSize = new w_virtual_components.Size(null, 30)
-    ..scrollMultiplier = 1.00
-    ..showScrollBars = true
-    ..nodeUniqueIdFactory = ((int index, w_virtual_components.TreeNode node) {
-      AttachmentsTreeNode attNode = node as AttachmentsTreeNode;
-      if (attNode != null) {
-        return '${attNode.label}${attNode.label.hashCode}';
-      }
-      return node.hashCode;
-    }))());
+    ..addTestId('w_attachments_client'))(_renderAsRegions());
 
   _renderAsRegions() {
     int ctr = 0;
