@@ -9,7 +9,6 @@ import 'package:w_attachments_client/src/w_annotations_service/w_annotations_pay
 class AttachmentsActions extends Disposable {
   final addAttachment = new Action<AddAttachmentPayload>();
   final dropFiles = new Action<DropFilesPayload>();
-  final updateAttachment = new Action<UpdateAttachmentPayload>();
   final updateLabel = new Action<UpdateLabelPayload>();
   final upsertAttachment = new Action<UpsertAttachmentPayload>();
 
@@ -27,15 +26,10 @@ class AttachmentsActions extends Disposable {
   final updateAttachmentsConfig = new Action<AttachmentsConfig>();
   final refreshPanelToolbar = new Action<Null>();
 
-  // Nested Attachment Tree Actions
-  final hoverOverAttachmentNode = new Action<HoverOverNodePayload>();
-  final hoverOutAttachmentNode = new Action<HoverOutNodePayload>();
-
   AttachmentsActions() {
     [
       addAttachment,
       dropFiles,
-      updateAttachment,
       updateLabel,
       upsertAttachment,
       selectAttachments,
@@ -46,8 +40,6 @@ class AttachmentsActions extends Disposable {
       setGroups,
       updateAttachmentsConfig,
       refreshPanelToolbar,
-      hoverOverAttachmentNode,
-      hoverOutAttachmentNode
     ].forEach(manageDisposable);
   }
 }

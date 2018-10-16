@@ -58,11 +58,6 @@ class AttachmentsStore extends Store {
   Map<String, Filter> _filtersByName = {};
   List<Group> _groups = [];
 
-  // nested tree properties
-  AttachmentsTreeNode _hoveredNode;
-  AttachmentsTreeNode _rootNode;
-  Map<dynamic, List<AttachmentsTreeNode>> _treeNodes = {};
-
   // content extension framework properties
   Iterable<String> _currentScopes = [];
   Set<int> _currentlySelectedAttachments = new Set<int>();
@@ -94,12 +89,6 @@ class AttachmentsStore extends Store {
       _filters = initialFilters;
     }
 
-    _rootNode = new GroupTreeNode(
-        new ContextGroup(sortMethod: showFilenameAsLabel ? FilenameGroupSort.compare : LabelGroupSort.compare),
-        _actionProvider,
-        this,
-        attachmentsActions);
-
     // Module Action Listeners
     triggerOnActionV2(attachmentsActions.setActionItemState, _setActionItemState);
     triggerOnActionV2(attachmentsActions.setGroups, _setGroups);
@@ -116,10 +105,7 @@ class AttachmentsStore extends Store {
       attachmentsActions.createAttachmentUsage.listen(_handleCreateAttachmentUsage),
       attachmentsActions.getAttachmentsByIds.listen(_handleGetAttachmentsByIds),
       attachmentsActions.getAttachmentsByProducers.listen(_handleGetAttachmentsByProducers),
-      attachmentsActions.hoverOverAttachmentNode.listen(_hoverOverAttachmentNodes),
       attachmentsActions.getAttachmentUsagesByIds.listen(_getAttachmentUsagesByIds),
-      attachmentsActions.hoverOutAttachmentNode.listen(_hoverOutAttachmentNodes),
-      attachmentsActions.updateAttachment.listen(_updateAttachment),
       attachmentsActions.upsertAttachment.listen(_upsertAttachment),
       attachmentsActions.refreshPanelToolbar.listen(_handleRefreshPanelToolbar)
     ].forEach(manageActionSubscription);
@@ -198,11 +184,6 @@ class AttachmentsStore extends Store {
     return attachmentsOfUsages(usages);
   }
 
-  // nested tree getters/setters
-  AttachmentsTreeNode get rootNode => _rootNode;
-  AttachmentsTreeNode get hoveredNode => _hoveredNode;
-  Map<dynamic, List<AttachmentsTreeNode>> get treeNodes => _treeNodes;
-
   // group and filter getters/setters
   List<Group> get groups => new List<Group>.from(_groups);
 
@@ -227,8 +208,6 @@ class AttachmentsStore extends Store {
     _attachments.clear();
     _groups.clear();
     _filters.clear();
-    _rootNode.clearChildren();
-    _rootNode = null;
     _currentlySelectedAttachments = null;
     currentlyDisplayedSingle = null;
   }
@@ -251,44 +230,7 @@ class AttachmentsStore extends Store {
     for (var group in _groups) {
       group.rebuildAndRedrawGroup(_attachments);
     }
-    if (_groups.any((Group group) => group.hasChildren)) {
-      _rootNode.clearChildren();
-      _rootNode.addChildren(_generateTreeNodes(_groups));
-      _rootNode.triggerRoot();
-    }
     trigger();
-  }
-
-  List<GroupTreeNode> _generateTreeNodes(List<Group> groups) {
-    List<GroupTreeNode> nodes = [];
-    if (groups?.isNotEmpty == true) {
-      for (var group in groups) {
-        GroupTreeNode groupNode;
-        groupNode = new GroupTreeNode(group, actionProvider, this, attachmentsActions,
-            children: group.hasChildren ? _generateTreeNodes(group.childGroups) : null);
-        if (group.attachments?.isNotEmpty == true) {
-          group.attachments.forEach((attachment) {
-            if (_treeNodes[attachment.id] == null) {
-              _treeNodes[attachment.id] = [];
-            }
-            var attachmentNode = new AttachmentTreeNode(attachment, actionProvider, this, attachmentsActions);
-            groupNode.addChild(attachmentNode);
-            _treeNodes[attachment.id].add(attachmentNode);
-          });
-        }
-
-        if (groupNode.children?.isNotEmpty != true) {
-          groupNode.addChild(new EmptyTreeNode(this, attachmentsActions));
-        }
-
-        nodes.add(groupNode);
-        if (_treeNodes[group.key] == null) {
-          _treeNodes[group.key] = [];
-        }
-        _treeNodes[group.key].add(groupNode);
-      }
-    }
-    return nodes;
   }
 
   _removeAttachmentFromClientCache(int id) {
@@ -404,7 +346,8 @@ class AttachmentsStore extends Store {
 
   _upsertAttachment(UpsertAttachmentPayload request) {
     if (_attachments.contains(request.toUpsert)) {
-      _updateAttachment(new UpdateAttachmentPayload(toUpdate: request.toUpsert));
+      // trigger to update attachments view.
+      trigger();
     } else {
       _addAttachment(new AddAttachmentPayload(toAdd: request.toUpsert));
     }
@@ -417,23 +360,9 @@ class AttachmentsStore extends Store {
     }
   }
 
-  void _updateAttachment(UpdateAttachmentPayload request) {
-    trigger();
-    // treeNodes are not rendered as part of a general `trigger()` so must be triggered individually
-    List nodes = _treeNodes[request.toUpdate.id];
-    if (nodes?.isNotEmpty == true) {
-      for (AttachmentsTreeNode node in nodes) {
-        node.trigger();
-      }
-    }
-  }
-
   _selectAttachments(SelectAttachmentsPayload request) {
     if (!request.maintainSelections && currentlySelectedAttachments.isNotEmpty) {
       _deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: currentlySelectedAttachments.toList()));
-      for (var key in currentlySelectedAttachments) {
-        _treeNodes[key]?.forEach((node) => node.trigger());
-      }
     }
     List<int> attachmentIds = request?.attachmentIds;
     if (attachmentIds != null) {
@@ -441,7 +370,6 @@ class AttachmentsStore extends Store {
         if (currentlySelectedAttachments.add(id)) {
           attachmentsEvents.attachmentSelected(
               new AttachmentSelectedEventPayload(selectedAttachmentId: id), dispatchKey);
-          _treeNodes[id]?.forEach((node) => node.trigger());
         }
       }
     }
@@ -452,7 +380,6 @@ class AttachmentsStore extends Store {
     if (attachmentIds != null) {
       for (int id in attachmentIds) {
         if (currentlySelectedAttachments.remove(id)) {
-          _treeNodes[id]?.forEach((node) => node.trigger());
           attachmentsEvents.attachmentDeselected(
               new AttachmentDeselectedEventPayload(deselectedAttachmentId: id), dispatchKey);
         }
@@ -496,16 +423,6 @@ class AttachmentsStore extends Store {
     if (uploadStatus.status != Status.Cancelled) {
       _upsertAttachment(new UpsertAttachmentPayload(toUpsert: uploadStatus.attachment));
     }
-  }
-
-  void _hoverOverAttachmentNodes(HoverOverNodePayload request) {
-    _hoveredNode = request.hovered;
-    _hoveredNode.trigger();
-  }
-
-  void _hoverOutAttachmentNodes(HoverOutNodePayload request) {
-    _hoveredNode = null;
-    request.unhovered.trigger();
   }
 
   /// Triggers a refresh of the panel toolbar when new Action Items are to be used.

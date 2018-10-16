@@ -85,8 +85,8 @@ class BaseModule extends Module {
   - `List<Filter> initialFilters`: A list of `Filter`s that can be set per group to display a subset of a group's attachments.
   - `bool enableDraggable`: `true` to allow attachments (not groups) to be draggable components, `false` if not.
   - `bool enableUploadDropzones`: `true` to allow an attachment upload to be triggered by dragging a file from the file system to the panel, `false` if not.
-  - `bool enableLabelEdit`: `true` to allow editing the label through the CTE control in the card header or treenode.
-  - `bool showFilenameAsLabel`: `false` to show the annotation.filename in the label card header or treenode rather than the annotation.label which is default. This setting also controls which property is being edited with the enableLabelEdit setting.
+  - `bool enableLabelEdit`: `true` to allow editing the label through the CTE control in the card header.
+  - `bool showFilenameAsLabel`: `false` to show the annotation.filename in the label card header rather than the annotation.label which is default. This setting also controls which property is being edited with the enableLabelEdit setting.
   - `Selection zipSelection`: The de facto [Selection](https://github.com/Workiva/w_attachments_client/blob/master/lib/src/models/selection.dart) being used for zip download bundles, it requires a type be set, such as `SelectionGraphVertex`, `SelectionDocument`, `SelectionSection`.
   - `String label`: A short description of the Document or Section or Test Control Form or Spreadsheet from which the Attachments Panel
   has been loaded. Examples are section name or test control form name (like "Sample Selection"). This is the label applied to zip download files.
@@ -123,7 +123,7 @@ module = new AttachmentsModule(
 ```
 
 #### Setting Groups
-- There are two views now supported: Region-based and VirtualTree-based.
+- There are two views now supported: Region-based and Reference-based.
 
 ##### Region View
 - In order to display attachments in a region view, the module requires that context groups are set.
@@ -163,43 +163,6 @@ module = new AttachmentsModule(
         groups: [someGroupOfAttachments]);
 
 ```
-
-##### Nested Attachment Tree View
-- The Nested Tree View allows for a simulated directory structure by which to organize the displayed attachments.
-- In order to display attachments in a Nested Tree view, the module requires a list of [ContextGroup](https://github.com/Workiva/w_attachments_client/blob/master/lib/src/models/group/context_group.dart)
- or [PredicateGroup](https://github.com/Workiva/w_attachments_client/blob/master/lib/src/models/group/predicate_group.dart) that have `childGroups` set within them.
- - ContextGroups and Predicates can both be set as children for both types (ContextGroup => ContextGroup, ContextGroup => PredicateGroup, PredicateGroup => ContextGroup, PredicateGroup => PredicateGroup).
- - Groups will take attachments only from its parent's attachments and filter down from that list.
-  - For instance, a PredicateGroup's child ContextGroup will only display attachments that match both its `resourceId` AND the custom predicate of its parent.
- - ContextGroups can take multiple pivots in a list, filtering attachment by either pivot (union of all matching attachments). ContextGroups must have
- a provided uploadSelection (of type [Selection](https://github.com/Workiva/w_attachments_client/blob/master/lib/src/models/selection.dart)) in order to allow upload.
-
-```dart
-import 'package:w_attachments_client/w_attachments_client.dart';
-...
-Selection uploadSelection = new Selection(documentId: ExampleDocumentId)
-
-ContextGroup someGroupOfAttachments = new ContextGroup(
-    name: 'some group of attachments',
-    childGroups: [],
-    pivots: [new GroupPivot(
-      type: GroupPivotType.DOCUMENT,
-      id: ExampleDocumentId,
-      selection: uploadSelection)],
-    uploadSelection: uploadSelection
-);
-ContextGroup parentGroup = new ContextGroup(
-    name: 'parent',
-    childGroups: [someGroupOfAttachments]
-);
-...
-await module.api.setGroups(groups: [parentGroup]); // pass in a list of parent groups, the childGroups will trigger a TreeView.
-
-```
-
-Groups with a provided `childGroup` structure defined here can be set in the module construction the same as the example above in region view.
-
-
 
 #### Setting Filters
   - Each group can have filters applied to it (for instance, the group needs to show files supported by some
