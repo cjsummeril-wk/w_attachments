@@ -6,8 +6,8 @@
 @import 'package:web_skin/sass/core/api';
 
 .w_attachments_client {
-  @import "./sass/general.scss";
-  @import "./sass/reference_view.scss";
+  width: 100%;
+  @import "./sass/attachment-avatar.scss", "./sass/attachment-card.scss", "./sass/group-panel.scss";
 }
 
 

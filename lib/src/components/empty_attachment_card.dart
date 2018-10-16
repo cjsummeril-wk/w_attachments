@@ -32,8 +32,7 @@ class EmptyAttachmentCardComponent extends FluxUiStatefulComponent<EmptyAttachme
     ..skin = CardSkin.WHITE)();
 
   _renderEmptyHeader() => (CardHeader()
-    ..className = ((new ClassNameBuilder()..add('attachment-card-header')..add('no-attachments')..add('not-editing'))
-        .toClassName())
+    ..className = 'attachment-card__header--no-attachments'
     ..leftCap = AttachmentIconRenderer()())(props.store.moduleConfig.emptyViewText);
 
   _handleMouseOver(e) {

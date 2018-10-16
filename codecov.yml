@@ -12,7 +12,6 @@ coverage:
     - "lib/sass"
   status:
     project: yes
-    patch: yes
     changes: no
 
 comment:

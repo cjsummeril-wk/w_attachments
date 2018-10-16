@@ -29,7 +29,6 @@ part 'components/attachment_file_label.dart';
 part 'components/attachment_icon_renderer.dart';
 part 'components/attachments_components.dart';
 part 'components/attachments_container.dart';
-part 'components/attachments_controls.dart';
 part 'components/attachments_header.dart';
 part 'components/attachments_panel_toolbar.dart';
 part 'components/empty_attachment_card.dart';

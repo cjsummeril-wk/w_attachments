@@ -21,10 +21,9 @@ class AttachmentCardHeaderComponent extends FluxUiComponent<AttachmentCardHeader
   @override
   render() {
     ClassNameBuilder headerClasses = new ClassNameBuilder()
-      ..add('attachment-card-header')
+      ..add('attachment-card__header', !props.isSelected)
       ..add('is-clickable')
-      ..add('not-editing')
-      ..add('selected', props.isSelected);
+      ..add('attachment-card__header--selected', props.isSelected);
 
     return (CardHeader()
       ..className = headerClasses.toClassName()
@@ -37,7 +36,7 @@ class AttachmentCardHeaderComponent extends FluxUiComponent<AttachmentCardHeader
         ..isHovered = props.isHovered
         ..isSelected = props.isSelected
         ..renderAsCardHeaderActions = true
-        ..addedClassName = 'card__header__menu-item')()))(!props.store.enableLabelEdit
+        ..addedClassName = 'attachment-card__header__menu-item')()))(!props.store.enableLabelEdit
         ? _labelText
         : (AttachmentFileLabel()
           ..actions = props.actions

@@ -105,10 +105,9 @@ class GroupPanelComponent extends FluxUiStatefulComponent<GroupPanelProps, Group
 
   _renderDropZone() {
     var classes = new ClassNameBuilder()
-      ..add('region__drop-target')
-      ..add('grid-block')
-      ..add('is-drop-target')
-      ..add('is-drop-target--dragover', state.isDragging);
+      ..add('group-panel__drop-target', !state.isDragging)
+      ..add('group-panel__drop-target--dragover', state.isDragging)
+      ..add('grid-block');
 
     return (Dom.div()
           ..key = 'attachment-upload-dropzone'

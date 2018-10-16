@@ -41,7 +41,6 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
 //    return (BlockContent()
 //      ..shrink = true
 //      ..collapse = BlockCollapse.ALL
-//      ..className = 'attachments-container'
 //    )(
 //      regionContent.isEmpty || (props.store.showingHeaderlessGroup && numAttachmentsDisplayed == 0) ?
 //        _renderEmptyView() :
@@ -52,7 +51,6 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
         ? _renderEmptyView()
         : (RegionCollapse()
 //        ..defaultExpandedTargetKeys = [props.group]
-          ..className = 'attachments-container'
           ..ref = ((RegionCollapseComponent ref) => _regionCollapse = ref))(regionContent);
   }
 
