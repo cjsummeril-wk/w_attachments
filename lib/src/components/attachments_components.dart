@@ -17,20 +17,9 @@ class AttachmentsComponents extends ModuleComponents {
     ..glyph = IconGlyph.ATTACHMENT
     ..addTestId('attachments.AttachmentViewComponent.Icon'))();
 
-  /// __Deprecated.__ Use [titleV2] instead.
-  @deprecated
-  title() => (AttachmentsHeader()..headingLabel = 'Attachments')();
-
   PanelTitleProps titleV2() => PanelTitle()
     ..addTestId('attachment.AttachmentViewComponent.Heading')
     ..defaultValue = 'Attachments';
-
-  /// __Deprecated.__ Use [panelToolbar] instead.
-  @deprecated
-  menu() => (AttachmentsControls()
-    ..actions = attachmentsActions
-    ..store = store
-    ..actionProvider = actionProvider)();
 
   AttachmentsPanelToolbarProps panelToolbar() => AttachmentsPanelToolbar()
     ..actions = attachmentsActions

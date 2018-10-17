@@ -1,0 +1,19 @@
+// dragged object css
+.attachment--dragged {
+  height: 3.4rem;
+  min-width: 20rem;
+  max-width: 38.4rem;
+  padding: 0.6rem;
+
+  &__icon {
+    margin: 0.2rem 1.2rem 0 0.2rem;
+  }
+
+  &__text {
+    max-width: 35.8rem;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

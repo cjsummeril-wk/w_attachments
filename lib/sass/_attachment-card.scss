@@ -1,0 +1,26 @@
+.attachment-card__header {
+	h4 {
+	  font-weight: normal;
+	}
+
+	&--no-attachments{
+	  font-style: italic;
+	  color: lighten(color('global.gray.lighter'), 20%);
+	}
+
+	&--selected {
+	  font-weight: bold;
+	}
+
+	&__label {
+	  color: #7d7d7d;
+	  padding: 0.2rem 0 0.2rem 0.2rem;
+	  max-height: 2.4rem !important;
+	  border-radius: 0.3rem;
+	}
+
+	&__menu-item {
+	  margin-top: .3rem;
+	  padding-top: .1rem;
+	}
+}

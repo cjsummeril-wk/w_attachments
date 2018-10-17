@@ -33,7 +33,7 @@ class AttachmentFileLabelComponent extends FluxUiComponent<AttachmentFileLabelPr
 
     return ((ClickToEditInput()
       ..alwaysReadOnly = !props.store.enableLabelEdit
-      ..className = 'attachment-label'
+      ..className = 'attachment-card__header__label'
       ..defaultValue = props.labelText
       ..formGroupTitle = ''
       ..hideLabel = true

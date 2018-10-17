@@ -32,9 +32,9 @@ class GroupPanelComponent extends FluxUiStatefulComponent<GroupPanelProps, Group
         : [];
 
     var content = predicates.isEmpty ? _renderAttachmentCards(props.group.attachments) : _renderPredicates(predicates);
-//    if (props.store.enableUploadDropzones) {
-//      content.add(_renderDropZone());
-//    }
+    if (props.store.enableUploadDropzones) {
+      content.add(_renderDropZone());
+    }
 
     if (props.store.showingHeaderlessGroup) {
       return (Region()
@@ -105,10 +105,9 @@ class GroupPanelComponent extends FluxUiStatefulComponent<GroupPanelProps, Group
 
   _renderDropZone() {
     var classes = new ClassNameBuilder()
-      ..add('region__drop-target')
-      ..add('grid-block')
-      ..add('is-drop-target')
-      ..add('is-drop-target--dragover', state.isDragging);
+      ..add('group-panel__drop-target', !state.isDragging)
+      ..add('group-panel__drop-target--dragover', state.isDragging)
+      ..add('grid-block');
 
     return (Dom.div()
           ..key = 'attachment-upload-dropzone'

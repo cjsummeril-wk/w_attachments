@@ -10,30 +10,19 @@ class AttachmentsPanelToolbarProps extends PanelToolbarProps<AttachmentsActions,
 
 @Component()
 class AttachmentsPanelToolbarComponent extends FluxUiComponent<AttachmentsPanelToolbarProps> {
-  List<ActionItem> _panelActions;
-
   @override
   get consumedProps => const [
         const $Props(AttachmentsPanelToolbarProps),
       ];
 
   @override
-  componentWillMount() {
-    super.componentWillMount();
-    _panelActions = props.panelActions;
-  }
-
-  @override
   render() {
-    final classes = forwardingClassNameBuilder()..add('attachments-controls');
-
     return (PanelToolbar()
       ..addProps(copyUnconsumedProps())
       ..addTestId('attachment.AttachmentViewComponent.Toolbar')
       ..belowToolbarContent = (Block()
         ..id = utils.UPLOAD_INPUT_CACHE_CONTAINER
         ..style = {'display': 'none'})()
-      ..className = classes.toClassName()
       ..toolbarItems = _renderItems())();
   }
 
