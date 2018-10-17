@@ -1,4 +1,4 @@
-part of w_attachments_client.upload;
+part of w_attachments_client.tools.upload;
 
 class UploadWorker extends ThreadPoolWorker {
   BaseRequest request;

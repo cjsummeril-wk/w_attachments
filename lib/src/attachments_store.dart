@@ -15,7 +15,7 @@ import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_config.dart';
 import 'package:w_attachments_client/src/attachments_events.dart';
-import 'package:w_attachments_client/src/models.dart';
+import 'package:w_attachments_client/src/models/models.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/src/utils.dart';
 

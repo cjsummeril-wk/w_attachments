@@ -1,4 +1,4 @@
-part of w_attachments_client.upload;
+part of w_attachments_client.tools.upload;
 
 class UploadManager extends Disposable {
   static int _refCount = 0;

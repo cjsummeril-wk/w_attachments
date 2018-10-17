@@ -1,4 +1,4 @@
-part of w_attachments_client.thread_pool;
+part of w_attachments_client.tools.thread_pool;
 
 class ThreadPool extends Disposable {
   final int _workerCount;

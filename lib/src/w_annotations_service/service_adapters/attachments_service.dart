@@ -13,7 +13,7 @@ import 'package:w_annotations_api/annotations_api_v1.dart';
 import 'package:w_common/disposable.dart';
 
 import 'package:w_attachments_client/src/components/utils.dart' as component_utils;
-import 'package:w_attachments_client/src/upload.dart';
+import 'package:w_attachments_client/src/tools/upload.dart';
 
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';

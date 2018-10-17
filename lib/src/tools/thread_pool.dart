@@ -1,4 +1,4 @@
-library w_attachments_client.thread_pool;
+library w_attachments_client.tools.thread_pool;
 
 import 'dart:async';
 import 'dart:collection';
