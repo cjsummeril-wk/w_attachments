@@ -18,8 +18,9 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
 
   // if any groups have childGroups, render as Tree, else render as regions
   @override
-  render() => (Dom.div()
+  render() => (Block()
     ..className = 'w_attachments_client'
+    ..size = 12
     ..addTestId('w_attachments_client'))(_renderAttachmentsView());
 
   _renderAttachmentsView() {
@@ -47,23 +48,17 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
         ..addProps(copyUnconsumedProps())
         ..key = attachment.id
         ..attachment = attachment
+        ..references = props.store.usagesOfAttachment(attachment)
         ..actions = props.actions
         ..store = props.store
         ..targetKey = attachment.id)();
     }).toList();
 
     return (RegionCollapse()
+      ..revealHeaderActionsOnHover = true
       ..className = 'reference-view__region-container'
       ..addTestId('reference-view__region-container')
-      ..defaultExpandedTargetKeys = []
-      ..onRegionSelect = _handleAttachmentRegionSelect)(attachmentsToRender);
-  }
-
-  bool _handleAttachmentRegionSelect(SyntheticEvent event, Object selectedRegionTargetKey) {
-    Attachment expandAttachmentRegion = props.store.attachments
-        .firstWhere((Attachment attachment) => attachment.id == selectedRegionTargetKey, orElse: () => null);
-    if (expandAttachmentRegion != null) {}
-    return true;
+      ..defaultExpandedTargetKeys = [])(attachmentsToRender);
   }
 
   _renderAsRegions() {

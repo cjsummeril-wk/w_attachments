@@ -1,0 +1,63 @@
+// Styling for the Reference View for the AttachmentPanel.
+.reference-view{
+	&__region-container{
+		width: 100%;
+		border-bottom-width: 0;
+		&::after{
+			border-bottom-width: 0;
+		}
+	}
+
+	&__region-header{
+		font-weight: bold;
+	}
+
+	&--header {
+		margin-bottom: 0;
+		margin-top: 1rem;
+		margin-left: 2.5rem;
+	}
+
+	&--location{
+		color: #cbcbcb;
+		font-size: 12px;
+		margin-left: 2.5rem;
+	}
+
+	&__reference-card {
+		border-bottom: 0.02rem solid #e3e3e3;
+
+		&:hover{
+			background-color: #ebf6ff;
+
+			.reference-view__reference-card--buttons{
+					display: inline-block;
+				}
+		}
+
+		&--text-container{
+			padding: 0;
+		}
+
+		&--buttons-container{
+			text-align: right;
+			padding: 0;
+		}
+
+		&--buttons{
+			display: none;
+			margin-left: 0.25rem;
+			margin-right: 0.25rem;
+			margin-top: 1.5rem;
+		}
+	}
+
+	&__reference-card:first-child{
+		border-top: 0.02rem solid #e3e3e3;
+	}
+}
+
+// hard override of a region collapse visual bug
+	.reference-view__region-container.region-collapse-list.region-collapse-list--reveal-actions-on-hover::after{
+		display: none;
+	}

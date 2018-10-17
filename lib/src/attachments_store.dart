@@ -183,8 +183,10 @@ class AttachmentsStore extends Store {
     return attachmentsToReturn;
   }
 
-  List<AttachmentUsage> usagesOfAttachment(Attachment attachment) =>
-      _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachment.id);
+  List<AttachmentUsage> usagesOfAttachment(Attachment attachment) {
+    return _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachment.id).toList();
+  }
+
   List<Attachment> attachmentsForProducerWurl(String producerWurl) {
     List<AttachmentUsage> usages = attachmentUsagesByAnchors(anchorsByWurl(producerWurl));
     return attachmentsOfUsages(usages);
