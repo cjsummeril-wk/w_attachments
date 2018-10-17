@@ -3,7 +3,6 @@ library w_attachments_client.payloads.attachments_module_actions;
 import 'dart:html' show File;
 
 import 'package:meta/meta.dart';
-import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
 import 'package:w_attachments_client/src/models/action_item.dart';
 import 'package:w_attachments_client/src/models/group.dart';
@@ -24,7 +23,6 @@ part 'module_actions/replace_attachment_payload.dart';
 part 'module_actions/select_attachments_payload.dart';
 part 'module_actions/set_filters_payload.dart';
 part 'module_actions/set_groups_payload.dart';
-part 'module_actions/update_attachment_payload.dart';
 part 'module_actions/update_filename_payload.dart';
 part 'module_actions/update_label_payload.dart';
 part 'module_actions/upload_attachment_payload.dart';

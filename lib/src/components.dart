@@ -1,6 +1,5 @@
 library w_attachments_client.components;
 
-import 'dart:async';
 import 'dart:html' as html;
 
 import 'package:dnd/dnd.dart';
@@ -9,7 +8,6 @@ import 'package:truss/truss.dart' show PanelTitle, PanelTitleProps, PanelToolbar
 import 'package:react/react.dart' as react;
 import 'package:react/react_dom.dart' as react_dom;
 import 'package:w_module/w_module.dart';
-import 'package:w_virtual_components/w_virtual_components.dart' as w_virtual_components;
 import 'package:web_skin_dart/ui_components.dart';
 import 'package:web_skin_dart/ui_core.dart';
 

@@ -54,11 +54,6 @@ dependencies:
       name: w_session
       url: https://pub.workiva.org
     version: '>=5.21.0 <7.0.0'
-  w_virtual_components:
-    hosted:
-      name: w_virtual_components
-      url: https://pub.workiva.org
-    version: ^1.17.0
   wdesk_sdk:
     hosted:
       name: wdesk_sdk
