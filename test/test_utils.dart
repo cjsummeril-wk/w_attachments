@@ -8,6 +8,7 @@ import 'package:w_module/w_module.dart';
 
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
+import 'package:w_attachments_client/src/attachments_config.dart';
 
 import './mocks/mocks_library.dart';
 

@@ -9,10 +9,14 @@ import 'package:w_attachments_client/src/w_annotations_service/w_annotations_mod
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
-import 'package:w_attachments_client/src/action_payloads.dart';
-import 'package:w_attachments_client/src/attachments_actions.dart';
-import 'package:w_attachments_client/src/attachments_store.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
+import 'package:w_attachments_client/src/attachments_actions.dart';
+import 'package:w_attachments_client/src/attachments_config.dart';
+import 'package:w_attachments_client/src/attachments_events.dart';
+import 'package:w_attachments_client/src/attachments_store.dart';
+import 'package:w_attachments_client/src/models/models.dart';
+import 'package:w_attachments_client/src/standard_action_provider.dart';
+import 'package:w_attachments_client/src/payloads/module_actions.dart';
 
 import './mocks/mocks_library.dart';
 import 'attachment_test_constants.dart';
