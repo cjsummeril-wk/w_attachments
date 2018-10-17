@@ -49,7 +49,10 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
 
   @override
   render() {
-    var classes = new ClassNameBuilder()..add('cursor-default')..add('is-drag-source', state.isDragging);
+    var classes = new ClassNameBuilder()
+      ..add('attachment-card')
+      ..add('cursor-default')
+      ..add('is-drag-source', state.isDragging);
 
     return (Card()
       ..addTestId('wh.AttachmentCardComponent.Card')

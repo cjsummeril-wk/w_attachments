@@ -32,9 +32,9 @@ class GroupPanelComponent extends FluxUiStatefulComponent<GroupPanelProps, Group
         : [];
 
     var content = predicates.isEmpty ? _renderAttachmentCards(props.group.attachments) : _renderPredicates(predicates);
-//    if (props.store.enableUploadDropzones) {
-//      content.add(_renderDropZone());
-//    }
+    if (props.store.enableUploadDropzones) {
+      content.add(_renderDropZone());
+    }
 
     if (props.store.showingHeaderlessGroup) {
       return (Region()
