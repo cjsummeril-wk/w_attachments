@@ -2,14 +2,10 @@
 .reference-view{
 	&__region-container{
 		width: 100%;
-		border-bottom-width: 0;
-		&::after{
-			border-bottom-width: 0;
-		}
 	}
 
-	&__region-header{
-		font-weight: bold;
+	&__icon{
+		padding-right: 1rem;
 	}
 
 	&--header {
@@ -18,41 +14,48 @@
 		margin-left: 2.5rem;
 	}
 
-	&--location{
-		color: #cbcbcb;
-		font-size: 12px;
-		margin-left: 2.5rem;
+	&__buttons {
+		margin-right: 0.5rem;
 	}
 
-	&__reference-card {
+	&__reference {
 		border-bottom: 0.02rem solid #e3e3e3;
-
-		&:hover{
-			background-color: #ebf6ff;
-
-			.reference-view__reference-card--buttons{
-					display: inline-block;
-				}
-		}
 
 		&--text-container{
 			padding: 0;
 		}
 
+		&--header-text {
+			margin-bottom: 0;
+			margin-top: 1rem;
+			margin-left: 2.5rem;
+		}
+		&--location-text {
+			color: #cbcbcb;
+			font-size: 12px;
+			margin-left: 2.5rem;
+		}
+
 		&--buttons-container{
 			text-align: right;
-			padding: 0;
 		}
 
 		&--buttons{
 			display: none;
-			margin-left: 0.25rem;
-			margin-right: 0.25rem;
+			margin-left: 0.5rem;
 			margin-top: 1.5rem;
+		}
+
+		&:hover{
+			background-color: #ebf6ff;
+
+			.reference-view__reference--buttons{
+					display: inline-block;
+				}
 		}
 	}
 
-	&__reference-card:first-child{
+	&__reference:first-child{
 		border-top: 0.02rem solid #e3e3e3;
 	}
 }

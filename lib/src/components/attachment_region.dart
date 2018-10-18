@@ -9,6 +9,7 @@ class AttachmentRegionProps extends RegionProps {
   AttachmentsStore store;
   Attachment attachment;
   List<AttachmentUsage> references;
+  cef.Selection currentSelection;
 }
 
 @State()
@@ -27,18 +28,20 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
   @override
   render() {
     return (Region()
-          ..addProps(copyUnconsumedProps())
-          ..className = 'reference-view__region'
-          ..className = state.isExpanded ? 'region-block' : ''
-          ..targetKey = props.targetKey
-          ..key = props.attachment.id
-          ..onMouseOver = _handleMouseOver
-          ..onMouseLeave = _handleMouseLeave
-          ..onClick = _handleExpandRegion
-          ..size = RegionSize.DEFAULT
-          ..header = (RegionHeader()..rightCap = _handleRenderRegionDropdown())(
-              Dom.strong()(props.attachment.filename.isEmpty ? 'attachment_file_name' : props.attachment.filename)))(
-        (_generateReferenceCards()));
+      ..addProps(copyUnconsumedProps())
+      ..className = 'reference-view__region'
+      ..targetKey = props.targetKey
+      ..key = props.attachment.id
+      ..onMouseOver = _handleMouseOver
+      ..onMouseLeave = _handleMouseLeave
+      ..onClick = _handleExpandRegion
+      ..size = RegionSize.DEFAULT
+      ..header = (RegionHeader()..rightCap = _handleRenderActionButtons())(
+          Dom.strong()(
+              (Dom.span()
+                ..className = 'reference-view__icon')((AttachmentIconRenderer()..attachment = props.attachment)()),
+              props.attachment.filename.isEmpty ? 'attachment_file_name' : props.attachment.filename),
+          ' (${props.references.length})'))((_generateReferenceCards()));
   }
 
   List<ReactElement> _generateReferenceCards() {
@@ -46,36 +49,44 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
     List<ReactElement> referenceCards = props.references.map((AttachmentUsage usage) {
       return (Block()
             ..size = 12
-            ..className = 'reference-view__reference-card'
+            ..className = 'reference-view__reference'
             ..key = usage.id)(
           // two blocks nested next to each other: one for text, one for actions on reference.
           (BlockContent()
                 ..size = 9
-                ..className = "reference-view__reference-card--text-container")(
-              ((Dom.p()..className = 'reference-view--header')('Reference Label ${referenceCount++}')),
-              ((Dom.p()..className = 'reference-view--location')(usage.anchorId))),
+                ..className = "reference-view__reference--text-container")(
+              ((Dom.p()..className = 'reference-view__reference--header-text')('Reference Label ${referenceCount++}')),
+              ((Dom.p()..className = 'reference-view__reference--location-text')(usage.anchorId))),
           (BlockContent()
                 ..size = 3
-                ..className = 'reference-view__reference-card--buttons-container')(
+                ..className = 'region__cap--right reference-view__reference--buttons-container')(
               (Button()
-                ..className = 'reference-view__reference-card--buttons'
+                ..className = 'reference-view__reference--buttons'
                 ..noText = true
                 ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.TASK_LINK)()),
               (Button()
-                ..className = 'reference-view__reference-card--buttons'
+                ..className = 'reference-view__reference--buttons'
                 ..noText = true
                 ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.CHEVRON_DOWN)())));
     }).toList();
     return referenceCards;
   }
 
-  ReactElement _handleRenderRegionDropdown() {
+  ReactElement _handleRenderActionButtons() {
     if (state.isExpanded || state.isHovered) {
-      return (DropdownButton()
-        ..noText = true
-        ..onClick = _handleDropdownClick
-        ..pullMenuRight = true
-        ..size = ButtonSize.XSMALL)(DropdownMenu()((MenuItem()..onClick = _handleAddReference)("Add Reference")));
+      return (Block())(
+          (Button()
+            ..noText = true
+            ..isDisabled = !props.store.isValidSelection
+            ..onClick = _handleAddReference
+            ..className = 'reference-view__buttons'
+            ..modifyProps(hint('Add Reference', HintPlacement.BOTTOM))
+            ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.SHORTCUT_ADD)()),
+          (DropdownButton()
+            ..noText = true
+            ..onClick = _handleDropdownClick
+            ..pullMenuRight = true
+            ..size = ButtonSize.XSMALL)(DropdownMenu()((MenuItem())("Delete Attachment"))));
     } else {
       return null;
     }

@@ -48,11 +48,14 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
         ..addProps(copyUnconsumedProps())
         ..key = attachment.id
         ..attachment = attachment
+        ..currentSelection = props.store.currentSelection
         ..references = props.store.usagesOfAttachment(attachment)
         ..actions = props.actions
         ..store = props.store
         ..targetKey = attachment.id)();
     }).toList();
+
+    attachmentsToRender.sort((a, b) => a.key.compareTo(b.key));
 
     return (RegionCollapse()
       ..revealHeaderActionsOnHover = true
