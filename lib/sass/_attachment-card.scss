@@ -1,26 +1,37 @@
 .attachment-card__header {
+	min-height: 2.4rem;
+	padding-top: 0.5rem;
+	height: auto;
+
 	h4 {
-	  font-weight: normal;
+		font-weight: normal;
 	}
 
 	&--no-attachments{
-	  font-style: italic;
-	  color: lighten(color('global.gray.lighter'), 20%);
+		font-style: italic;
+		color: lighten(color('global.gray.lighter'), 20%);
 	}
 
 	&--selected {
-	  font-weight: bold;
+		@extend .attachment-card__header;
+		font-weight: bold;
 	}
 
 	&__label {
-	  color: #7d7d7d;
-	  padding: 0.2rem 0 0.2rem 0.2rem;
-	  max-height: 2.4rem !important;
-	  border-radius: 0.3rem;
+		color: #7d7d7d;
+		padding: 0.2rem 0 0.2rem 0.2rem;
+		border-radius: 0.3rem;
+		max-height: 2.4rem;
+
+		&--active {
+			color: #7d7d7d;
+			padding: 0.2rem 0 0.2rem 0.2rem;
+			border-radius: 0.3rem;
+		}
 	}
 
 	&__menu-item {
-	  margin-top: .3rem;
-	  padding-top: .1rem;
+		margin-top: .3rem;
+		padding-top: .1rem;
 	}
 }

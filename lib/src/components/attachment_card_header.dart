@@ -22,8 +22,8 @@ class AttachmentCardHeaderComponent extends FluxUiComponent<AttachmentCardHeader
   render() {
     ClassNameBuilder headerClasses = new ClassNameBuilder()
       ..add('attachment-card__header', !props.isSelected)
-      ..add('is-clickable')
-      ..add('attachment-card__header--selected', props.isSelected);
+      ..add('attachment-card__header--selected', props.isSelected)
+      ..add('is-clickable');
 
     return (CardHeader()
       ..className = headerClasses.toClassName()
@@ -41,7 +41,7 @@ class AttachmentCardHeaderComponent extends FluxUiComponent<AttachmentCardHeader
         : (AttachmentFileLabel()
           ..actions = props.actions
           ..attachment = props.attachment
-          ..labelText = _labelText
+          ..isCardExpanded = props.isSelected
           ..store = props.store)());
   }
 }

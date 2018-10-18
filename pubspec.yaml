@@ -87,7 +87,7 @@ dev_dependencies:
   dartdoc: ^0.13.0
   dependency_validator: ^1.1.1
   mockito: ">=2.2.2 <3.0.0"
-  over_react: ^1.25.0
+  over_react: ^1.27.0
   over_react_test: ^1.4.0
   sass: ^1.0.0
   semver_audit:

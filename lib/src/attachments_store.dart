@@ -326,8 +326,7 @@ class AttachmentsStore extends Store {
         return null;
       }
 
-      _attachmentUsages = removeAndAddType(response, _attachmentUsages, false);
-      return _attachmentUsages;
+      return removeAndAddType(response, _attachmentUsages, false);
     } else {
       _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);
       return null;

@@ -39,7 +39,6 @@ void main() {
     String validWurl = 'wurl://docs.v1/doc:962DD25A85142FBBD7AC5AC84BAE9BD6';
     String testUsername = 'Ron Swanson';
     String veryGoodResourceId = 'very good resource id';
-    String veryGoodSectionId = 'very good section id';
 
     group('constructor', () {
       setUp(() {
