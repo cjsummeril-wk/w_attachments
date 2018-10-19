@@ -38,7 +38,7 @@ class GroupPanelComponent extends FluxUiStatefulComponent<GroupPanelProps, Group
 
     if (props.store.showingHeaderlessGroup) {
       return (Region()
-            ..header = ((RegionHeader())())
+            ..header = (RegionHeader()())
             ..onDragEnter = _onDragEnter
             ..onDragLeave = _onDragLeave
             ..onDragOver = _onDragOver

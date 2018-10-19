@@ -8,48 +8,43 @@
 		padding-right: 1rem;
 	}
 
-	&--header {
-		margin-bottom: 0;
-		margin-top: 1rem;
-		margin-left: 2.5rem;
-	}
-
 	&__buttons {
 		margin-right: 0.5rem;
 	}
 
-	&__reference {
+	&__reference-card {
 		border-bottom: 0.02rem solid #e3e3e3;
 
-		&--text-container{
-			padding: 0;
-		}
-
-		&--header-text {
-			margin-bottom: 0;
-			margin-top: 1rem;
-			margin-left: 2.5rem;
-		}
-		&--location-text {
-			color: #cbcbcb;
-			font-size: 12px;
-			margin-left: 2.5rem;
-		}
-
-		&--buttons-container{
+		&__buttons-container{
 			text-align: right;
 		}
 
-		&--buttons{
+		&__buttons{
 			display: none;
 			margin-left: 0.5rem;
 			margin-top: 1.5rem;
 		}
 
+		&__text-container{
+			padding: 0;
+		}
+
+		&__location-text {
+			color: #cbcbcb;
+			font-size: 12px;
+			margin-left: 2.5rem;
+		}
+
+		&__header-text {
+			margin-bottom: 0;
+			margin-top: 1rem;
+			margin-left: 2.5rem;
+		}
+
 		&:hover{
 			background-color: #ebf6ff;
 
-			.reference-view__reference--buttons{
+			.reference-view__reference-card__buttons{
 					display: inline-block;
 				}
 		}
@@ -57,7 +52,7 @@
 
 	// fixes a visual bug when multiple regions are next to each other and expanded, where the border bottom disappears on the header of the region.
 	// Adds a border top to the first reference instance.
-	&__reference:first-child{
+	&__reference-card:first-child{
 		border-top: 0.02rem solid #e3e3e3;
 	}
 }

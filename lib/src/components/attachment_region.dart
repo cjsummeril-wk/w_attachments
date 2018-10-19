@@ -27,68 +27,68 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
     ..isExpanded = false);
 
   @override
-  render() {
-    return (Region()
-      ..addProps(copyUnconsumedProps())
-      ..addTestId('${ComponentTestIds.rvAttachment}-${props.attachmentCounter}')
-      ..className = 'reference-view__region'
-      ..targetKey = props.targetKey
-      ..key = props.attachment.id
-      ..onMouseOver = _handleMouseOver
-      ..onMouseLeave = _handleMouseLeave
-      ..onClick = _handleExpandRegion
-      ..size = RegionSize.DEFAULT
-      ..header = (RegionHeader()..rightCap = _handleRenderActionButtons())(
-          Dom.strong()(
-              (Dom.span()
-                ..className = 'reference-view__icon')((AttachmentIconRenderer()..attachment = props.attachment)()),
-              props.attachment.filename == null || props.attachment.filename.isEmpty
-                  ? 'attachment_file_name'
-                  : props.attachment.filename),
-          ' (${props.references.length})'))((_generateReferenceCards()));
-  }
+  render() => (Region()
+    ..addProps(copyUnconsumedProps())
+    ..addTestId('${ReferenceViewTestIds.rvAttachment}-${props.attachmentCounter}')
+    ..className = 'reference-view__region'
+    ..targetKey = props.targetKey
+    ..key = props.attachment.id
+    ..onMouseOver = _handleMouseOver
+    ..onMouseLeave = _handleMouseLeave
+    ..onClick = _handleOnClickExpand
+    ..size = RegionSize.DEFAULT
+    ..header = (RegionHeader()..rightCap = _renderActionButtons())(_renderHeader()))((_generateReferenceCards()));
 
   List<ReactElement> _generateReferenceCards() {
-    int referenceCount = 0;
     List<ReactElement> referenceCards = props.references.map((AttachmentUsage usage) {
       // increment test ids by 1
-      referenceCount += 1;
+      int count = props.references.indexOf(usage);
       return (Block()
-            ..addTestId("${ComponentTestIds.rvReference}-${referenceCount}")
+            ..addTestId("${ReferenceViewTestIds.rvReference}-${count}")
             ..size = 12
-            ..className = 'reference-view__reference'
+            ..className = 'reference-view__reference-card'
             ..key = usage.id)(
           // two blocks nested next to each other: one for text, one for actions on reference.
           (BlockContent()
                 ..size = 9
-                ..addTestId(ComponentTestIds.referenceText)
-                ..className = "reference-view__reference--text-container")(
-              ((Dom.p()..className = 'reference-view__reference--header-text')('Reference Label ${referenceCount}')),
-              ((Dom.p()..className = 'reference-view__reference--location-text')(usage.anchorId))),
+                ..addTestId(ReferenceViewTestIds.referenceText)
+                ..className = "reference-view__reference-card__text-container")(
+              ((Dom.p()..className = 'reference-view__reference-card__header-text')('Reference Label ${count}')),
+              ((Dom.p()..className = 'reference-view__reference-card__location-text')(usage.anchorId))),
           (BlockContent()
                 ..size = 3
-                ..addTestId(ComponentTestIds.referenceButtons)
-                ..className = 'region__cap--right reference-view__reference--buttons-container')(
+                ..addTestId(ReferenceViewTestIds.referenceButtons)
+                ..className = 'region__cap--right reference-view__reference-card__buttons-container')(
               (Button()
-                ..className = 'reference-view__reference--buttons'
+                ..className = 'reference-view__reference-card__buttons'
                 ..noText = true
                 ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.TASK_LINK)()),
               (Button()
-                ..className = 'reference-view__reference--buttons'
+                ..className = 'reference-view__reference-card__buttons'
                 ..noText = true
                 ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.CHEVRON_DOWN)())));
     }).toList();
     return referenceCards;
   }
 
-  ReactElement _handleRenderActionButtons() {
+  ReactElement _renderHeader() {
+    return (Dom.span()..className = 'reference-view__icon')(
+        Dom.strong()(
+            (AttachmentIconRenderer()..attachment = props.attachment)(),
+            props.attachment.filename == null || props.attachment.filename.isEmpty
+                ? ' attachment_file_name'
+                : props.attachment.filename),
+        ' (${props.references.length})');
+  }
+
+  ReactElement _renderActionButtons() {
     if (state.isExpanded || state.isHovered) {
       return (Block())(
           (Button()
             ..noText = true
             ..isDisabled = !props.store.isValidSelection
             ..onClick = _handleAddReference
-            ..addTestId(ComponentTestIds.addReferenceButton)
+            ..addTestId(ReferenceViewTestIds.addReferenceButton)
             ..className = 'reference-view__buttons'
             ..modifyProps(hint('Add Reference', HintPlacement.BOTTOM))
             ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.SHORTCUT_ADD)()),
@@ -114,7 +114,7 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
     }
   }
 
-  _handleExpandRegion(e) {
+  _handleOnClickExpand(e) {
     if (state.isExpanded) {
       setState(newState()..isExpanded = false);
     } else {

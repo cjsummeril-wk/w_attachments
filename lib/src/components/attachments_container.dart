@@ -12,11 +12,6 @@ class AttachmentsContainerProps extends FluxUiProps<AttachmentsActions, Attachme
 class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainerProps> {
   RegionCollapseComponent _regionCollapse;
 
-  static final utils.TestIdGenerator _testId = utils.buildTestIdGenerator(containerPrefix: 'attachmentsContainer');
-
-  static final String emptyViewTestId = _testId('empty-view');
-
-  // if any groups have childGroups, render as Tree, else render as regions
   @override
   render() => (Block()
     ..className = 'w_attachments_client'
@@ -24,26 +19,28 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     ..addTestId(ComponentTestIds.attachmentContainer))(_renderAttachmentsView());
 
   _renderAttachmentsView() {
-    switch (props.store.moduleConfig.viewModeSetting) {
-      case ViewModeSettings.References:
-        return _renderReferenceView();
-        break;
-      case ViewModeSettings.Groups:
-        return _renderAsRegions();
-        break;
-      case ViewModeSettings.Headerless:
-        return _renderAsRegions();
-        break;
-      default:
-        return _renderEmptyView();
+    if (props.store.attachments.isNotEmpty) {
+      switch (props.store.moduleConfig.viewModeSetting) {
+        case ViewModeSettings.References:
+          return _renderReferenceView();
+          break;
+        case ViewModeSettings.Groups:
+          return _renderAsRegions();
+          break;
+        case ViewModeSettings.Headerless:
+          return _renderAsRegions();
+          break;
+        default:
+          return _renderEmptyView();
+      }
+    } else {
+      return _renderEmptyView();
     }
   }
 
   _renderReferenceView() {
-    int attachmentCounter = 0;
     List<ReactElement> attachmentsToRender = props.store.attachments.map((Attachment attachment) {
       // increment test ids by 1 to grab the right element in tests.
-      attachmentCounter += 1;
       return (AttachmentRegion()
         ..addProps(copyUnconsumedProps())
         ..key = attachment.id
@@ -52,7 +49,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
         ..references = props.store.usagesOfAttachment(attachment)
         ..actions = props.actions
         ..store = props.store
-        ..attachmentCounter = attachmentCounter
+        ..attachmentCounter = props.store.attachments.indexOf(attachment)
         ..targetKey = attachment.id)();
     }).toList();
 
@@ -63,7 +60,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     return (RegionCollapse()
       ..revealHeaderActionsOnHover = true
       ..className = 'reference-view__region-container'
-      ..addTestId(ComponentTestIds.referenceView)
+      ..addTestId(ReferenceViewTestIds.referenceView)
       ..defaultExpandedTargetKeys = [])(attachmentsToRender);
   }
 
@@ -101,7 +98,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
   }
 
   _renderEmptyView() => (EmptyView()
-    ..addTestId(emptyViewTestId)
+    ..addTestId(ComponentTestIds.emptyView)
     ..glyph = props.store.moduleConfig.emptyViewIcon
     ..header = props.store.moduleConfig.emptyViewText
     ..type = EmptyViewType.VBLOCK)();

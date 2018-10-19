@@ -36,13 +36,14 @@ void main() {
         _annotationsApiMock = new AnnotationsApiMock();
 
         _module = new AttachmentsModule(
-            config: new AttachmentsConfig(viewModeSetting: ViewModeSettings.Headerless),
+            config: new AttachmentsConfig(viewModeSetting: ViewModeSettings.References),
             session: _session,
             messagingClient: _msgClient,
             extensionContext: _extensionContext,
             annotationsApi: _annotationsApiMock,
             actionProviderFactory: StandardActionProvider.actionProviderFactory);
 
+        _module.store.attachments = [];
         await _module.load();
 
         attachmentsView = render(_module.components.content());
@@ -60,14 +61,14 @@ void main() {
 
       test('should render empty view', () {
         test_utils.expectTestIdWasFound(attachmentsView, ComponentTestIds.attachmentContainer);
-        test_utils.expectTestIdWasFound(attachmentsView, AttachmentsContainerComponent.emptyViewTestId);
+        test_utils.expectTestIdWasFound(attachmentsView, ComponentTestIds.emptyView);
       });
 
       group('should use config for', () {
         EmptyViewComponent emptyViewComponent;
 
         setUp(() {
-          emptyViewComponent = getComponentByTestId(attachmentsView, AttachmentsContainerComponent.emptyViewTestId);
+          emptyViewComponent = getComponentByTestId(attachmentsView, ComponentTestIds.emptyView);
           expect(emptyViewComponent, isNotNull);
         });
 
@@ -114,8 +115,14 @@ void main() {
       });
 
       test('should render the panel and the Reference View ', () {
+        _module.store.attachments = [
+          AttachmentTestConstants.mockAttachment,
+          AttachmentTestConstants.mockChangedAttachment
+        ];
+        attachmentsView = render(_module.components.content());
+
         test_utils.expectTestIdWasFound(attachmentsView, ComponentTestIds.attachmentContainer);
-        test_utils.expectTestIdWasFound(attachmentsView, ComponentTestIds.referenceView);
+        test_utils.expectTestIdWasFound(attachmentsView, ReferenceViewTestIds.referenceView);
       });
 
       test('should render a list of Attachments within the ReferenceView', () {
@@ -125,9 +132,9 @@ void main() {
         ];
         attachmentsView = render(_module.components.content());
 
-        test_utils.expectTestIdWasFound(attachmentsView, ComponentTestIds.referenceView);
-        test_utils.expectTestIdWasFound(attachmentsView, '${ComponentTestIds.rvAttachment}-1');
-        test_utils.expectTestIdWasFound(attachmentsView, '${ComponentTestIds.rvAttachment}-2');
+        test_utils.expectTestIdWasFound(attachmentsView, ReferenceViewTestIds.referenceView);
+        test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-0');
+        test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-1');
       });
     });
   });
