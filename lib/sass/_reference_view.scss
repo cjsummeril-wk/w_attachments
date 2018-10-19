@@ -55,6 +55,8 @@
 		}
 	}
 
+	// fixes a visual bug when multiple regions are next to each other and expanded, where the border bottom disappears on the header of the region.
+	// Adds a border top to the first reference instance.
 	&__reference:first-child{
 		border-top: 0.02rem solid #e3e3e3;
 	}

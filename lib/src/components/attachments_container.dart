@@ -21,29 +21,29 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
   render() => (Block()
     ..className = 'w_attachments_client'
     ..size = 12
-    ..addTestId('w_attachments_client'))(_renderAttachmentsView());
+    ..addTestId(ComponentTestIds.attachmentContainer))(_renderAttachmentsView());
 
   _renderAttachmentsView() {
     switch (props.store.moduleConfig.viewModeSetting) {
       case ViewModeSettings.References:
         return _renderReferenceView();
-
         break;
       case ViewModeSettings.Groups:
         return _renderAsRegions();
-
         break;
       case ViewModeSettings.Headerless:
         return _renderAsRegions();
-
         break;
       default:
-        return null;
+        return _renderEmptyView();
     }
   }
 
   _renderReferenceView() {
+    int attachmentCounter = 0;
     List<ReactElement> attachmentsToRender = props.store.attachments.map((Attachment attachment) {
+      // increment test ids by 1 to grab the right element in tests.
+      attachmentCounter += 1;
       return (AttachmentRegion()
         ..addProps(copyUnconsumedProps())
         ..key = attachment.id
@@ -52,15 +52,18 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
         ..references = props.store.usagesOfAttachment(attachment)
         ..actions = props.actions
         ..store = props.store
+        ..attachmentCounter = attachmentCounter
         ..targetKey = attachment.id)();
     }).toList();
 
+    // for now, sort the region by key (attachment.id). Resolves a bug where
+    // an added reference to an AttachmentRegion would re-render the view and re-order the attachments.
     attachmentsToRender.sort((a, b) => a.key.compareTo(b.key));
 
     return (RegionCollapse()
       ..revealHeaderActionsOnHover = true
       ..className = 'reference-view__region-container'
-      ..addTestId('reference-view__region-container')
+      ..addTestId(ComponentTestIds.referenceView)
       ..defaultExpandedTargetKeys = [])(attachmentsToRender);
   }
 
