@@ -26,6 +26,7 @@ class AttachmentCardHeaderComponent extends FluxUiComponent<AttachmentCardHeader
       ..add('is-clickable');
 
     return (CardHeader()
+      ..addTestId(test_id.AttachmentCardIds.attachmentCardHeaderId)
       ..className = headerClasses.toClassName()
       ..leftCap = (AttachmentIconRenderer()..attachment = props.attachment)()
       ..rightCap = ((AttachmentActionRenderer()

@@ -12,6 +12,9 @@ import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 import 'package:web_skin_dart/ui_components.dart';
 import 'package:web_skin_dart/ui_core.dart';
 
+import 'package:w_attachments_client/src/components/utils.dart' as utils;
+
+import 'package:w_attachments_client/src/payloads/module_actions.dart';
 import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_config.dart';
@@ -22,6 +25,7 @@ import 'package:w_attachments_client/src/payloads/module_actions.dart';
 import 'package:w_attachments_client/src/test/component_test_ids.dart';
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_models.dart';
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
+import 'package:w_attachments_client/src/components/component_test_ids.dart' as test_id;
 
 part 'attachment_action_renderer.dart';
 part 'attachment_region.dart';

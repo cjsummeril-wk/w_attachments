@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:w_attachments_client/w_attachments_client.dart';
@@ -113,6 +114,7 @@ class AttachmentsStore extends Store {
       attachmentsActions.getAttachmentsByProducers.listen(_handleGetAttachmentsByProducers),
       attachmentsActions.getAttachmentUsagesByIds.listen(_getAttachmentUsagesByIds),
       attachmentsActions.upsertAttachment.listen(_upsertAttachment),
+      attachmentsActions.updateAttachmentLabel.listen(_handleUpdateAttachmentLabel),
       attachmentsActions.refreshPanelToolbar.listen(_handleRefreshPanelToolbar)
     ].forEach(manageActionSubscription);
 
@@ -326,11 +328,15 @@ class AttachmentsStore extends Store {
         return null;
       }
 
-      return removeAndAddType(response, _attachmentUsages, false);
+      return _attachmentUsages = removeAndAddType(response, _attachmentUsages, false);
     } else {
       _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);
       return null;
     }
+  }
+
+  Future<Null> _handleUpdateAttachmentLabel(UpdateAttachmentLabelPayload payload) async {
+    _annotationsApi.updateAttachmentLabel(attachmentId: payload.idToUpdate, attachmentLabel: payload.newLabel);
   }
 
   _setActionItemState(ActionStateChangePayload request) {

@@ -69,6 +69,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     var regionContent = props.store.groups.map((Group group) {
       numAttachmentsDisplayed += group.attachments.length;
       return (GroupPanel()
+        ..addTestId(test_id.GroupPanelIds.groupPanelId)
         ..key = group.key
         ..actions = props.actions
         ..actionProvider = props.actionProvider

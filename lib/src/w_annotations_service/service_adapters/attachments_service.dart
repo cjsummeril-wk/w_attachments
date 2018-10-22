@@ -182,9 +182,9 @@ class AttachmentsService extends Disposable {
   }
 
   Future<GetAttachmentsByProducersResponse> getAttachmentsByProducers({@required List<String> producerWurls}) async {
-    FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()..producerWurls = producerWurls;
-
     try {
+      FGetAttachmentsByProducersRequest request = new FGetAttachmentsByProducersRequest()
+        ..producerWurls = producerWurls;
       List<Anchor> returnAnchors = [];
       List<AttachmentUsage> returnAttachmentUsages = [];
       List<Attachment> returnAttachments = [];
@@ -207,6 +207,23 @@ class AttachmentsService extends Disposable {
 
       return new GetAttachmentsByProducersResponse(
           attachments: returnAttachments, attachmentUsages: returnAttachmentUsages, anchors: returnAnchors);
+    } on FAnnotationError catch (e, stacktrace) {
+      _logger.warning('${ServiceConstants.genericAnnoError}', e, stacktrace);
+      return null;
+    } on Exception catch (e, stacktrace) {
+      _logger.severe('${ServiceConstants.transportError}', e, stacktrace);
+      rethrow;
+    }
+  }
+
+  Future<Attachment> updateAttachmentLabel({@required int attachmentId, @required String labelToUpdate}) async {
+    try {
+      FUpdateAttachmentLabelRequest request = new FUpdateAttachmentLabelRequest()
+        ..attachmentId = attachmentId
+        ..label = labelToUpdate;
+      FUpdateAttachmentLabelResponse response = await _fClient.updateAttachmentLabel(context, request);
+
+      return new Attachment.fromFAttachment(response?.attachment);
     } on FAnnotationError catch (e, stacktrace) {
       _logger.warning('${ServiceConstants.genericAnnoError}', e, stacktrace);
       return null;

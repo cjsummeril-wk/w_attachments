@@ -20,27 +20,12 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
   @override
   getInitialState() => newState()..isLabelActive = false;
 
-  // @override
-  // componentWillReceiveProps(Map nextProps) {
-  //   super.componentWillReceiveProps(nextProps);
-
-  //   AttachmentFileLabelProps tNextProps = typedPropsFactory(nextProps);
-  //   if (_labelRef != null && tNextProps != null) {
-  //     String labelText;
-  //     if (props.store.showFilenameAsLabel) {
-  //       labelText = tNextProps.attachment.filename;
-  //     } else {
-  //       labelText = tNextProps.attachment.label;
-  //     }
-  //     _labelRef.setValue(labelText);
-  //   }
-  // }
-
   @override
   render() {
     String placeholderText = (props.store.showFilenameAsLabel) ? 'file name' : 'label';
 
     return (ClickToEditInput()
+      ..addTestId(test_id.AttachmentCardIds.attachmentFileLabelId)
       ..formGroupProps = (domProps()
         ..onClick = (SyntheticMouseEvent event) {
           // Prevent the card from collapsing by stopping the event before it makes it to the card header
@@ -53,7 +38,7 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
       ..hideLabel = true
       ..label = 'Label'
       ..onCommit = _onCommit
-      // If user is editing field, allow expanded input field. 
+      // If user is editing field, allow expanded input field.
       ..isMultiline = state.isLabelActive
       ..onDidEnterEditable = () {
         setState(newState()..isLabelActive = true);
@@ -73,22 +58,22 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
       if (newValue.isEmpty == true) {
         return;
       }
-//      String fileName = utils.fixFilenameExtension(oldValue, newValue);
-//      if (fileName?.isNotEmpty == true) {
-//        props.store.attachmentsActions.updateFilename(new UpdateFilenamePayload(keyToUpdate: props.attachment.id, newFilename: fileName));
-//      } else {
-//        return false;
-//      }
+      //  String fileName = utils.fixFilenameExtension(oldValue, newValue);
+      //  if (fileName?.isNotEmpty == true) {
+      //    props.store.attachmentsActions.updateFilename(new UpdateFilenamePayload(keyToUpdate: props.attachment.id, newFilename: fileName));
+      //  } else {
+      //    return false;
+      //  }
     } else {
       props.store.attachmentsActions
-          .updateLabel(new UpdateLabelPayload(idToUpdate: props.attachment.id, newLabel: newValue));
+          .updateAttachmentLabel(new UpdateAttachmentLabelPayload(idToUpdate: props.attachment.id, newLabel: newValue));
     }
   }
 
   void _onDidEnterEditable() {
-    html.TextAreaElement labelInputNode = _labelRef?.getInputDomNode();
-    if (labelInputNode != null && labelInputNode.value.isNotEmpty) {
-      utils.stripExtensionFromFilename(labelInputNode.value).length;
+    var labelInputNode = _labelRef?.getInputDomNode();
+    if (labelInputNode != null && _labelRef.getValue().isNotEmpty && props.store.showFilenameAsLabel) {
+      utils.stripExtensionFromFilename(_labelRef.getValue()).length;
     }
   }
 }

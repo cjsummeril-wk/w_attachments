@@ -11,4 +11,5 @@ packages
 .idea
 .atom
 ssh-keys
+test/generated_runner_test.html.temp.html
 

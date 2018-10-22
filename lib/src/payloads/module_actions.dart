@@ -24,6 +24,5 @@ part 'module_actions/select_attachments_payload.dart';
 part 'module_actions/set_filters_payload.dart';
 part 'module_actions/set_groups_payload.dart';
 part 'module_actions/update_filename_payload.dart';
-part 'module_actions/update_label_payload.dart';
 part 'module_actions/upload_attachment_payload.dart';
 part 'module_actions/upsert_attachment_payload.dart';

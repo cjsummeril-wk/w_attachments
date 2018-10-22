@@ -3,7 +3,7 @@ part of w_attachments_client.w_annotations_service.models;
 class Attachment extends AnnotationModel {
   String accountResourceId;
   String fsResourceId;
-  String fsResourceType;
+  String filemime;
   String filename;
   String label;
   String userName;
@@ -15,11 +15,10 @@ class Attachment extends AnnotationModel {
     id = fAttachment.id;
     accountResourceId = fAttachment.accountResourceId;
     fsResourceId = fAttachment.fsResourceId;
-    fsResourceType = fAttachment.fsResourceType;
+    filemime = fAttachment.filemime;
     filename = fAttachment.filename;
+    label = fAttachment.label;
   }
-
-  String get filemime => filename?.contains('.') == true ? filename.split('.')[1] : null;
 
   bool get isUploadFailed => false;
 
@@ -29,8 +28,9 @@ class Attachment extends AnnotationModel {
     ..id = id
     ..accountResourceId = accountResourceId
     ..fsResourceId = fsResourceId
-    ..fsResourceType = fsResourceType
-    ..filename = filename;
+    ..filemime = filemime
+    ..filename = filename
+    ..label = label;
 
   @override
   int get hashCode => id.hashCode;
@@ -41,7 +41,6 @@ class Attachment extends AnnotationModel {
         other.accountResourceId == accountResourceId &&
         other.id == id &&
         other.fsResourceId == fsResourceId &&
-        other.fsResourceType == fsResourceType &&
         other.label == label &&
         other.userName == userName &&
         other.uploadStatus == uploadStatus;
