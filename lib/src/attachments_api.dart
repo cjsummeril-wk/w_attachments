@@ -35,9 +35,6 @@ class AttachmentsApi {
   /// currentlyDisplayedSingle is the [ContextGroup] that is currently displayed in headless mode.
   ContextGroup get currentlyDisplayedSingle => _attachmentsStore.currentlyDisplayedSingle;
 
-  /// currentlySelectedAttachments is the set of keys for the [Attachment]s that are 'selected'.
-  Set<int> get currentlySelectedAttachments => new Set<int>.from(_attachmentsStore.currentlySelectedAttachments);
-
   /// filtersByName is a map to allow direct fetching of currently applied [Filter]s on a particular selection.
   Map<String, Filter> get filtersByName => _attachmentsStore.filtersByName;
 
@@ -80,12 +77,6 @@ class AttachmentsApi {
       _attachmentsStore.attachmentsOfUsages(usages);
 
   // Attachment Actions
-  /// deselectAttachmentsByIds deselects attachment cards based on the passed in [attachmentIds]
-  ///
-  ///   [attachmentIds] is a list of [Attachment] keys
-  Future<Null> deselectAttachmentsByIds({@required List<int> attachmentIds}) async =>
-      await _attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: attachmentIds));
-
   /// Updates the label on the [Attachment] with the [newLabel] via w-annotations-service
   ///
   ///   [attachmentId] is the id of the attachment where the label is being changed.
@@ -117,15 +108,6 @@ class AttachmentsApi {
     GetAttachmentUsagesByIdsPayload requestPayload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
     await _attachmentsActions.getAttachmentUsagesByIds(requestPayload);
   }
-
-  /// selectAttachmentsBySelectionKeys selects attachment cards based on the passed in [attachmentIds]
-  ///
-  ///   [attachmentIds] is a list of [Attachment] ids
-  ///   [maintainSelections] allows the current selections to be preserved while appending new selections,
-  ///   otherwise current selections will have deselect called on them first
-  Future<Null> selectAttachmentsByIds({@required List<int> attachmentIds, bool maintainSelections: false}) async =>
-      await _attachmentsActions.selectAttachments(
-          new SelectAttachmentsPayload(attachmentIds: attachmentIds, maintainSelections: maintainSelections));
 
   /// setActionState sets the state of a StatefulActionItem to a new state
   ///

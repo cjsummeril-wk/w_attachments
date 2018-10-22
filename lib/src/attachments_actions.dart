@@ -15,6 +15,8 @@ class AttachmentsActions extends Disposable {
   final selectAttachments = new Action<SelectAttachmentsPayload>();
   final deselectAttachments = new Action<DeselectAttachmentsPayload>();
 
+  final hoverAttachment = new Action<HoverAttachmentPayload>();
+
   // module-level actions
   final createAttachmentUsage = new Action<CreateAttachmentUsagePayload>();
   final getAttachmentsByIds = new Action<GetAttachmentsByIdsPayload>();
@@ -29,17 +31,18 @@ class AttachmentsActions extends Disposable {
   AttachmentsActions() {
     [
       addAttachment,
-      dropFiles,
-      updateAttachmentLabel,
-      upsertAttachment,
-      selectAttachments,
       deselectAttachments,
+      dropFiles,
       getAttachmentsByProducers,
+      hoverAttachment,
+      refreshPanelToolbar,
+      selectAttachments,
       setActionItemState,
       setFilters,
       setGroups,
+      updateAttachmentLabel,
       updateAttachmentsConfig,
-      refreshPanelToolbar,
+      upsertAttachment
     ].forEach(manageDisposable);
   }
 }

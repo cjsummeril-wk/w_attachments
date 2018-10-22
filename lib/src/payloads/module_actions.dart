@@ -18,6 +18,7 @@ part 'module_actions/deselect_attachments_payload.dart';
 part 'module_actions/download_all_as_zip_payload.dart';
 part 'module_actions/download_attachment_payload.dart';
 part 'module_actions/drop_files_payload.dart';
+part 'module_actions/hover_attachment_payload.dart';
 part 'module_actions/remove_attachment_payload.dart';
 part 'module_actions/replace_attachment_payload.dart';
 part 'module_actions/select_attachments_payload.dart';

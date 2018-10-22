@@ -9,13 +9,6 @@ class AttachmentsEvents extends EventsCollection {
   /// This event only gets raised when the attachment gets removed from within the panel.
   final Event<AttachmentRemovedEventPayload> attachmentRemoved = new Event(attachmentsModuleDispatchKey);
 
-  /// selectedAttachment Event is raised when an attachment becomes selected in the Attachments panel list.
-  final Event<AttachmentSelectedEventPayload> attachmentSelected = new Event(attachmentsModuleDispatchKey);
-
-  /// deselectedAttachment Event is raised when an attachment becomes deselected in the Attachments panel list,
-  /// either when that attachment is specifically deselected or when another attachment becomes selected.
-  final Event<AttachmentDeselectedEventPayload> attachmentDeselected = new Event(attachmentsModuleDispatchKey);
-
   /// attachmentUploadCanceled Event is raised when the active upload of an attachment is selected to be canceled
   /// by the user, and either the cancelUpload or cancelUploads action is called.
   final Event<AttachmentUploadCanceledEventPayload> attachmentUploadCanceled = new Event(attachmentsModuleDispatchKey);
@@ -29,7 +22,6 @@ class AttachmentsEvents extends EventsCollection {
   final Event<DraggableEvent> attachmentDragEnd = new Event(attachmentsModuleDispatchKey);
 
   AttachmentsEvents() : super(attachmentsModuleDispatchKey) {
-    [attachmentRemoved, attachmentSelected, attachmentDeselected, attachmentDragStart, attachmentDragEnd]
-        .forEach(manageEvent);
+    [attachmentRemoved, attachmentDragStart, attachmentDragEnd].forEach(manageEvent);
   }
 }
