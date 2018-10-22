@@ -1,5 +1,6 @@
 class ReferenceViewTestIds {
   static const String rvAttachment = 'reference_view_attachent';
+  static const String rvAttachmentComponent = 'reference_view_attachent_component';
   static const String rvReference = 'reference_view_reference';
   static const String referenceButtons = 'reference_buttons';
   static const String referenceText = 'reference_text';

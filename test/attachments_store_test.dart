@@ -824,18 +824,19 @@ void main() {
         when(_extensionContext.observedRegionApi.create(selection: testSelection)).thenReturn(
             new cef.ObservedRegion(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
-        when(_annotationsApiMock.createAttachmentUsage(producerWurl: any)).thenAnswer((_) => new Future.value(
-            new CreateAttachmentUsageResponse(
+        when(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: any)).thenAnswer((_) =>
+            new Future.value(new CreateAttachmentUsageResponse(
                 anchor: AttachmentTestConstants.mockAnchor,
                 attachmentUsage: AttachmentTestConstants.mockAttachmentUsage,
                 attachment: AttachmentTestConstants.mockAttachment)));
 
         // Act
-        await _attachmentsActions
-            .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
+        await _attachmentsActions.createAttachmentUsage(
+            new CreateAttachmentUsagePayload(producerSelection: testSelection, attachmentId: 1234));
 
         // Assert
-        verify(_annotationsApiMock.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl));
+        verify(_annotationsApiMock.createAttachmentUsage(
+            producerWurl: AttachmentTestConstants.testWurl, attachmentId: 1234));
         expect(_store.anchorsByWurls.keys.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);
@@ -860,8 +861,8 @@ void main() {
         when(_extensionContext.observedRegionApi.create(selection: testSelection)).thenReturn(
             new cef.ObservedRegion(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
-        when(_annotationsApiMock.createAttachmentUsage(producerWurl: any)).thenAnswer((_) => new Future.value(
-            new CreateAttachmentUsageResponse(
+        when(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: any)).thenAnswer((_) =>
+            new Future.value(new CreateAttachmentUsageResponse(
                 anchor: AttachmentTestConstants.mockAnchor,
                 attachmentUsage: AttachmentTestConstants.mockAttachmentUsage,
                 attachment: AttachmentTestConstants.mockAttachment)));
@@ -869,11 +870,12 @@ void main() {
         expect(_store.attachments.length, 1);
 
         // Act
-        await _attachmentsActions
-            .createAttachmentUsage(new CreateAttachmentUsagePayload(producerSelection: testSelection));
+        await _attachmentsActions.createAttachmentUsage(
+            new CreateAttachmentUsagePayload(producerSelection: testSelection, attachmentId: 1234));
 
         // Assert
-        verify(_annotationsApiMock.createAttachmentUsage(producerWurl: AttachmentTestConstants.testWurl));
+        verify(_annotationsApiMock.createAttachmentUsage(
+            producerWurl: AttachmentTestConstants.testWurl, attachmentId: 1234));
         expect(_store.anchorsByWurls.keys.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);

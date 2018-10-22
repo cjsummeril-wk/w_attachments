@@ -27,47 +27,52 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
     ..isExpanded = false);
 
   @override
-  render() => (Region()
-    ..addProps(copyUnconsumedProps())
-    ..addTestId('${ReferenceViewTestIds.rvAttachment}-${props.attachmentCounter}')
-    ..className = 'reference-view__region'
-    ..targetKey = props.targetKey
-    ..key = props.attachment.id
-    ..onMouseOver = _handleMouseOver
-    ..onMouseLeave = _handleMouseLeave
-    ..onClick = _handleOnClickExpand
-    ..size = RegionSize.DEFAULT
-    ..header = (RegionHeader()..rightCap = _renderActionButtons())(_renderHeader()))((_generateReferenceCards()));
+  render() {
+    final classes = forwardingClassNameBuilder()..add('reference-view__region');
+
+    return (Region()
+      ..addProps(copyUnconsumedProps())
+      ..addTestId('${ReferenceViewTestIds.rvAttachment}-${props.attachmentCounter}')
+      ..className = classes.toClassName()
+      ..key = props.attachment.id
+      ..onMouseOver = _handleMouseOver
+      ..onMouseLeave = _handleMouseLeave
+      ..onClick = _handleOnClickExpand
+      ..header = (RegionHeader()..rightCap = _renderActionButtons())(_renderHeader()))(_generateReferenceCards());
+  }
 
   List<ReactElement> _generateReferenceCards() {
     List<ReactElement> referenceCards = props.references.map((AttachmentUsage usage) {
       // increment test ids by 1
       int count = props.references.indexOf(usage);
-      return (Block()
+      return (Card()
             ..addTestId("${ReferenceViewTestIds.rvReference}-${count}")
-            ..size = 12
             ..className = 'reference-view__reference-card'
-            ..key = usage.id)(
-          // two blocks nested next to each other: one for text, one for actions on reference.
-          (BlockContent()
-                ..size = 9
-                ..addTestId(ReferenceViewTestIds.referenceText)
-                ..className = "reference-view__reference-card__text-container")(
-              ((Dom.p()..className = 'reference-view__reference-card__header-text')('Reference Label ${count}')),
-              ((Dom.p()..className = 'reference-view__reference-card__location-text')(usage.anchorId))),
-          (BlockContent()
-                ..size = 3
+            ..key = usage.id
+            ..skin = CardSkin.WHITE
+            ..aria.expanded = state.isExpanded
+            // for CEF implementation, we can select a card
+            // we can change the selection color through ..selectedEdgeColor = CardEdgeColor.COLORNAME
+            ..isSelectable = true)(
+          (CardBlock()
                 ..addTestId(ReferenceViewTestIds.referenceButtons)
-                ..className = 'region__cap--right reference-view__reference-card__buttons-container')(
+                ..className = 'reference-view__reference-card__text-container')(
+              (Dom.p()..className = 'reference-view__reference-card__header-text')('Reference Label ${count}'),
+              (Dom.p()..className = 'reference-view__reference-card__location-text')(usage.anchorId)),
+          (CardBlock()
+                ..addTestId(ReferenceViewTestIds.referenceText)
+                ..className = 'reference-view__reference-card__buttons-container'
+                ..aria.hidden = state.isHovered)(
               (Button()
-                ..className = 'reference-view__reference-card__buttons'
+                ..size = ButtonSize.XSMALL
                 ..noText = true
-                ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.TASK_LINK)()),
+                ..className = 'reference-view__reference-card__button')((Icon()..glyph = IconGlyph.TASK_LINK)()),
               (Button()
-                ..className = 'reference-view__reference-card__buttons'
+                ..size = ButtonSize.XSMALL
                 ..noText = true
-                ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.CHEVRON_DOWN)())));
+                ..className = 'reference-view__reference-card__button')((Icon()..glyph = IconGlyph.CHEVRON_DOWN)())));
     }).toList();
+
     return referenceCards;
   }
 
@@ -82,52 +87,57 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
   }
 
   ReactElement _renderActionButtons() {
-    if (state.isExpanded || state.isHovered) {
-      return (Block())(
-          (Button()
-            ..noText = true
-            ..isDisabled = !props.store.isValidSelection
-            ..onClick = _handleAddReference
-            ..addTestId(ReferenceViewTestIds.addReferenceButton)
-            ..className = 'reference-view__buttons'
-            ..modifyProps(hint('Add Reference', HintPlacement.BOTTOM))
-            ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.SHORTCUT_ADD)()),
-          (DropdownButton()
-            ..noText = true
-            ..onClick = _handleDropdownClick
-            ..pullMenuRight = true
-            ..size = ButtonSize.XSMALL)(DropdownMenu()((MenuItem())("Delete Attachment"))));
-    } else {
-      return null;
-    }
+    if (!state.isExpanded && !state.isHovered) return null;
+
+    return (Block())(
+        (Button()
+          ..noText = true
+          ..isDisabled = !props.store.isValidSelection
+          ..onClick = _handleAddReference
+          ..addTestId(ReferenceViewTestIds.addReferenceButton)
+          ..className = 'reference-view__buttons'
+          ..modifyProps(hint('Add Reference', HintPlacement.BOTTOM))
+          ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.SHORTCUT_ADD)()),
+        (DropdownButton()
+          ..noText = true
+          ..onClick = _handleDropdownClick
+          ..pullMenuRight = true
+          ..size = ButtonSize.XSMALL)(DropdownMenu()((MenuItem())("Delete Attachment"))));
   }
 
-  _handleMouseOver(e) {
+  _handleMouseOver(SyntheticMouseEvent event) {
+    if (props.onMouseOver != null) {
+      props.onMouseOver(event);
+    }
     if (!state.isHovered) {
       setState(newState()..isHovered = true);
     }
   }
 
-  _handleMouseLeave(e) {
+  _handleMouseLeave(SyntheticMouseEvent event) {
+    if (props.onMouseLeave != null) {
+      props.onMouseLeave(event);
+    }
     if (state.isHovered) {
       setState(newState()..isHovered = false);
     }
   }
 
-  _handleOnClickExpand(e) {
-    if (state.isExpanded) {
-      setState(newState()..isExpanded = false);
-    } else {
-      setState(newState()..isExpanded = true);
+  _handleOnClickExpand(SyntheticMouseEvent event) {
+    if (props.onClick != null) {
+      props.onClick(event);
     }
+    setState(newState()..isExpanded = !state.isExpanded);
   }
 
-  _handleDropdownClick(event) {
+  _handleDropdownClick(SyntheticMouseEvent event) {
     event.stopPropagation();
     event.preventDefault();
   }
 
-  _handleAddReference(e) {
+  _handleAddReference(SyntheticMouseEvent event) {
+    event.preventDefault();
+    event.stopPropagation();
     cef.Selection selection = props.store.currentSelection;
     CreateAttachmentUsagePayload payload =
         new CreateAttachmentUsagePayload(producerSelection: selection, attachmentId: props.attachment.id);

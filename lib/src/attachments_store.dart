@@ -265,7 +265,8 @@ class AttachmentsStore extends Store {
     try {
       final region = await _extensionContext.observedRegionApi.create(selection: payload.producerSelection);
 
-      CreateAttachmentUsageResponse response = await _annotationsApi.createAttachmentUsage(producerWurl: region.wuri);
+      CreateAttachmentUsageResponse response =
+          await _annotationsApi.createAttachmentUsage(producerWurl: region.wuri, attachmentId: payload.attachmentId);
 
       if (response == null) {
         _logger.warning('Something went wrong with CreateAttachmentUsage for ${payload.producerSelection}');

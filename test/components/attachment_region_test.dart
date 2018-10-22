@@ -71,7 +71,7 @@ void main() {
       test_utils.expectTestIdWasFound(rendered, ReferenceViewTestIds.referenceText);
     });
 
-    test('Attachment Region can create a new Reference within', () async {
+    test('Attachment Region can create a new Reference within', () {
       Completer addReference = test_utils.hookinActionVerifier(_store.attachmentsActions.createAttachmentUsage);
       test_utils.expectTestIdWasFound(rendered, '${ReferenceViewTestIds.rvAttachment}-0');
 

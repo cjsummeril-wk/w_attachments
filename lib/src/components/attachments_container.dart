@@ -15,10 +15,9 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
   @override
   render() => (Block()
     ..className = 'w_attachments_client'
-    ..size = 12
     ..addTestId(ComponentTestIds.attachmentContainer))(_renderAttachmentsView());
 
-  _renderAttachmentsView() {
+  ReactElement _renderAttachmentsView() {
     if (props.store.attachments.isNotEmpty) {
       switch (props.store.moduleConfig.viewModeSetting) {
         case ViewModeSettings.References:
@@ -38,18 +37,19 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     }
   }
 
-  _renderReferenceView() {
+  ReactElement _renderReferenceView() {
     List<ReactElement> attachmentsToRender = props.store.attachments.map((Attachment attachment) {
+      int count = props.store.attachments.indexOf(attachment);
       // increment test ids by 1 to grab the right element in tests.
       return (AttachmentRegion()
-        ..addProps(copyUnconsumedProps())
+        ..addTestId('${ReferenceViewTestIds.rvAttachmentComponent}-${count}')
         ..key = attachment.id
         ..attachment = attachment
         ..currentSelection = props.store.currentSelection
         ..references = props.store.usagesOfAttachment(attachment)
         ..actions = props.actions
         ..store = props.store
-        ..attachmentCounter = props.store.attachments.indexOf(attachment)
+        ..attachmentCounter = count
         ..targetKey = attachment.id)();
     }).toList();
 
@@ -64,7 +64,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
       ..defaultExpandedTargetKeys = [])(attachmentsToRender);
   }
 
-  _renderAsRegions() {
+  ReactElement _renderAsRegions() {
     int ctr = 0;
     int numAttachmentsDisplayed = 0;
     var regionContent = props.store.groups.map((Group group) {
@@ -97,7 +97,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
           ..ref = ((RegionCollapseComponent ref) => _regionCollapse = ref))(regionContent);
   }
 
-  _renderEmptyView() => (EmptyView()
+  ReactElement _renderEmptyView() => (EmptyView()
     ..addTestId(ComponentTestIds.emptyView)
     ..glyph = props.store.moduleConfig.emptyViewIcon
     ..header = props.store.moduleConfig.emptyViewText

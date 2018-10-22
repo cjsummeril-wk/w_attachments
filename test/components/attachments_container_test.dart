@@ -3,6 +3,8 @@ library w_attachments_client.test.components.attachments_container_test;
 import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';
 import 'package:web_skin_dart/ui_components.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mockito/mirrors.dart';
 import 'package:w_session/mock.dart';
 import 'package:w_session/w_session.dart';
 
@@ -135,6 +137,22 @@ void main() {
         test_utils.expectTestIdWasFound(attachmentsView, ReferenceViewTestIds.referenceView);
         test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-0');
         test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-1');
+      });
+
+      test('ReferenceViews AttachmentRegions have state.', () {
+        _module.store.attachments = [
+          AttachmentTestConstants.mockAttachment,
+          AttachmentTestConstants.mockChangedAttachment
+        ];
+
+        attachmentsView = render(_module.components.content());
+        test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-0');
+        AttachmentRegionComponent attachmentRegionComponent =
+            getDartComponent(getByTestId(attachmentsView, '${ReferenceViewTestIds.rvAttachmentComponent}-0'));
+
+        expect(attachmentRegionComponent, isNotNull);
+        expect(attachmentRegionComponent.state.isExpanded, isFalse);
+        expect(attachmentRegionComponent.state.isHovered, isFalse);
       });
     });
   });
