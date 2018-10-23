@@ -13,11 +13,9 @@ import 'package:w_attachments_client/src/w_annotations_service/w_annotations_mod
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_events.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
-import 'package:w_attachments_client/src/attachments_module.dart';
 
 part 'annotations_api_mock.dart';
 part 'attachments_actions_mock.dart';
-part 'attachments_module_mock.dart';
 part 'attachments_events_mock.dart';
 part 'attachments_store_mock.dart';
 part 'extension_context_mock.dart';

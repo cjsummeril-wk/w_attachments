@@ -43,7 +43,6 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
 
   List<ReactElement> _generateReferenceCards() {
     List<ReactElement> referenceCards = props.references.map((AttachmentUsage usage) {
-      // increment test ids by 1
       int count = props.references.indexOf(usage);
       return (Card()
             ..addTestId("${ReferenceViewTestIds.rvReference}-${count}")
@@ -81,13 +80,15 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
         Dom.strong()(
             (AttachmentIconRenderer()..attachment = props.attachment)(),
             props.attachment.filename == null || props.attachment.filename.isEmpty
-                ? ' attachment_file_name'
+                ? ' file_name'
                 : props.attachment.filename),
         ' (${props.references.length})');
   }
 
   ReactElement _renderActionButtons() {
-    if (!state.isExpanded && !state.isHovered) return null;
+    if (!state.isExpanded && !state.isHovered) {
+      return null;
+    }
 
     return (Block())(
         (Button()

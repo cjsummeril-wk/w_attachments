@@ -831,12 +831,12 @@ void main() {
                 attachment: AttachmentTestConstants.mockAttachment)));
 
         // Act
-        await _attachmentsActions.createAttachmentUsage(
-            new CreateAttachmentUsagePayload(producerSelection: testSelection, attachmentId: 1234));
+        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
+            producerSelection: testSelection, attachmentId: AttachmentTestConstants.attachmentIdOne));
 
         // Assert
         verify(_annotationsApiMock.createAttachmentUsage(
-            producerWurl: AttachmentTestConstants.testWurl, attachmentId: 1234));
+            producerWurl: AttachmentTestConstants.testWurl, attachmentId: AttachmentTestConstants.attachmentIdOne));
         expect(_store.anchorsByWurls.keys.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);
@@ -870,12 +870,12 @@ void main() {
         expect(_store.attachments.length, 1);
 
         // Act
-        await _attachmentsActions.createAttachmentUsage(
-            new CreateAttachmentUsagePayload(producerSelection: testSelection, attachmentId: 1234));
+        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
+            producerSelection: testSelection, attachmentId: AttachmentTestConstants.attachmentIdOne));
 
         // Assert
         verify(_annotationsApiMock.createAttachmentUsage(
-            producerWurl: AttachmentTestConstants.testWurl, attachmentId: 1234));
+            producerWurl: AttachmentTestConstants.testWurl, attachmentId: AttachmentTestConstants.attachmentIdOne));
         expect(_store.anchorsByWurls.keys.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);

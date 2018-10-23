@@ -2,70 +2,70 @@
 @import 'package:web_skin/sass/core/api';
 
 .reference-view {
-		&__region-container {
-				width: 100%;
-		}
+    &__region-container {
+        width: 100%;
+    }
 
-		&__icon {
-				padding-right: 1rem;
-		}
+    &__icon {
+        padding-right: 1rem;
+    }
 
-		&__buttons{
-				margin-right: 0.5rem;
-		}
+    &__buttons{
+        margin-right: 0.5rem;
+    }
 
-		&__reference-card {
-				border-bottom: to-rem(get($card-shared-config, bd-width)) solid $zc-gray-40;
-				background-color: none;
-				margin-top: 0;
+    &__reference-card {
+        border-bottom: to-rem(get($card-shared-config, bd-width)) solid $zc-gray-40;
+        background-color: none;
+        margin-top: 0;
 
-				&__button {
-						display: none;
-						margin-right: 0.5rem;
-						margin-left: 0.5rem;
-						margin-bottom: 1.1rem;
-				}
+        &__button {
+            display: none;
+            margin-right: 0.5rem;
+            margin-left: 0.5rem;
+            margin-bottom: 1.1rem;
+        }
 
-				&__buttons-container {
-						width: 25%;
-						display: inline-block;
-						padding: 0;
-						text-align: right;
-				}
-				&__text-container {
-						width: 70%;
-						padding: 0;
-						margin-left: 1rem;
-						display: inline-block;
-				}
+        &__buttons-container {
+            width: 25%;
+            display: inline-block;
+            padding: 0;
+            text-align: right;
+        }
+        &__text-container {
+            width: 70%;
+            padding: 0;
+            margin-left: 1rem;
+            display: inline-block;
+        }
 
-				&__location-text {
-						color: $zc-gray-80;
-						font-size: 1.2rem;
-						margin-left: 2.5rem;
-				}
+        &__location-text {
+            color: $zc-gray-80;
+            font-size: 1.2rem;
+            margin-left: 2.5rem;
+        }
 
-				&__header-text {
-						margin-bottom: 0;
-						margin-top: 1rem;
-						margin-left: 2.5rem;
-				}
+        &__header-text {
+            margin-bottom: 0;
+            margin-top: 1rem;
+            margin-left: 2.5rem;
+        }
 
-				&:hover {
-						.reference-view__reference-card__button {
-								display: inline-block;
-						}
-				}
-		}
+        &:hover {
+            .reference-view__reference-card__button {
+                display: inline-block;
+            }
+        }
+    }
 
 	// fixes a visual bug when multiple regions are next to each other and expanded, where the border bottom disappears on the header of the region.
 	// Adds a border top to the first reference instance.
-		&__reference-card:first-child {
-				border-top: to-rem(get($card-shared-config, bd-width)) solid $zc-gray-40;
-		}
+    &__reference-card:first-child {
+        border-top: to-rem(get($card-shared-config, bd-width)) solid $zc-gray-40;
+    }
 }
 
 // hard override of a region collapse visual bug
 .reference-view__region-container.region-collapse-list.region-collapse-list--reveal-actions-on-hover::after {
-		display: none;
+    display: none;
 }
