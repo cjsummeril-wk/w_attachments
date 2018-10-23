@@ -52,6 +52,13 @@ class MockSelectionApi extends Mock implements cef.SelectionApi {
 class MockHighlightApi extends Mock implements cef.HighlightApi {}
 
 class MockHighlight extends Mock implements cef.Highlight {
+  Completer removeMock = new Completer();
   @override
-  Future<Null> get wasRemoved => new Future.value(null);
+  Future<Null> get wasRemoved => removeMock.future;
+
+  @override
+  remove() {
+    super.remove();
+    removeMock.complete();
+  }
 }

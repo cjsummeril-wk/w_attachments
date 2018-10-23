@@ -21,7 +21,6 @@ void main() {
     AttachmentsModule _module;
     Session _session;
     ExtensionContextMock _extensionContext;
-    AnnotationsApiMock _annotationsApiMock;
     MockMessagingClient _msgClient;
 
     Object attachmentsView;
@@ -33,14 +32,12 @@ void main() {
         _session = new Session();
         _extensionContext = new ExtensionContextMock();
         _msgClient = new MockMessagingClient();
-        _annotationsApiMock = new AnnotationsApiMock();
 
         _module = new AttachmentsModule(
             config: new AttachmentsConfig(viewModeSetting: ViewModeSettings.References),
             session: _session,
             messagingClient: _msgClient,
             extensionContext: _extensionContext,
-            annotationsApi: _annotationsApiMock,
             actionProviderFactory: StandardActionProvider.actionProviderFactory);
 
         _module.store.attachments = [];
@@ -52,7 +49,6 @@ void main() {
       tearDown(() async {
         await _session.dispose();
         await _extensionContext.dispose();
-        await _annotationsApiMock.dispose();
         await _module.unload();
         await _msgClient.dispose();
 
@@ -89,14 +85,12 @@ void main() {
         _session = new Session();
         _extensionContext = new ExtensionContextMock();
         _msgClient = new MockMessagingClient();
-        _annotationsApiMock = new AnnotationsApiMock();
 
         _module = new AttachmentsModule(
             config: new AttachmentsConfig(viewModeSetting: ViewModeSettings.References),
             session: _session,
             messagingClient: _msgClient,
             extensionContext: _extensionContext,
-            annotationsApi: _annotationsApiMock,
             actionProviderFactory: StandardActionProvider.actionProviderFactory);
 
         await _module.load();
@@ -107,7 +101,6 @@ void main() {
       tearDown(() async {
         await _session.dispose();
         await _extensionContext.dispose();
-        await _annotationsApiMock.dispose();
         await _module.unload();
         await _msgClient.dispose();
 

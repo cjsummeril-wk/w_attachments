@@ -154,6 +154,8 @@ class AttachmentsStore extends Store {
 
   cef.Selection get currentSelection => _extensionContextAdapter.currentSelection;
 
+  List<String> get currentScopes => new List.unmodifiable(_extensionContextAdapter.currentScopes);
+
   // zip download properties
   String get label => _moduleConfig.label;
 //  Selection get zipSelection => _moduleConfig.zipSelection;
@@ -211,6 +213,9 @@ class AttachmentsStore extends Store {
     List<AttachmentUsage> usages = attachmentUsagesByAnchors(anchorsByWurl(producerWurl));
     return attachmentsOfUsages(usages);
   }
+
+  Attachment _getAttachmentById(int id) =>
+      _attachments.firstWhere((attachment) => attachment.id == id, orElse: () => null);
 
   // group and filter getters/setters
   List<Group> get groups => new List<Group>.from(_groups);
@@ -438,9 +443,6 @@ class AttachmentsStore extends Store {
   _handleHoverAttachment(HoverAttachmentPayload payload) {
     _extensionContextAdapter.hoverChanged(payload);
   }
-
-  Attachment _getAttachmentById(int id) =>
-      _attachments.firstWhere((attachment) => attachment.id == id, orElse: () => null);
 
   void _handleAttachmentRemoved(AttachmentRemovedEventPayload removeEvent) {
     if (removeEvent.responseStatus) {

@@ -444,7 +444,8 @@ void main() {
 //        expect(_store.attachments[0].userName, 'Harvey Birdman');
 //      });
 
-      test('selectAttachment should set the store\'s currentlySelectedAttachments/Anchors with the passed in arg', () async {
+      test('selectAttachment should set the store\'s currentlySelectedAttachments/Anchors with the passed in arg',
+          () async {
         _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
         _store.attachments = [AttachmentTestConstants.mockAttachment];
 
@@ -466,7 +467,7 @@ void main() {
         expect(_store.currentlySelectedAnchors, isEmpty);
 
         await _actions.selectAttachments(new SelectAttachmentsPayload(
-          attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
 
         expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
         expect(_store.currentlySelectedAnchors, isEmpty);
@@ -694,6 +695,25 @@ void main() {
         expect(_store.currentlySelectedAttachments, isEmpty);
         expect(_store.currentlySelectedAttachmentUsages, isEmpty);
         expect(_store.currentlySelectedAnchors, isEmpty);
+      });
+
+      test('hoverAttachment changes currentlyHovered to provided next id or null', () async {
+        expect(_store.currentlyHoveredAttachmentId, isNull);
+        await _actions.hoverAttachment(new HoverAttachmentPayload(
+            previousAttachmentId: null, nextAttachmentId: AttachmentTestConstants.attachmentIdOne));
+
+        expect(_store.currentlyHoveredAttachmentId, AttachmentTestConstants.attachmentIdOne);
+
+        await _actions.hoverAttachment(new HoverAttachmentPayload(
+            previousAttachmentId: AttachmentTestConstants.attachmentIdOne,
+            nextAttachmentId: AttachmentTestConstants.attachmentIdTwo));
+
+        expect(_store.currentlyHoveredAttachmentId, AttachmentTestConstants.attachmentIdTwo);
+
+        await _actions.hoverAttachment(new HoverAttachmentPayload(
+            previousAttachmentId: AttachmentTestConstants.attachmentIdOne, nextAttachmentId: null));
+
+        expect(_store.currentlyHoveredAttachmentId, null);
       });
     });
 
@@ -954,7 +974,7 @@ void main() {
 
         // Assert
         verify(_annotationsApiMock.createAttachmentUsage(
-          producerWurl: AttachmentTestConstants.testWurl, attachmentId: AttachmentTestConstants.attachmentIdOne));
+            producerWurl: AttachmentTestConstants.testWurl, attachmentId: AttachmentTestConstants.attachmentIdOne));
         expect(_store.anchors.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);

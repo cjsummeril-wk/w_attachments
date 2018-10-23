@@ -60,7 +60,7 @@ void main() {
         ..store = _store
         ..attachment = AttachmentTestConstants.mockAttachment
         ..currentSelection = _store.currentSelection
-        ..references = _store.usagesOfAttachment(AttachmentTestConstants.mockAttachment)
+        ..references = _store.usagesByAttachmentId(AttachmentTestConstants.mockAttachment.id)
         ..attachmentCounter = 1
         ..targetKey = AttachmentTestConstants.mockAttachment.id));
     });
@@ -103,12 +103,12 @@ void main() {
         ..store = _store
         ..attachment = AttachmentTestConstants.mockAttachment
         ..currentSelection = _store.currentSelection
-        ..references = _store.usagesOfAttachment(AttachmentTestConstants.mockAttachment)
+        ..references = _store.usagesByAttachmentId(AttachmentTestConstants.mockAttachment.id)
         ..attachmentCounter = 0
         ..targetKey = AttachmentTestConstants.mockAttachment.id));
 
       expect(_store.attachmentUsages.length, 2);
-      expect(_store.usagesOfAttachment(AttachmentTestConstants.mockAttachment).length, 2);
+      expect(_store.usagesByAttachmentId(AttachmentTestConstants.mockAttachment.id).length, 2);
     });
   });
 }

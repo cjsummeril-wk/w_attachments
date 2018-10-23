@@ -121,13 +121,13 @@ class ExtensionContextAdapter extends Disposable {
     _refreshHighlights();
   }
 
-  // if the selected attachment or usage changes in our store, update the highlights
+  /// if the selected attachment or usage changes in our store, update the highlights
   void selectedChanged(Set<int> anchorIds) {
     _logger.fine("Selections changed, updating highlights");
     _updateHighlightStyle(anchorIds);
   }
 
-  // if the hovered attachment or usage changes in our store, update the highlights
+  /// if the hovered attachment or usage changes in our store, update the highlights
   void hoverChanged(HoverAttachmentPayload payload) {
     _logger.fine("Hovered changed, updating highlights");
     Set<int> anchorIdsToUpdate = new Set<int>();
