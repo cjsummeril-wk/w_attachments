@@ -11,6 +11,7 @@ import './components/attachment_region_test.dart' as components_attachment_regio
 import './components/attachments_container_test.dart' as components_attachments_container_test;
 import './components/attachments_panel_toolbar_test.dart' as components_attachments_panel_toolbar_test;
 import './components/utils_test.dart' as components_utils_test;
+import './extension_context_adapter_test.dart' as extension_context_adapter_test;
 import './models/group_test.dart' as models_group_test;
 import './tools/thread_pool/thread_pool_test.dart' as tools_thread_pool_thread_pool_test;
 import './w_annotations_service/service_adapters/attachments_service_test.dart' as w_annotations_service_service_adapters_attachments_service_test;
@@ -32,6 +33,7 @@ void main() {
   components_attachments_container_test.main();
   components_attachments_panel_toolbar_test.main();
   components_utils_test.main();
+  extension_context_adapter_test.main();
   models_group_test.main();
   tools_thread_pool_thread_pool_test.main();
   w_annotations_service_service_adapters_attachments_service_test.main();

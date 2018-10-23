@@ -5,5 +5,5 @@ class SelectAttachmentsPayload {
   final List<int> usageIds;
   final bool maintainSelections;
 
-  SelectAttachmentsPayload({@required this.attachmentIds, this.usageIds, this.maintainSelections: false});
+  SelectAttachmentsPayload({this.attachmentIds, this.usageIds, this.maintainSelections: false});
 }

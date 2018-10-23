@@ -31,8 +31,8 @@ void main() {
     AttachmentsStore _store;
 
     // Other
-    AttachmentsActions _attachmentsActions;
-    AttachmentsEvents _attachmentsEvents;
+    AttachmentsActions _actions;
+    AttachmentsEvents _events;
     AttachmentsApi _api;
     ExtensionContextMock _extensionContext;
 
@@ -45,8 +45,8 @@ void main() {
 
     group('constructor', () {
       setUp(() {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
       });
@@ -61,8 +61,8 @@ void main() {
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -83,8 +83,8 @@ void main() {
       test('should have enableDraggableset to false when specified', () {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            attachmentsActions: _attachmentsActions,
-            attachmentsEvents: _attachmentsEvents,
+            attachmentsActions: _actions,
+            attachmentsEvents: _events,
             annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
@@ -99,8 +99,8 @@ void main() {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             moduleConfig: new AttachmentsConfig(enableUploadDropzones: false, label: configLabel),
-            attachmentsActions: _attachmentsActions,
-            attachmentsEvents: _attachmentsEvents,
+            attachmentsActions: _actions,
+            attachmentsEvents: _events,
             annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
@@ -114,8 +114,8 @@ void main() {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             moduleConfig: new AttachmentsConfig(enableClickToSelect: false, label: configLabel),
-            attachmentsActions: _attachmentsActions,
-            attachmentsEvents: _attachmentsEvents,
+            attachmentsActions: _actions,
+            attachmentsEvents: _events,
             annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
@@ -128,8 +128,8 @@ void main() {
       test('should set a primarySelection when it is provided', () {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            attachmentsActions: _attachmentsActions,
-            attachmentsEvents: _attachmentsEvents,
+            attachmentsActions: _actions,
+            attachmentsEvents: _events,
             annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
@@ -146,8 +146,8 @@ void main() {
         _store = new AttachmentsStore(
             actionProviderFactory: null,
             moduleConfig: new AttachmentsConfig(enableDraggable: false, label: configLabel),
-            attachmentsActions: _attachmentsActions,
-            attachmentsEvents: _attachmentsEvents,
+            attachmentsActions: _actions,
+            attachmentsEvents: _events,
             annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
@@ -160,8 +160,8 @@ void main() {
 
     group('setGroups', () {
       setUp(() {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
@@ -169,8 +169,8 @@ void main() {
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 moduleConfig: new AttachmentsConfig(label: configLabel),
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -202,7 +202,7 @@ void main() {
           ..id = 1
           ..filename = 'very_good_file.docx'
           ..userName = testUsername;
-        _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
+        _actions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
         ContextGroup veryGoodGroup = new ContextGroup(
             name: 'veryGoodGroup',
             pivots: [new GroupPivot(type: GroupPivotType.ALL, id: veryGoodResourceId, selection: validWurl)]);
@@ -222,8 +222,8 @@ void main() {
         _annotationsApiMock = new AnnotationsApiMock();
 
         // Client
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
 
         // Subject
@@ -232,8 +232,8 @@ void main() {
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 moduleConfig: new AttachmentsConfig(label: configLabel),
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -322,7 +322,7 @@ void main() {
           when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(happyPathAttachments);
 
           // Act
-          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
 
           // Assert
           expect(_store.attachments.length, equals(3));
@@ -335,7 +335,7 @@ void main() {
           when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(twoMatchAttachments);
 
           // Act
-          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
 
           // Assert
           expect(_store.attachments.length, equals(2));
@@ -348,7 +348,7 @@ void main() {
           when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(noMatchAttachments);
 
           // Act
-          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
 
           // Assert
           expect(_store.attachments.length, equals(0));
@@ -360,12 +360,12 @@ void main() {
           when(_annotationsApiMock.getAttachmentsByIds).thenReturn(happyPathAttachments);
 
           // Act (1/2)
-          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: null));
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: null));
           // Assert (1/2)
           verifyNever(_annotationsApiMock.getAttachmentsByIds);
 
           // Act (2/2)
-          await _attachmentsActions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: []));
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: []));
           // Assert (2/2)
           verifyNever(_annotationsApiMock.getAttachmentsByIds);
         });
@@ -379,8 +379,8 @@ void main() {
 
     group('AttachmentsStore attachment actions', () {
       setUp(() {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
@@ -388,8 +388,8 @@ void main() {
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
                 moduleConfig: new AttachmentsConfig(label: configLabel),
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -400,8 +400,8 @@ void main() {
 
       tearDown(() async {
         // eliminate all attachments in the store cache, cancelUpload handles all cases that loadAttachments doesn't
-        _attachmentsActions.dispose();
-        _attachmentsEvents.dispose();
+        _actions.dispose();
+        _events.dispose();
         _extensionContext.dispose();
         _store.dispose();
         _api = null;
@@ -412,12 +412,12 @@ void main() {
           ..filename = 'very_good_file.docx'
           ..id = 1
           ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
+        await _actions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
         expect(_store.attachments, [attachment]);
 
         // adding the same attachment again should not modify the list
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
+        await _actions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
         expect(_store.attachments, [attachment]);
       });
@@ -444,186 +444,263 @@ void main() {
 //        expect(_store.attachments[0].userName, 'Harvey Birdman');
 //      });
 
-      test('selectAttachment should set the store\'s currentlySelected with the passed in arg', () async {
-        Completer completer = new Completer();
-        AttachmentSelectedEventPayload selectEventResult;
-        _attachmentsEvents.attachmentSelected.listen((selectEvent) {
-          selectEventResult = selectEvent;
-          completer.complete();
-        });
+      test('selectAttachment should set the store\'s currentlySelectedAttachments/Anchors with the passed in arg', () async {
+        _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
+        _store.attachments = [AttachmentTestConstants.mockAttachment];
 
-        Attachment attachment = new Attachment()
-          ..filename = 'very_good_file.docx'
-          ..id = 1
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        expect(_store.currentlySelectedAnchors, isEmpty);
 
-        expect(_api.currentlySelectedAttachments, isEmpty);
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
 
-        await _attachmentsActions
-            .selectAttachments(new SelectAttachmentsPayload(attachmentIds: [attachment.id], maintainSelections: false));
-        await completer.future;
-
-        expect(selectEventResult.selectedAttachmentId, attachment.id);
-        expect(_api.currentlySelectedAttachments, contains(attachment.id));
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdOne));
       });
 
-      test('should be able to select a bundle by selectionKey through api', () async {
-        Completer completer = new Completer();
-        AttachmentSelectedEventPayload selectEventResult;
-        _attachmentsEvents.attachmentSelected.listen((selectEvent) {
-          selectEventResult = selectEvent;
-          completer.complete();
-        });
+      test('selectAttachment sets currentlySelectedAttachment, but not Anchor when usage is not present', () async {
+        // simulates an attachment with no usages
+        _store.attachments = [AttachmentTestConstants.mockAttachment];
 
-        Attachment attachment = new Attachment()
-          ..filename = 'very_good_file.docx'
-          ..id = 1
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        expect(_store.currentlySelectedAnchors, isEmpty);
 
-        expect(_api.currentlySelectedAttachments, isEmpty);
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+          attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
 
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment.id], maintainSelections: false);
-        await completer.future;
-
-        expect(selectEventResult.selectedAttachmentId, attachment.id);
-        expect(_api.currentlySelectedAttachments, contains(attachment.id));
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.currentlySelectedAnchors, isEmpty);
       });
 
-      test('should be able to select multiple attachments by selectionKeys through api in single call', () async {
-        Attachment attachment1 = new Attachment()
-          ..filename = 'very_good_file.docx'
-          ..id = 1
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment1));
+      test('should be able to select multiple attachments by selectionKeys in single call', () async {
+        _store.attachmentUsages = [
+          AttachmentTestConstants.mockAttachmentUsage,
+          AttachmentTestConstants.mockChangedAttachmentUsage
+        ];
+        _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
 
-        Attachment attachment2 = new Attachment()
-          ..filename = 'very_good_file.pptx'
-          ..id = 2
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment2));
+        expect(_store.currentlySelectedAttachments, isEmpty);
 
-        expect(_api.currentlySelectedAttachments, isEmpty);
+        await _actions.selectAttachments(new SelectAttachmentsPayload(attachmentIds: [
+          AttachmentTestConstants.mockAttachment.id,
+          AttachmentTestConstants.mockChangedAttachment.id
+        ], maintainSelections: false));
 
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id, attachment2.id], maintainSelections: false);
+        expect(_store.currentlySelectedAttachments.length, 2);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachment.id), isTrue);
+        expect(
+            _store.currentlySelectedAnchors,
+            allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
+                contains(AttachmentTestConstants.anchorIdTwo)));
+      });
 
-        expect(_api.currentlySelectedAttachments.length, 2);
-        expect(_api.currentlySelectedAttachments, contains(attachment1.id));
-        expect(_api.currentlySelectedAttachments, contains(attachment2.id));
+      test('should be able to select multiple attachments by ID one at a time maintaining selections', () async {
+        _store.attachmentUsages = [
+          AttachmentTestConstants.mockAttachmentUsage,
+          AttachmentTestConstants.mockChangedAttachmentUsage
+        ];
+        _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
+
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
+
+        expect(_store.currentlySelectedAttachments, isNotEmpty);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.currentlySelectedAnchors, allOf(hasLength(1), contains(AttachmentTestConstants.anchorIdOne)));
+
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockChangedAttachment.id], maintainSelections: true));
+
+        expect(_store.currentlySelectedAttachments.length, 2);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachment.id), isTrue);
+        expect(
+            _store.currentlySelectedAnchors,
+            allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
+                contains(AttachmentTestConstants.anchorIdTwo)));
+      });
+
+      test('should be able to select an attachment by ID and clear the list', () async {
+        _store.attachmentUsages = [
+          AttachmentTestConstants.mockAttachmentUsage,
+          AttachmentTestConstants.mockChangedAttachmentUsage
+        ];
+        _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
+
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
+
+        expect(_store.currentlySelectedAttachments, isNotEmpty);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdOne));
+
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockChangedAttachment.id], maintainSelections: false));
+
+        expect(_store.currentlySelectedAttachments.length, 1);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachment.id), isTrue);
+        expect(_store.currentlySelectedAnchors.length, 1);
+        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdTwo));
+      });
+
+      test('should be able to deselect an attachment by id', () async {
+        _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
+        _store.attachments = [AttachmentTestConstants.mockAttachment];
+
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdOne));
+
+        await _actions.deselectAttachments(
+            new DeselectAttachmentsPayload(attachmentIds: [AttachmentTestConstants.mockAttachment.id]));
+
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+      });
+
+      test('should be able to deselect an attachment usage by id', () async {
+        _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
+
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            usageIds: [AttachmentTestConstants.mockAttachmentUsage.id], maintainSelections: false));
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
+        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdOne));
+
+        await _actions.deselectAttachments(
+            new DeselectAttachmentsPayload(usageIds: [AttachmentTestConstants.mockAttachmentUsage.id]));
+
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+      });
+
+      test('selectAttachment should set the store\'s currentlySelectedAttachmentUsages with the passed in arg',
+          () async {
+        _store.attachments = [AttachmentTestConstants.mockAttachment];
+        _store.attachmentUsages = [
+          AttachmentTestConstants.mockAttachmentUsage,
+          AttachmentTestConstants.mockChangedAttachmentUsage
+        ];
+
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isFalse);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+
+        await _actions.selectAttachments(new SelectAttachmentsPayload(usageIds: [
+          AttachmentTestConstants.mockAttachmentUsage.id,
+          AttachmentTestConstants.mockChangedAttachmentUsage.id
+        ], maintainSelections: false));
+
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isTrue);
+        expect(_store.currentlySelectedAnchors,
+            allOf(contains(AttachmentTestConstants.anchorIdTwo), contains(AttachmentTestConstants.anchorIdOne)));
+      });
+
+      test('selectAttachment should only set the store\'s currentlySelectedAttachmentUsages where specified', () async {
+        _store.attachments = [AttachmentTestConstants.mockAttachment];
+        _store.attachmentUsages = [
+          AttachmentTestConstants.mockAttachmentUsage,
+          AttachmentTestConstants.mockChangedAttachmentUsage
+        ];
+
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isFalse);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            usageIds: [AttachmentTestConstants.mockChangedAttachmentUsage.id], maintainSelections: false));
+
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isTrue);
+        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdTwo));
       });
 
       test(
-          'should be able to select multiple attachments by selectionKey through api one at a time maintaining selections',
+          'selectAttachment should set the store\'s currentlySelectedAttachments and currentlySelectedAttachmentUsages when specified',
           () async {
-        Completer completer = new Completer();
-        AttachmentSelectedEventPayload selectEventResult;
-        _attachmentsEvents.attachmentSelected.listen((selectEvent) {
-          selectEventResult = selectEvent;
-          completer.complete();
-        });
+        _store.attachments = [AttachmentTestConstants.mockAttachment];
+        _store.attachmentUsages = [
+          AttachmentTestConstants.mockAttachmentUsage,
+          AttachmentTestConstants.mockChangedAttachmentUsage
+        ];
 
-        Attachment attachment1 = new Attachment()
-          ..filename = 'very_good_file.docx'
-          ..id = 1
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment1));
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isFalse);
+        expect(_store.currentlySelectedAnchors, isEmpty);
 
-        Attachment attachment2 = new Attachment()
-          ..filename = 'very_good_file.pptx'
-          ..id = 2
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment2));
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id],
+            usageIds: [AttachmentTestConstants.mockChangedAttachmentUsage.id],
+            maintainSelections: false));
 
-        expect(_api.currentlySelectedAttachments, isEmpty);
-
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id], maintainSelections: false);
-        await completer.future;
-
-        expect(selectEventResult.selectedAttachmentId, attachment1.id);
-        expect(_api.currentlySelectedAttachments, isNotEmpty);
-        expect(_api.currentlySelectedAttachments, contains(attachment1.id));
-
-        completer = new Completer();
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment2.id], maintainSelections: true);
-        await completer.future;
-
-        expect(selectEventResult.selectedAttachmentId, attachment2.id);
-        expect(_api.currentlySelectedAttachments.length, 2);
-        expect(_api.currentlySelectedAttachments, contains(attachment1.id));
-        expect(_api.currentlySelectedAttachments, contains(attachment2.id));
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isTrue);
+        // should contain the anchor(s) for mockAttachment (anchorIdOne), and the anchor for mockChangedAttachmentUsage (anchorIdTwo)
+        expect(_store.currentlySelectedAnchors,
+            allOf(contains(AttachmentTestConstants.anchorIdOne), contains(AttachmentTestConstants.anchorIdTwo)));
       });
 
-      test('should be able to select an attachment by selectionKey through api and clear the list', () async {
-        Completer completer = new Completer();
-        AttachmentSelectedEventPayload selectEventResult;
-        _attachmentsEvents.attachmentSelected.listen((selectEvent) {
-          selectEventResult = selectEvent;
-          completer.complete();
-        });
+      test('should be able to select multiple attachments by ID one at a time maintaining selections', () async {
+        _store.attachmentUsages = [
+          AttachmentTestConstants.mockAttachmentUsage,
+          AttachmentTestConstants.mockChangedAttachmentUsage
+        ];
 
-        Attachment attachment1 = new Attachment()
-          ..filename = 'very_good_file.docx'
-          ..id = 1
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment1));
+        expect(_store.currentlySelectedAttachments, isEmpty);
 
-        Attachment attachment2 = new Attachment()
-          ..filename = 'very_good_file.pptx'
-          ..id = 1
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment2));
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachmentUsage.id], maintainSelections: false));
 
-        expect(_api.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAttachments, isNotEmpty);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isFalse);
 
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment1.id], maintainSelections: false);
-        await completer.future;
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockChangedAttachmentUsage.id], maintainSelections: true));
 
-        expect(selectEventResult.selectedAttachmentId, attachment1.id);
-        expect(_api.currentlySelectedAttachments, isNotEmpty);
-        expect(_api.currentlySelectedAttachments, contains(attachment1.id));
-
-        completer = new Completer();
-        await _api.selectAttachmentsByIds(attachmentIds: [attachment2.id], maintainSelections: false);
-        await completer.future;
-
-        expect(selectEventResult.selectedAttachmentId, attachment2.id);
-        expect(_api.currentlySelectedAttachments.length, 1);
-        expect(_api.currentlySelectedAttachments, contains(attachment2.id));
+        expect(_store.currentlySelectedAttachments.length, 2);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isTrue);
       });
 
-      test('should be able to deselect an attachment by id through api', () async {
-        Completer eventCompleter = new Completer();
-        AttachmentDeselectedEventPayload deselectEventResult;
-        _attachmentsEvents.attachmentDeselected.listen((selectEvent) {
-          deselectEventResult = selectEvent;
-          eventCompleter.complete();
-        });
+      test('selectAttachment should make no selections when no IDs are provided', () async {
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAttachmentUsages, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+        await _actions.selectAttachments(new SelectAttachmentsPayload());
 
-        Attachment attachment = new Attachment()
-          ..filename = 'very_good_file.docx'
-          ..id = 1
-          ..userName = testUsername;
-        await _attachmentsActions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
-
-        expect(_api.currentlySelectedAttachments, isEmpty);
-
-        await _attachmentsActions
-            .selectAttachments(new SelectAttachmentsPayload(attachmentIds: [attachment.id], maintainSelections: false));
-        expect(_api.currentlySelectedAttachments, contains(attachment.id));
-
-        await _api.deselectAttachmentsByIds(attachmentIds: [attachment.id]);
-        await eventCompleter.future;
-
-        expect(deselectEventResult.deselectedAttachmentId, attachment.id);
-        expect(_api.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAttachmentUsages, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
       });
     });
 
     group('config', () {
       setUp(() {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
       });
@@ -641,8 +718,8 @@ void main() {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             moduleConfig: config,
-            attachmentsActions: _attachmentsActions,
-            attachmentsEvents: _attachmentsEvents,
+            attachmentsActions: _actions,
+            attachmentsEvents: _events,
             annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
@@ -672,8 +749,8 @@ void main() {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             moduleConfig: config,
-            attachmentsActions: _attachmentsActions,
-            attachmentsEvents: _attachmentsEvents,
+            attachmentsActions: _actions,
+            attachmentsEvents: _events,
             annotationsApi: _annotationsApiMock,
             extensionContext: _extensionContext,
             dispatchKey: attachmentsModuleDispatchKey,
@@ -711,16 +788,16 @@ void main() {
 
     group('handles onDidChangeSelection -', () {
       setUp(() {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -753,16 +830,16 @@ void main() {
 
     group('createAttachmentUsage -', () {
       setUp(() {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -773,8 +850,8 @@ void main() {
       });
 
       tearDown(() async {
-        await _attachmentsActions.dispose();
-        await _attachmentsEvents.dispose();
+        await _actions.dispose();
+        await _events.dispose();
         await _extensionContext.dispose();
         await _store.dispose();
         _api = null;
@@ -787,7 +864,7 @@ void main() {
                 new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
 
         // Act
-        await _attachmentsActions.createAttachmentUsage(payload);
+        await _actions.createAttachmentUsage(payload);
 
         // Assert
         verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
@@ -808,7 +885,7 @@ void main() {
                 new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope));
 
         // Act
-        await _attachmentsActions.createAttachmentUsage(payload);
+        await _actions.createAttachmentUsage(payload);
 
         // Assert
         verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
@@ -833,13 +910,13 @@ void main() {
                 attachment: AttachmentTestConstants.mockAttachment)));
 
         // Act
-        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
+        await _actions.createAttachmentUsage(new CreateAttachmentUsagePayload(
             producerSelection: testSelection, attachmentId: AttachmentTestConstants.attachmentIdOne));
 
         // Assert
         verify(_annotationsApiMock.createAttachmentUsage(
             producerWurl: AttachmentTestConstants.testWurl, attachmentId: AttachmentTestConstants.attachmentIdOne));
-        expect(_store.anchorsByWurls.keys.length, 1);
+        expect(_store.anchors.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);
         expect(_store.attachments.length, 1);
@@ -872,13 +949,13 @@ void main() {
         expect(_store.attachments.length, 1);
 
         // Act
-        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
+        await _actions.createAttachmentUsage(new CreateAttachmentUsagePayload(
             producerSelection: testSelection, attachmentId: AttachmentTestConstants.attachmentIdOne));
 
         // Assert
         verify(_annotationsApiMock.createAttachmentUsage(
-            producerWurl: AttachmentTestConstants.testWurl, attachmentId: AttachmentTestConstants.attachmentIdOne));
-        expect(_store.anchorsByWurls.keys.length, 1);
+          producerWurl: AttachmentTestConstants.testWurl, attachmentId: AttachmentTestConstants.attachmentIdOne));
+        expect(_store.anchors.length, 1);
         expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl).length, 1);
         expect(_store.attachmentUsages.length, 1);
         expect(_store.attachments.length, 1);
@@ -899,14 +976,14 @@ void main() {
         _extensionContext.selectionApi.didChangeSelectionsController.add([testSelection]);
 
         // Act
-        await _attachmentsActions.createAttachmentUsage(new CreateAttachmentUsagePayload(
+        await _actions.createAttachmentUsage(new CreateAttachmentUsagePayload(
             producerSelection:
                 new cef.Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope)));
 
         // Assert
         verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: any));
         verifyNever(_annotationsApiMock.createAttachmentUsage(producerWurl: any));
-        expect(_store.anchorsByWurls, isEmpty);
+        expect(_store.anchors, isEmpty);
         expect(_store.attachmentUsages, isEmpty);
         expect(_store.attachments, isEmpty);
       });
@@ -914,16 +991,16 @@ void main() {
 
     group('getAttachmentUsagesById -', () {
       setUp(() {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -934,8 +1011,8 @@ void main() {
       });
 
       tearDown(() async {
-        await _attachmentsActions.dispose();
-        await _attachmentsEvents.dispose();
+        await _actions.dispose();
+        await _events.dispose();
         await _extensionContext.dispose();
         await _store.dispose();
         _api = null;
@@ -953,7 +1030,7 @@ void main() {
 
         GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
 
-        await _attachmentsActions.getAttachmentUsagesByIds(payload);
+        await _actions.getAttachmentUsagesByIds(payload);
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");
@@ -974,7 +1051,7 @@ void main() {
 
         GetAttachmentUsagesByIdsPayload payload = new GetAttachmentUsagesByIdsPayload(attachmentUsageIds: usageIds);
 
-        await _attachmentsActions.getAttachmentUsagesByIds(payload);
+        await _actions.getAttachmentUsagesByIds(payload);
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");
@@ -1001,7 +1078,7 @@ void main() {
                 u.label == AttachmentTestConstants.mockAttachmentUsage.label &&
                 u.accountResourceId == AttachmentTestConstants.mockAttachmentUsage.accountResourceId)));
 
-        await _attachmentsActions.getAttachmentUsagesByIds(payload);
+        await _actions.getAttachmentUsagesByIds(payload);
 
         expect(getAttachmentUsagesByIdsCompleter.future, completes,
             reason: "getAttachmentUsagesByIds did not complete");
@@ -1022,16 +1099,16 @@ void main() {
           attachments: AttachmentTestConstants.mockAttachmentList);
 
       setUp(() {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -1040,15 +1117,12 @@ void main() {
                 moduleConfig: new AttachmentsConfig(label: configLabel)));
         _api = _store.api;
 
-        _store.anchorsByWurls = {
-          AttachmentTestConstants.existingWurl: [AttachmentTestConstants.mockAnchor],
-          AttachmentTestConstants.testWurl: [AttachmentTestConstants.mockAnchor]
-        };
+        _store.anchors = [AttachmentTestConstants.mockExistingAnchor, AttachmentTestConstants.mockAnchor];
       });
 
       tearDown(() async {
-        await _attachmentsActions.dispose();
-        await _attachmentsEvents.dispose();
+        await _actions.dispose();
+        await _events.dispose();
         await _extensionContext.dispose();
         await _store.dispose();
         _api = null;
@@ -1059,11 +1133,11 @@ void main() {
 
         when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls)).thenReturn(null);
 
-        Map<String, List<Anchor>> _previous = new Map<String, List<Anchor>>.from(_store.anchorsByWurls);
+        List<Anchor> _previous = new List<Anchor>.from(_store.anchors);
 
-        await _attachmentsActions.getAttachmentsByProducers(
+        await _actions.getAttachmentsByProducers(
             new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
-        expect(_previous, equals(_store.anchorsByWurls));
+        expect(_previous, equals(_store.anchors));
       });
 
       test('calls getAttachmentsByProducers preserving', () async {
@@ -1072,13 +1146,13 @@ void main() {
         when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls))
             .thenReturn(getAttachmentsByProducersHappyResponse);
 
-        await _attachmentsActions.getAttachmentsByProducers(
+        await _actions.getAttachmentsByProducers(
             new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
-        expect(_store.anchorsByWurls[AttachmentTestConstants.existingWurl],
+        expect(_store.anchorsByWurl(AttachmentTestConstants.existingWurl),
+            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockExistingAnchor.id)));
+        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
             anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
-        expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
-            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
-        expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
+        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
             anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
       });
 
@@ -1088,12 +1162,11 @@ void main() {
         when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls))
             .thenReturn(getAttachmentsByProducersHappyResponse);
 
-        await _attachmentsActions
-            .getAttachmentsByProducers(new GetAttachmentsByProducersPayload(producerWurls: producerWurls));
-        expect(_store.anchorsByWurls[AttachmentTestConstants.existingWurl], isNull);
-        expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
+        await _actions.getAttachmentsByProducers(new GetAttachmentsByProducersPayload(producerWurls: producerWurls));
+        expect(_store.anchorsByWurl(AttachmentTestConstants.existingWurl), isEmpty);
+        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
             everyElement(predicate((Anchor a) => a.id != AttachmentTestConstants.mockAnchor.id)));
-        expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
+        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
             anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
       });
     });

@@ -44,8 +44,7 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
     _disposeAvatar();
   }
 
-  bool get _selected =>
-      (props.attachment?.id != null && props.store.attachmentIsSelected(props.attachment.id));
+  bool get _selected => (props.attachment?.id != null && props.store.attachmentIsSelected(props.attachment.id));
 
   @override
   render() {

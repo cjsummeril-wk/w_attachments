@@ -53,7 +53,6 @@ class AttachmentsStore extends Store {
   List<Anchor> _anchors = <Anchor>[];
   @visibleForTesting
   set anchors(List<Anchor> anchors) => _anchors = anchors;
-  List<Anchor> get anchors => _anchors;
 
   // headerless properties
   ContextGroup currentlyDisplayedSingle;
@@ -114,7 +113,7 @@ class AttachmentsStore extends Store {
       attachmentsActions.createAttachmentUsage.listen(_handleCreateAttachmentUsage),
       attachmentsActions.getAttachmentsByIds.listen(_handleGetAttachmentsByIds),
       attachmentsActions.getAttachmentsByProducers.listen(_handleGetAttachmentsByProducers),
-      attachmentsActions.getAttachmentUsagesByIds.listen(_getAttachmentUsagesByIds),
+      attachmentsActions.getAttachmentUsagesByIds.listen(_handleGetAttachmentUsagesByIds),
       attachmentsActions.hoverAttachment.listen(_handleHoverAttachment),
       attachmentsActions.upsertAttachment.listen(_upsertAttachment),
       attachmentsActions.updateAttachmentLabel.listen(_handleUpdateAttachmentLabel),
@@ -164,11 +163,18 @@ class AttachmentsStore extends Store {
 
   bool usageIsSelected(int usageId) => _currentlySelectedAttachmentUsages.contains(usageId);
 
+  @visibleForTesting
+  Set<int> get currentlySelectedAttachments => new Set<int>.from(_currentlySelectedAttachments);
+
+  @visibleForTesting
+  Set<int> get currentlySelectedAttachmentUsages => new Set<int>.from(_currentlySelectedAttachmentUsages);
+
   // attachment getters/setters
   List<Attachment> get attachments => new List<Attachment>.unmodifiable(_attachments);
-  List<int> get attachmentIds => new List<int>.unmodifiable(_attachments.map((attachment) => attachment?.id));
 
   List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
+
+  List<Anchor> get anchors => new List<Anchor>.unmodifiable(_anchors);
 
   List<Anchor> anchorsByWurl(String wurl) =>
       new List<Anchor>.unmodifiable(_anchors.where((anchor) => anchor?.producerWurl == wurl));
@@ -330,7 +336,7 @@ class AttachmentsStore extends Store {
     _rebuildAndRedrawGroups();
   }
 
-  _getAttachmentUsagesByIds(GetAttachmentUsagesByIdsPayload payload) async {
+  _handleGetAttachmentUsagesByIds(GetAttachmentUsagesByIdsPayload payload) async {
     if (payload.attachmentUsageIds != null && payload.attachmentUsageIds.isNotEmpty) {
       List<AttachmentUsage> response =
           await _annotationsApi.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
@@ -390,7 +396,8 @@ class AttachmentsStore extends Store {
     Set<int> anchorIds = new Set<int>();
     if (!request.maintainSelections && _currentlySelectedAttachments.isNotEmpty) {
       _deselectAttachments(new DeselectAttachmentsPayload(
-          attachmentIds: _currentlySelectedAttachments.toList(), usageIds: _currentlySelectedAttachmentUsages.toList()));
+          attachmentIds: _currentlySelectedAttachments.toList(),
+          usageIds: _currentlySelectedAttachmentUsages.toList()));
     }
     if (request?.attachmentIds?.isNotEmpty == true) {
       for (int id in request.attachmentIds) {

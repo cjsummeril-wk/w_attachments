@@ -4,5 +4,5 @@ class DeselectAttachmentsPayload {
   final List<int> attachmentIds;
   final List<int> usageIds;
 
-  DeselectAttachmentsPayload({@required this.attachmentIds, this.usageIds});
+  DeselectAttachmentsPayload({this.attachmentIds, this.usageIds});
 }

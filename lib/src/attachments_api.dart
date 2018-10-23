@@ -29,9 +29,6 @@ class AttachmentsApi {
   /// attachmentUsages is the list of all [AttachmentUsage]s loaded into the store.
   List<AttachmentUsage> get attachmentUsages => _attachmentsStore.attachmentUsages;
 
-  /// attachmentKeys is the list of all IDs for the [Attachment]s currently loaded into the store.
-  List<int> get attachmentIds => _attachmentsStore.attachmentIds;
-
   /// currentlyDisplayedSingle is the [ContextGroup] that is currently displayed in headless mode.
   ContextGroup get currentlyDisplayedSingle => _attachmentsStore.currentlyDisplayedSingle;
 

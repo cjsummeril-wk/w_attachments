@@ -6,10 +6,13 @@ import 'package:w_attachments_client/src/w_annotations_service/w_annotations_mod
 class AttachmentTestConstants {
   static int anchorIdOne = 1234;
   static int anchorIdTwo = 4567;
+  static int anchorIdThree = 8901;
   static int attachmentUsageIdOne = 1234;
   static int attachmentUsageIdTwo = 4567;
+  static int attachmentUsageIdThree = 8901;
   static int attachmentIdOne = 1234;
   static int attachmentIdTwo = 4567;
+  static int attachmentIdThree = 8901;
 
   static String existingWurl = "wurl://scope/existing";
   static String testWurl = "wurl://scope/test";
@@ -27,6 +30,11 @@ class AttachmentTestConstants {
     ..accountResourceId = "crispy-veggie-straws"
     ..disconnected = false
     ..producerWurl = testWurl;
+  static Anchor mockExistingAnchor = new Anchor()
+    ..id = anchorIdThree
+    ..accountResourceId = "crispy-confit-duck"
+    ..disconnected = false
+    ..producerWurl = existingWurl;
 
   static AttachmentUsage mockAttachmentUsage = new AttachmentUsage()
     ..id = attachmentUsageIdOne
@@ -51,6 +59,13 @@ class AttachmentTestConstants {
     ..accountResourceId = "crispy-bacon-pancakes"
     ..label = "crispy-bacon-and-crispy-chicken-waffles"
     ..parentId = 999;
+  static AttachmentUsage mockExistingAttachmentUsage = new AttachmentUsage()
+    ..id = attachmentUsageIdThree
+    ..anchorId = anchorIdThree
+    ..attachmentId = attachmentIdThree
+    ..accountResourceId = "crispy-crisps"
+    ..label = 'crispy-lasagna'
+    ..parentId = 123;
 
   static Attachment mockAttachment = new Attachment()
     ..id = attachmentIdOne
@@ -67,7 +82,15 @@ class AttachmentTestConstants {
     ..label = "crispy-crackle-pop"
     ..filename = 'crispy-parmesan-cheese'
     ..userName = "crispy-fighter-jets-like-freals-cool"
-    ..uploadStatus = Status.Pending;
+    ..uploadStatus = Status.Complete;
+  static Attachment mockExistingAttachment = new Attachment()
+    ..id = attachmentIdThree
+    ..accountResourceId = "crispy-jello"
+    ..fsResourceId = "3456"
+    ..fsResourceType = "type"
+    ..label = "crispy-laundry"
+    ..userName = "crispy-smoothie"
+    ..uploadStatus = Status.Complete;
 
   static FAnchor mockFAnchor = mockAnchor.toFAnchor();
   static FAnchor mockChangedFAnchor = mockChangedAnchor.toFAnchor();
