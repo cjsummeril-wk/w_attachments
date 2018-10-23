@@ -43,7 +43,7 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
 
   List<ReactElement> _generateReferenceCards() {
     List<ReactElement> referenceCards = props.references.map((AttachmentUsage usage) {
-      int count = props.references.indexOf(usage);
+      int count = props.references.indexOf(usage) + 1;
       return (Card()
             ..addTestId("${ReferenceViewTestIds.rvReference}-${count}")
             ..className = 'reference-view__reference-card'

@@ -39,7 +39,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
 
   ReactElement _renderReferenceView() {
     List<ReactElement> attachmentsToRender = props.store.attachments.map((Attachment attachment) {
-      int count = props.store.attachments.indexOf(attachment);
+      int count = props.store.attachments.indexOf(attachment) + 1;
       return (AttachmentRegion()
         ..addTestId('${ReferenceViewTestIds.rvAttachmentComponent}-${count}')
         ..key = attachment.id

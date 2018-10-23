@@ -135,8 +135,8 @@ void main() {
         attachmentsView = render(_module.components.content());
 
         test_utils.expectTestIdWasFound(attachmentsView, ReferenceViewTestIds.referenceView);
-        test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-0');
         test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-1');
+        test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-2');
       });
 
       test('ReferenceViews AttachmentRegions have state.', () {
@@ -146,9 +146,9 @@ void main() {
         ];
 
         attachmentsView = render(_module.components.content());
-        test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-0');
+        test_utils.expectTestIdWasFound(attachmentsView, '${ReferenceViewTestIds.rvAttachment}-1');
         AttachmentRegionComponent attachmentRegionComponent =
-            getDartComponent(getByTestId(attachmentsView, '${ReferenceViewTestIds.rvAttachmentComponent}-0'));
+            getDartComponent(getByTestId(attachmentsView, '${ReferenceViewTestIds.rvAttachmentComponent}-1'));
 
         expect(attachmentRegionComponent, isNotNull);
         expect(attachmentRegionComponent.state.isExpanded, isFalse);

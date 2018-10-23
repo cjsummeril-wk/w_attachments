@@ -21,22 +21,22 @@
 
         &__button {
             display: none;
-            margin-right: 0.5rem;
+            margin-bottom: 1.0rem;
             margin-left: 0.5rem;
-            margin-bottom: 1.1rem;
+            margin-right: 0.5rem;
         }
 
         &__buttons-container {
-            width: 25%;
             display: inline-block;
             padding: 0;
             text-align: right;
+            width: 25%;
         }
         &__text-container {
-            width: 70%;
-            padding: 0;
-            margin-left: 1rem;
             display: inline-block;
+            margin-left: 1rem;
+            padding: 0;
+            width: 70%;
         }
 
         &__location-text {
@@ -47,8 +47,8 @@
 
         &__header-text {
             margin-bottom: 0;
-            margin-top: 1rem;
             margin-left: 2.5rem;
+            margin-top: 1rem;
         }
 
         &:hover {

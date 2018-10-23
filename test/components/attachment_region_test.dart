@@ -61,23 +61,23 @@ void main() {
         ..attachment = AttachmentTestConstants.mockAttachment
         ..currentSelection = _store.currentSelection
         ..references = _store.usagesOfAttachment(AttachmentTestConstants.mockAttachment)
-        ..attachmentCounter = 0
+        ..attachmentCounter = 1
         ..targetKey = AttachmentTestConstants.mockAttachment.id));
     });
 
     test('Attachment Region holds a reference and has basic structure', () {
-      test_utils.expectTestIdWasFound(rendered, '${ReferenceViewTestIds.rvReference}-0');
+      test_utils.expectTestIdWasFound(rendered, '${ReferenceViewTestIds.rvReference}-1');
       test_utils.expectTestIdWasFound(rendered, ReferenceViewTestIds.referenceButtons);
       test_utils.expectTestIdWasFound(rendered, ReferenceViewTestIds.referenceText);
     });
 
     test('Attachment Region can create a new Reference within', () {
       Completer addReference = test_utils.hookinActionVerifier(_store.attachmentsActions.createAttachmentUsage);
-      test_utils.expectTestIdWasFound(rendered, '${ReferenceViewTestIds.rvAttachment}-0');
+      test_utils.expectTestIdWasFound(rendered, '${ReferenceViewTestIds.rvAttachment}-1');
 
       when(_store.isValidSelection).thenReturn(true);
 
-      click(getByTestId(getByTestId(rendered, '${ReferenceViewTestIds.rvAttachment}-0'), 'wsd.hitarea'));
+      click(getByTestId(getByTestId(rendered, '${ReferenceViewTestIds.rvAttachment}-1'), 'wsd.hitarea'));
 
       ButtonComponent addReferenceButtonComponent =
           getDartComponent(getByTestId(rendered, ReferenceViewTestIds.addReferenceButton));
