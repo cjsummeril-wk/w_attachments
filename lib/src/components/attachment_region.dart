@@ -32,7 +32,7 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
 
     return (Region()
       ..addProps(copyUnconsumedProps())
-      ..addTestId('${ReferenceViewTestIds.rvAttachment}-${props.attachmentCounter}')
+      ..addTestId('${test_id.ReferenceViewTestIds.rvAttachment}-${props.attachmentCounter}')
       ..className = classes.toClassName()
       ..key = props.attachment.id
       ..onMouseOver = _handleMouseOver
@@ -45,7 +45,7 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
     List<ReactElement> referenceCards = props.references.map((AttachmentUsage usage) {
       int count = props.references.indexOf(usage) + 1;
       return (Card()
-            ..addTestId("${ReferenceViewTestIds.rvReference}-${count}")
+            ..addTestId("${test_id.ReferenceViewTestIds.rvReference}-${count}")
             ..className = 'reference-view__reference-card'
             ..key = usage.id
             ..skin = CardSkin.WHITE
@@ -54,12 +54,12 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
             // we can change the selection color through ..selectedEdgeColor = CardEdgeColor.COLORNAME
             ..isSelectable = true)(
           (CardBlock()
-                ..addTestId(ReferenceViewTestIds.referenceButtons)
+                ..addTestId(test_id.ReferenceViewTestIds.referenceButtons)
                 ..className = 'reference-view__reference-card__text-container')(
               (Dom.p()..className = 'reference-view__reference-card__header-text')('Reference Label ${count}'),
               (Dom.p()..className = 'reference-view__reference-card__location-text')(usage.anchorId)),
           (CardBlock()
-                ..addTestId(ReferenceViewTestIds.referenceText)
+                ..addTestId(test_id.ReferenceViewTestIds.referenceText)
                 ..className = 'reference-view__reference-card__buttons-container'
                 ..aria.hidden = state.isHovered)(
               (Button()
@@ -95,7 +95,7 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
           ..noText = true
           ..isDisabled = !props.store.isValidSelection
           ..onClick = _handleAddReference
-          ..addTestId(ReferenceViewTestIds.addReferenceButton)
+          ..addTestId(test_id.ReferenceViewTestIds.addReferenceButton)
           ..className = 'reference-view__buttons'
           ..modifyProps(hint('Add Reference', HintPlacement.BOTTOM))
           ..size = ButtonSize.XSMALL)((Icon()..glyph = IconGlyph.SHORTCUT_ADD)()),

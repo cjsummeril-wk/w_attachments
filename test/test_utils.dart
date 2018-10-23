@@ -63,5 +63,6 @@ Future<AttachmentsModule> loadModule() async {
 
 void expectTestIdWasFound(dynamic rendered, String testId) =>
     expect(getByTestId(rendered, testId), isNotNull, reason: 'Could not find the test ID: ${testId}');
+
 void expectTestIdWasNotFound(dynamic rendered, String testId) =>
     expect(getByTestId(rendered, testId), isNull, reason: 'Found the test ID: ${testId}, but should not exist');

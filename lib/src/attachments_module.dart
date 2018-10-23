@@ -47,8 +47,7 @@ class AttachmentsModule extends Module {
       List<Filter> initialFilters,
       AttachmentsConfig config,
       StaticAssetLoader staticAssetLoader,
-      AnnotationsApi annotationsApi,
-      AttachmentsStore store}) {
+      AnnotationsApi annotationsApi}) {
     // Default the config if one wasn't provided
     config ??= new AttachmentsConfig();
 
@@ -60,18 +59,17 @@ class AttachmentsModule extends Module {
             new AnnotationsApi(messagingClient: messagingClient, appIntelligence: appIntelligence));
 
     _events = manageAndReturnDisposable(new AttachmentsEvents());
-    _store = store ??
-        manageAndReturnDisposable(new AttachmentsStore(
-            actionProviderFactory: actionProviderFactory,
-            attachmentsActions: attachmentsActions,
-            attachmentsEvents: _events,
-            dispatchKey: attachmentsModuleDispatchKey,
-            annotationsApi: _annotationsApi,
-            extensionContext: extensionContext,
-            attachments: initialAttachments ?? [],
-            groups: initialGroups ?? [],
-            initialFilters: initialFilters ?? [],
-            moduleConfig: config));
+    _store = manageAndReturnDisposable(new AttachmentsStore(
+        actionProviderFactory: actionProviderFactory,
+        attachmentsActions: attachmentsActions,
+        attachmentsEvents: _events,
+        dispatchKey: attachmentsModuleDispatchKey,
+        annotationsApi: _annotationsApi,
+        extensionContext: extensionContext,
+        attachments: initialAttachments ?? [],
+        groups: initialGroups ?? [],
+        initialFilters: initialFilters ?? [],
+        moduleConfig: config));
     _components = new AttachmentsComponents(
         store: _store, actionProvider: actionProvider, attachmentsActions: attachmentsActions);
   }

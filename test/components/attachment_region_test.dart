@@ -12,9 +12,9 @@ import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_config.dart';
 import 'package:w_attachments_client/src/attachments_events.dart';
 import 'package:w_attachments_client/src/attachments_store.dart';
+import 'package:w_attachments_client/src/components/component_test_ids.dart';
 import 'package:w_attachments_client/src/components/components.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
-import 'package:w_attachments_client/src/test/component_test_ids.dart';
 import 'package:w_attachments_client/src/w_annotations_service/w_annotations_payloads.dart';
 
 import '../mocks/mocks_library.dart';

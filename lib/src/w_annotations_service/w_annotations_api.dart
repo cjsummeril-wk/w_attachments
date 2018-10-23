@@ -38,7 +38,7 @@ class AnnotationsApi extends Disposable {
       _attachmentService.getAttachmentsByProducers(producerWurls: producerWurls);
 
   Future<Attachment> updateAttachmentLabel({@required int attachmentId, @required String attachmentLabel}) async =>
-      _attachmentService.updateAttachmentLabel(attachmentId: attachmentId, labelToUpdate: attachmentLabel);
+      _attachmentService.updateAttachmentLabel(attachmentId: attachmentId, newLabel: attachmentLabel);
 
   Future<Null> initialize() async {
     await _attachmentService.initialize();

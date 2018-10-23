@@ -34,7 +34,7 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
         })
       ..alwaysReadOnly = !props.isCardExpanded
       ..className = (state.isLabelActive) ? 'attachment-card__header__label--active' : 'attachment-card__header__label'
-      ..defaultValue = (props.store.showFilenameAsLabel) ? props.attachment.filename : props.attachment.label
+      ..defaultValue = props.attachment.filename
       ..hideLabel = true
       ..label = 'Label'
       ..onCommit = _onCommit
@@ -54,20 +54,8 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
   }
 
   void _onCommit(String oldValue, String newValue, SyntheticFormEvent event) {
-    if (props.store.showFilenameAsLabel) {
-      if (newValue.isEmpty == true) {
-        return;
-      }
-      //  String fileName = utils.fixFilenameExtension(oldValue, newValue);
-      //  if (fileName?.isNotEmpty == true) {
-      //    props.store.attachmentsActions.updateFilename(new UpdateFilenamePayload(keyToUpdate: props.attachment.id, newFilename: fileName));
-      //  } else {
-      //    return false;
-      //  }
-    } else {
-      props.store.attachmentsActions
-          .updateAttachmentLabel(new UpdateAttachmentLabelPayload(idToUpdate: props.attachment.id, newLabel: newValue));
-    }
+    props.store.attachmentsActions
+        .updateAttachmentLabel(new UpdateAttachmentLabelPayload(idToUpdate: props.attachment.id, newLabel: newValue));
   }
 
   void _onDidEnterEditable() {

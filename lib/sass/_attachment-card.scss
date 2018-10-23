@@ -1,37 +1,41 @@
+.attachments-container__region-collapse {
+  width: 100%;
+}
+
 .attachment-card__header {
-  min-height: 2.4rem;
-  padding-top: 0.5rem;
-  height: auto;
+    min-height: 2.4rem;
+    padding-top: 0.5rem;
+    height: auto;
 
-  h4 {
-    font-weight: normal;
-  }
+    h4 {
+      font-weight: normal;
+    }
 
-  &--no-attachments{
-    font-style: italic;
-    color: lighten(color('global.gray.lighter'), 20%);
-  }
+    &--no-attachments {
+      font-style: italic;
+      color: lighten(color('global.gray.lighter'), 20%);
+    }
 
-  &--selected {
-    @extend .attachment-card__header;
-    font-weight: bold;
-  }
+    &--selected {
+      @extend .attachment-card__header;
+      font-weight: bold;
+    }
 
-  &__label {
-    color: #7d7d7d;
-    padding: 0.2rem 0 0.2rem 0.2rem;
-    border-radius: 0.3rem;
-    max-height: 2.4rem;
-
-    &--active {
+    &__label {
       color: #7d7d7d;
       padding: 0.2rem 0 0.2rem 0.2rem;
       border-radius: 0.3rem;
-    }
-  }
+      max-height: 2.4rem;
 
-  &__menu-item {
-    margin-top: .3rem;
-    padding-top: .1rem;
-  }
+      &--active {
+        color: #7d7d7d;
+        padding: 0.2rem 0 0.2rem 0.2rem;
+        border-radius: 0.3rem;
+      }
+    }
+
+    &__menu-item {
+      margin-top: .3rem;
+      padding-top: .1rem;
+    }
 }

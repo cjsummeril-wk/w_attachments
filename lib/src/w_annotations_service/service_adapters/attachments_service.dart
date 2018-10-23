@@ -216,11 +216,11 @@ class AttachmentsService extends Disposable {
     }
   }
 
-  Future<Attachment> updateAttachmentLabel({@required int attachmentId, @required String labelToUpdate}) async {
+  Future<Attachment> updateAttachmentLabel({@required int attachmentId, @required String newLabel}) async {
     try {
       FUpdateAttachmentLabelRequest request = new FUpdateAttachmentLabelRequest()
         ..attachmentId = attachmentId
-        ..label = labelToUpdate;
+        ..label = newLabel;
       FUpdateAttachmentLabelResponse response = await _fClient.updateAttachmentLabel(context, request);
 
       return new Attachment.fromFAttachment(response?.attachment);
