@@ -96,7 +96,7 @@ class ExtensionContextAdapter extends Disposable {
   }
 
   // called when the content provider tells us the selected regions changed
-  _onDidChangeSelectedRegions(Null _) {
+  void _onDidChangeSelectedRegions(Null _) {
     _logger.fine("Selected regions changed");
     // get the currently selected regions
     Set<cef.ObservedRegion> regions = _observedRegionApi.getSelectedRegionsV2();
@@ -115,7 +115,7 @@ class ExtensionContextAdapter extends Disposable {
   }
 
   // when visible regions change update our highlights
-  _onDidChangeVisibleRegions(Null _) {
+  void _onDidChangeVisibleRegions(Null _) {
     _logger.fine("Visible regions changed");
     _observedRegionApi.getVisibleRegions().forEach(_cacheRegion);
     _refreshHighlights();

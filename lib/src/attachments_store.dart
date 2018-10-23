@@ -42,15 +42,15 @@ class AttachmentsStore extends Store {
   ActionProvider _actionProvider;
   DispatchKey dispatchKey;
 
-  List<Attachment> _attachments = <Attachment>[];
+  List<Attachment> _attachments = [];
   @visibleForTesting
   set attachments(List<Attachment> attachments) => _attachments = attachments;
 
-  List<AttachmentUsage> _attachmentUsages = <AttachmentUsage>[];
+  List<AttachmentUsage> _attachmentUsages = [];
   @visibleForTesting
   set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
 
-  List<Anchor> _anchors = <Anchor>[];
+  List<Anchor> _anchors = [];
   @visibleForTesting
   set anchors(List<Anchor> anchors) => _anchors = anchors;
 
@@ -137,7 +137,7 @@ class AttachmentsStore extends Store {
 
   String get primarySelection => _moduleConfig.primarySelection;
 
-  Set<int> get currentlySelectedAnchors => new Set<int>.from(_currentlySelectedAnchors);
+  Set<int> get currentlySelectedAnchors => new Set.from(_currentlySelectedAnchors);
 
   int get currentlyHoveredAttachmentId => _extensionContextAdapter.currentlyHoveredAttachmentId;
 
@@ -166,17 +166,17 @@ class AttachmentsStore extends Store {
   bool usageIsSelected(int usageId) => _currentlySelectedAttachmentUsages.contains(usageId);
 
   @visibleForTesting
-  Set<int> get currentlySelectedAttachments => new Set<int>.from(_currentlySelectedAttachments);
+  Set<int> get currentlySelectedAttachments => new Set.from(_currentlySelectedAttachments);
 
   @visibleForTesting
-  Set<int> get currentlySelectedAttachmentUsages => new Set<int>.from(_currentlySelectedAttachmentUsages);
+  Set<int> get currentlySelectedAttachmentUsages => new Set.from(_currentlySelectedAttachmentUsages);
 
   // attachment getters/setters
-  List<Attachment> get attachments => new List<Attachment>.unmodifiable(_attachments);
+  List<Attachment> get attachments => new List.unmodifiable(_attachments);
 
-  List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
+  List<AttachmentUsage> get attachmentUsages => new List.unmodifiable(_attachmentUsages);
 
-  List<Anchor> get anchors => new List<Anchor>.unmodifiable(_anchors);
+  List<Anchor> get anchors => new List.unmodifiable(_anchors);
 
   List<Anchor> anchorsByWurl(String wurl) =>
       new List<Anchor>.unmodifiable(_anchors.where((anchor) => anchor?.producerWurl == wurl));
@@ -188,7 +188,7 @@ class AttachmentsStore extends Store {
 
   List<AttachmentUsage> attachmentUsagesByAnchors(List<Anchor> anchors) {
     List<AttachmentUsage> attachmentUsagesToReturn = [];
-    List<int> attachmentUsagesToGet = new List<int>.from(anchors.map((Anchor anchor) => anchor.id));
+    List<int> attachmentUsagesToGet = new List.from(anchors.map((Anchor anchor) => anchor.id));
     attachmentUsagesToReturn
         .addAll(_attachmentUsages.where((AttachmentUsage usage) => attachmentUsagesToGet.contains(usage.anchorId)));
     return attachmentUsagesToReturn;
@@ -397,7 +397,7 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _selectAttachments(SelectAttachmentsPayload request) {
+  void _selectAttachments(SelectAttachmentsPayload request) {
     Set<int> anchorIds = new Set<int>();
     if (!request.maintainSelections && _currentlySelectedAttachments.isNotEmpty) {
       _deselectAttachments(new DeselectAttachmentsPayload(
@@ -421,7 +421,7 @@ class AttachmentsStore extends Store {
     _extensionContextAdapter.selectedChanged(anchorIds);
   }
 
-  _deselectAttachments(DeselectAttachmentsPayload request) {
+  void _deselectAttachments(DeselectAttachmentsPayload request) {
     Set<int> anchorIds = new Set<int>();
     if (request?.attachmentIds?.isNotEmpty == true) {
       for (int id in request.attachmentIds) {
@@ -440,7 +440,7 @@ class AttachmentsStore extends Store {
     _extensionContextAdapter.selectedChanged(anchorIds);
   }
 
-  _handleHoverAttachment(HoverAttachmentPayload payload) {
+  void _handleHoverAttachment(HoverAttachmentPayload payload) {
     _extensionContextAdapter.hoverChanged(payload);
   }
 
