@@ -183,8 +183,10 @@ class AttachmentsStore extends Store {
     return attachmentsToReturn;
   }
 
-  List<AttachmentUsage> usagesOfAttachment(Attachment attachment) =>
-      _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachment.id);
+  List<AttachmentUsage> usagesOfAttachment(Attachment attachment) {
+    return _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachment.id).toList();
+  }
+
   List<Attachment> attachmentsForProducerWurl(String producerWurl) {
     List<AttachmentUsage> usages = attachmentUsagesByAnchors(anchorsByWurl(producerWurl));
     return attachmentsOfUsages(usages);
@@ -263,7 +265,8 @@ class AttachmentsStore extends Store {
     try {
       final region = await _extensionContext.observedRegionApi.create(selection: payload.producerSelection);
 
-      CreateAttachmentUsageResponse response = await _annotationsApi.createAttachmentUsage(producerWurl: region.wuri);
+      CreateAttachmentUsageResponse response =
+          await _annotationsApi.createAttachmentUsage(producerWurl: region.wuri, attachmentId: payload.attachmentId);
 
       if (response == null) {
         _logger.warning('Something went wrong with CreateAttachmentUsage for ${payload.producerSelection}');

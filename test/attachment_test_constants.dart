@@ -36,6 +36,15 @@ class AttachmentTestConstants {
     ..accountResourceId = "crispy-bacon-lettuce-and-tomato-sammich"
     ..label = "crispy-bacon-and-sun-dried-tomato-salad"
     ..parentId = 7890;
+
+  static AttachmentUsage mockAddedAttachmentUsage = new AttachmentUsage()
+    ..id = attachmentUsageIdOne
+    ..anchorId = 4343
+    ..attachmentId = attachmentIdOne
+    ..accountResourceId = "crispy-chick-fried-waffles"
+    ..label = "crispy-chicken-crispers"
+    ..parentId = 4343;
+
   static AttachmentUsage mockChangedAttachmentUsage = new AttachmentUsage()
     ..id = attachmentUsageIdTwo
     ..anchorId = anchorIdTwo
@@ -51,6 +60,7 @@ class AttachmentTestConstants {
     ..fsResourceType = "type"
     ..label = "crispy-salad-toppers"
     ..userName = "crispy-names"
+    ..filename = 'crispy-fried-pickles'
     ..uploadStatus = Status.Pending;
   static Attachment mockChangedAttachment = new Attachment()
     ..id = attachmentIdTwo
@@ -58,6 +68,7 @@ class AttachmentTestConstants {
     ..fsResourceId = "3456"
     ..fsResourceType = "type"
     ..label = "crispy-crackle-pop"
+    ..filename = 'crispy-parmesan-cheese'
     ..userName = "crispy-fighter-jets-like-freals-cool"
     ..uploadStatus = Status.Pending;
 

@@ -12,16 +12,58 @@ class AttachmentsContainerProps extends FluxUiProps<AttachmentsActions, Attachme
 class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainerProps> {
   RegionCollapseComponent _regionCollapse;
 
-  static final utils.TestIdGenerator _testId = utils.buildTestIdGenerator(containerPrefix: 'attachmentsContainer');
-
-  static final String emptyViewTestId = _testId('empty-view');
-
   @override
-  render() => (Dom.div()
+  render() => (Block()
     ..className = 'w_attachments_client'
-    ..addTestId('w_attachments_client'))(_renderAsRegions());
+    ..addTestId(ComponentTestIds.attachmentContainer))(_renderAttachmentsView());
 
-  _renderAsRegions() {
+  ReactElement _renderAttachmentsView() {
+    if (props.store.attachments.isNotEmpty) {
+      switch (props.store.moduleConfig.viewModeSetting) {
+        case ViewModeSettings.References:
+          return _renderReferenceView();
+          break;
+        case ViewModeSettings.Groups:
+          return _renderAsRegions();
+          break;
+        case ViewModeSettings.Headerless:
+          return _renderAsRegions();
+          break;
+        default:
+          return _renderEmptyView();
+      }
+    } else {
+      return _renderEmptyView();
+    }
+  }
+
+  ReactElement _renderReferenceView() {
+    List<ReactElement> attachmentsToRender = props.store.attachments.map((Attachment attachment) {
+      int count = props.store.attachments.indexOf(attachment) + 1;
+      return (AttachmentRegion()
+        ..addTestId('${ReferenceViewTestIds.rvAttachmentComponent}-${count}')
+        ..key = attachment.id
+        ..attachment = attachment
+        ..currentSelection = props.store.currentSelection
+        ..references = props.store.usagesOfAttachment(attachment)
+        ..actions = props.actions
+        ..store = props.store
+        ..attachmentCounter = count
+        ..targetKey = attachment.id)();
+    }).toList();
+
+    // for now, sort the region by key (attachment.id). Resolves a bug where
+    // an added reference to an AttachmentRegion would re-render the view and re-order the attachments.
+    attachmentsToRender.sort((a, b) => a.key.compareTo(b.key));
+
+    return (RegionCollapse()
+      ..revealHeaderActionsOnHover = true
+      ..className = 'reference-view__region-container'
+      ..addTestId(ReferenceViewTestIds.referenceView)
+      ..defaultExpandedTargetKeys = [])(attachmentsToRender);
+  }
+
+  ReactElement _renderAsRegions() {
     int ctr = 0;
     int numAttachmentsDisplayed = 0;
     var regionContent = props.store.groups.map((Group group) {
@@ -54,8 +96,8 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
           ..ref = ((RegionCollapseComponent ref) => _regionCollapse = ref))(regionContent);
   }
 
-  _renderEmptyView() => (EmptyView()
-    ..addTestId(emptyViewTestId)
+  ReactElement _renderEmptyView() => (EmptyView()
+    ..addTestId(ComponentTestIds.emptyView)
     ..glyph = props.store.moduleConfig.emptyViewIcon
     ..header = props.store.moduleConfig.emptyViewText
     ..type = EmptyViewType.VBLOCK)();

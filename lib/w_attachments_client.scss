@@ -7,7 +7,10 @@
 
 .w_attachments_client {
   width: 100%;
-  @import "./sass/attachment-avatar.scss", "./sass/attachment-card.scss", "./sass/group-panel.scss";
+  @import "./sass/_attachment-avatar";
+  @import "./sass/_attachment-card";
+  @import "./sass/_group-panel";
+  @import "./sass/_reference_view";
 }
 
 
