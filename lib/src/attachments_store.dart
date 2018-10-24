@@ -349,13 +349,13 @@ class AttachmentsStore extends Store {
 
       if (response == null) {
         _logger.warning("Invalid attachment usage ids: ", payload.attachmentUsageIds);
-        return;
+        return null;
       }
 
       return _attachmentUsages = removeAndAddType(response, _attachmentUsages, false);
     } else {
       _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);
-      return;
+      return null;
     }
   }
 

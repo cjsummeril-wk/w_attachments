@@ -1192,16 +1192,16 @@ void main() {
 
     group('updateAttachmentLabel -', () {
       setUp(() async {
-        _attachmentsActions = new AttachmentsActions();
-        _attachmentsEvents = new AttachmentsEvents();
+        _actions = new AttachmentsActions();
+        _events = new AttachmentsEvents();
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
         _store = spy(
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _attachmentsActions,
-                attachmentsEvents: _attachmentsEvents,
+                attachmentsActions: _actions,
+                attachmentsEvents: _events,
                 annotationsApi: _annotationsApiMock,
                 extensionContext: _extensionContext,
                 dispatchKey: attachmentsModuleDispatchKey,
@@ -1221,15 +1221,15 @@ void main() {
         UpdateAttachmentLabelPayload payload = new UpdateAttachmentLabelPayload(
             idToUpdate: AttachmentTestConstants.attachmentIdOne, newLabel: AttachmentTestConstants.label);
 
-        await _attachmentsActions.updateAttachmentLabel(payload);
+        await _actions.updateAttachmentLabel(payload);
 
         verify(_annotationsApiMock.updateAttachmentLabel(attachmentId: any, attachmentLabel: any)).called(1);
         expect(updateAttachmentLabelCompleter.future, completes);
       });
 
       tearDown(() async {
-        await _attachmentsActions.dispose();
-        await _attachmentsEvents.dispose();
+        await _actions.dispose();
+        await _events.dispose();
         await _extensionContext.dispose();
         await _store.dispose();
         _api = null;

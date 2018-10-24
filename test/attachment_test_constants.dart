@@ -87,7 +87,7 @@ class AttachmentTestConstants {
     ..id = attachmentIdThree
     ..accountResourceId = "crispy-jello"
     ..fsResourceId = "3456"
-    ..fsResourceType = "type"
+    ..filemime = "type"
     ..label = "crispy-laundry"
     ..userName = "crispy-smoothie"
     ..uploadStatus = Status.Complete;
