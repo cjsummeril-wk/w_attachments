@@ -33,7 +33,6 @@ class AttachmentsStore extends Store {
   final AttachmentsEvents attachmentsEvents;
   final AnnotationsApi _annotationsApi;
   final cef.ExtensionContext _extensionContext;
-  ExtensionContextAdapter _extensionContextAdapter;
 
   final Logger _logger = new Logger('w_attachments_client.attachments_store');
 
@@ -41,6 +40,7 @@ class AttachmentsStore extends Store {
   AttachmentsApi _api;
   ActionProvider _actionProvider;
   DispatchKey dispatchKey;
+  ExtensionContextAdapter _extensionContextAdapter;
 
   List<Attachment> _attachments = [];
   @visibleForTesting
