@@ -47,7 +47,7 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
       ..onDidExitEditable = () {
         setState(newState()..isLabelActive = false);
       }
-      ..placeholder = props.attachment.filename ??= 'Enter a label'
+      ..placeholder = props.attachment.filename?.isEmpty == true ? 'Enter a label' : props.attachment.filename
       ..ref = (ref) => _labelRef = ref)();
   }
 
