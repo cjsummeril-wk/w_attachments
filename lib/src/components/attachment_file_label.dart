@@ -22,8 +22,6 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
 
   @override
   render() {
-    String placeholderText = (props.store.showFilenameAsLabel) ? 'file name' : 'label';
-
     return (ClickToEditInput()
       ..addTestId(test_id.AttachmentCardIds.attachmentFileLabelId)
       ..formGroupProps = (domProps()
@@ -34,7 +32,7 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
         })
       ..alwaysReadOnly = !props.isCardExpanded
       ..className = (state.isLabelActive) ? 'attachment-card__header__label--active' : 'attachment-card__header__label'
-      ..defaultValue = props.attachment.filename
+      ..defaultValue = props.attachment.label
       ..hideLabel = true
       ..label = 'Label'
       ..onCommit = _onCommit
@@ -49,7 +47,7 @@ class AttachmentFileLabelComponent extends FluxUiStatefulComponent<AttachmentFil
       ..onDidExitEditable = () {
         setState(newState()..isLabelActive = false);
       }
-      ..placeholder = 'Enter a ${placeholderText}'
+      ..placeholder = props.attachment.filename ??= 'Enter a label'
       ..ref = (ref) => _labelRef = ref)();
   }
 
