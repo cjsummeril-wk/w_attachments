@@ -64,9 +64,9 @@ class AttachmentsStore extends Store {
   List<Group> _groups = [];
 
   // internal object selection properties
-  Set<int> _currentlySelectedAttachments = new Set<int>();
-  Set<int> _currentlySelectedAttachmentUsages = new Set<int>();
-  Set<int> _currentlySelectedAnchors = new Set<int>();
+  Set<int> _currentlySelectedAttachments = new Set();
+  Set<int> _currentlySelectedAttachmentUsages = new Set();
+  Set<int> _currentlySelectedAnchors = new Set();
 
   AttachmentsStore(
       {@required this.actionProviderFactory,
@@ -179,12 +179,12 @@ class AttachmentsStore extends Store {
   List<Anchor> get anchors => new List.unmodifiable(_anchors);
 
   List<Anchor> anchorsByWurl(String wurl) =>
-      new List<Anchor>.unmodifiable(_anchors.where((anchor) => anchor?.producerWurl == wurl));
+      new List.unmodifiable(_anchors.where((anchor) => anchor?.producerWurl == wurl));
 
-  List<int> get anchorIds => new List<int>.unmodifiable(_anchors.map((anchor) => anchor?.id));
+  List<int> get anchorIds => new List.unmodifiable(_anchors.map((anchor) => anchor?.id));
 
   List<AttachmentUsage> attachmentUsagesByAnchorId(int anchorId) =>
-      new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
+      new List.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
 
   List<AttachmentUsage> attachmentUsagesByAnchors(List<Anchor> anchors) {
     List<AttachmentUsage> attachmentUsagesToReturn = [];
@@ -196,18 +196,17 @@ class AttachmentsStore extends Store {
 
   List<Attachment> attachmentsOfUsages(List<AttachmentUsage> usages) {
     List<Attachment> attachmentsToReturn = [];
-    List<int> attachmentIdsToGet = new List<int>.from(usages.map((AttachmentUsage usage) => usage.attachmentId));
+    List<int> attachmentIdsToGet = new List.from(usages.map((AttachmentUsage usage) => usage.attachmentId));
     attachmentsToReturn
         .addAll(_attachments.where((Attachment attachment) => attachmentIdsToGet.contains(attachment.id)));
     return attachmentsToReturn;
   }
 
   List<AttachmentUsage> usagesByAttachmentId(int attachmentId) =>
-      _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachmentId)?.toList() ??
-      <AttachmentUsage>[];
+      _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachmentId)?.toList() ?? [];
 
   Set<int> anchorIdsByAttachmentId(int attachmentId) =>
-      usagesByAttachmentId(attachmentId)?.map((AttachmentUsage usage) => usage.anchorId)?.toSet() ?? new Set<int>();
+      usagesByAttachmentId(attachmentId)?.map((AttachmentUsage usage) => usage.anchorId)?.toSet() ?? new Set();
 
   List<Attachment> attachmentsForProducerWurl(String producerWurl) {
     List<AttachmentUsage> usages = attachmentUsagesByAnchors(anchorsByWurl(producerWurl));
@@ -218,11 +217,11 @@ class AttachmentsStore extends Store {
       _attachments.firstWhere((attachment) => attachment.id == id, orElse: () => null);
 
   // group and filter getters/setters
-  List<Group> get groups => new List<Group>.from(_groups);
+  List<Group> get groups => new List.from(_groups);
 
   List<Filter> get _filters => _filtersVar;
-  List<Filter> get filters => new List<Filter>.from(_filters);
-  Map<String, Filter> get filtersByName => new Map<String, Filter>.from(_filtersByName);
+  List<Filter> get filters => new List.from(_filters);
+  Map<String, Filter> get filtersByName => new Map.from(_filtersByName);
   set _filters(List<Filter> newFilters) {
     _filtersVar = newFilters;
     _filtersByName = _filtersVar?.fold({}, (result, filter) {
@@ -348,13 +347,13 @@ class AttachmentsStore extends Store {
 
       if (response == null) {
         _logger.warning("Invalid attachment usage ids: ", payload.attachmentUsageIds);
-        return null;
+        return;
       }
 
       return _attachmentUsages = removeAndAddType(response, _attachmentUsages, false);
     } else {
       _logger.warning("Unable to locate attachment usages with given ids: ", payload.attachmentUsageIds);
-      return null;
+      return;
     }
   }
 
@@ -398,7 +397,7 @@ class AttachmentsStore extends Store {
   }
 
   void _selectAttachments(SelectAttachmentsPayload request) {
-    Set<int> anchorIds = new Set<int>();
+    Set<int> anchorIds = new Set();
     if (!request.maintainSelections && _currentlySelectedAttachments.isNotEmpty) {
       _deselectAttachments(new DeselectAttachmentsPayload(
           attachmentIds: _currentlySelectedAttachments.toList(),
@@ -422,7 +421,7 @@ class AttachmentsStore extends Store {
   }
 
   void _deselectAttachments(DeselectAttachmentsPayload request) {
-    Set<int> anchorIds = new Set<int>();
+    Set<int> anchorIds = new Set();
     if (request?.attachmentIds?.isNotEmpty == true) {
       for (int id in request.attachmentIds) {
         _currentlySelectedAttachments.remove(id);
