@@ -108,6 +108,8 @@ class AttachmentsStore extends Store {
     triggerOnActionV2(attachmentsActions.dropFiles, _dropFiles);
     triggerOnActionV2(attachmentsActions.deselectAttachments, _deselectAttachments);
     triggerOnActionV2(attachmentsActions.selectAttachments, _selectAttachments);
+    triggerOnActionV2(attachmentsActions.deselectAttachmentUsages, _deselectAttachmentUsages);
+    triggerOnActionV2(attachmentsActions.selectAttachmentUsages, _selectAttachmentUsages);
 
     [
       attachmentsActions.createAttachmentUsage.listen(_handleCreateAttachmentUsage),
@@ -398,23 +400,35 @@ class AttachmentsStore extends Store {
 
   void _selectAttachments(SelectAttachmentsPayload request) {
     Set<int> anchorIds = new Set();
-    if (!request.maintainSelections && _currentlySelectedAttachments.isNotEmpty) {
-      _deselectAttachments(new DeselectAttachmentsPayload(
-          attachmentIds: _currentlySelectedAttachments.toList(),
-          usageIds: _currentlySelectedAttachmentUsages.toList()));
+    if (!request.maintainSelections && (_currentlySelectedAttachments.isNotEmpty)) {
+      _deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: _currentlySelectedAttachments.toList()));
     }
     if (request?.attachmentIds?.isNotEmpty == true) {
       for (int id in request.attachmentIds) {
         _currentlySelectedAttachments.add(id);
         anchorIds.addAll(anchorIdsByAttachmentId(id));
       }
+    } else {
+      _logger.fine('no attachment IDs were provided for selecting');
+    }
+    _currentlySelectedAnchors.addAll(anchorIds);
+    _extensionContextAdapter.selectedChanged(anchorIds);
+  }
+
+  void _selectAttachmentUsages(SelectAttachmentUsagesPayload request) {
+    Set<int> anchorIds = new Set();
+    if (!request.maintainSelections && (_currentlySelectedAttachmentUsages.isNotEmpty)) {
+      _deselectAttachmentUsages(
+          new DeselectAttachmentUsagesPayload(usageIds: _currentlySelectedAttachmentUsages.toList()));
     }
     if (request?.usageIds?.isNotEmpty == true) {
       for (int id in request.usageIds) {
         _currentlySelectedAttachmentUsages.add(id);
-        int anchorId = _attachmentUsages.firstWhere((usage) => usage.id == id, orElse: () => null).anchorId;
+        int anchorId = _attachmentUsages.firstWhere((usage) => usage.id == id, orElse: () => null)?.anchorId;
         if (anchorId != null) anchorIds.add(anchorId);
       }
+    } else {
+      _logger.fine('no attachment usage IDs were provided for selecting');
     }
     _currentlySelectedAnchors.addAll(anchorIds);
     _extensionContextAdapter.selectedChanged(anchorIds);
@@ -427,13 +441,23 @@ class AttachmentsStore extends Store {
         _currentlySelectedAttachments.remove(id);
         anchorIds.addAll(anchorIdsByAttachmentId(id));
       }
+    } else {
+      _logger.fine('no attachment IDs were provided for deselecting');
     }
+    _currentlySelectedAnchors.removeAll(anchorIds);
+    _extensionContextAdapter.selectedChanged(anchorIds);
+  }
+
+  void _deselectAttachmentUsages(DeselectAttachmentUsagesPayload request) {
+    Set<int> anchorIds = new Set();
     if (request?.usageIds?.isNotEmpty == true) {
       for (int id in request.usageIds) {
         _currentlySelectedAttachmentUsages.remove(id);
         int anchorId = _attachmentUsages.firstWhere((usage) => usage.id == id, orElse: () => null).anchorId;
         if (anchorId != null) anchorIds.add(anchorId);
       }
+    } else {
+      _logger.fine('no attachment usage IDs were provided for deselecting');
     }
     _currentlySelectedAnchors.removeAll(anchorIds);
     _extensionContextAdapter.selectedChanged(anchorIds);

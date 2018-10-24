@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:w_attachments_client/src/attachments_config.dart';
 import 'package:w_common/disposable.dart';
 import 'package:wdesk_sdk/content_extension_framework_v2.dart' as cef;
 
@@ -79,7 +80,7 @@ class ExtensionContextAdapter extends Disposable {
   }
 
   // called when the content provider tells us the scopes have changed
-  void _onDidChangeScopes(Null _) {
+  void _onDidChangeScopes(_) {
     var allScopes = _observedRegionApi.getScopes();
     var currentScopes = _currentScopes.toSet();
     // create a set of the scopes we need to subscribe to
@@ -88,7 +89,7 @@ class ExtensionContextAdapter extends Disposable {
         new GetAttachmentsByProducersPayload(producerWurls: scopesToObtain);
     _actions.getAttachmentsByProducers(payload);
     // create a set of the scopes we need to unsubscribe from
-    // TODO: remove old attachments we no longer need to show
+    // TODO RAM-828: remove old attachments we no longer need to show
     // final Set<String> scopesToRemove = currentScopes.difference(allScopes);
     // set _currentScopes to the new list of scopes
     _currentScopes = allScopes;
@@ -96,7 +97,7 @@ class ExtensionContextAdapter extends Disposable {
   }
 
   // called when the content provider tells us the selected regions changed
-  void _onDidChangeSelectedRegions(Null _) {
+  void _onDidChangeSelectedRegions(_) {
     _logger.fine("Selected regions changed");
     // get the currently selected regions
     Set<cef.ObservedRegion> regions = _observedRegionApi.getSelectedRegionsV2();
@@ -108,14 +109,22 @@ class ExtensionContextAdapter extends Disposable {
         .toList();
     final List<Attachment> attachments = _store.attachmentsOfUsages(usages);
 
-    // update the list of selected attachments and/or usages in our store
-    _actions.selectAttachments(new SelectAttachmentsPayload(
-        attachmentIds: attachments.map((a) => a.id).toList(), usageIds: usages.map((usage) => usage.id).toList()));
+    // update the list of selected attachments and/or usages in our store, based on ViewMode
+    switch (_store.moduleConfig.viewModeSetting) {
+      case ViewModeSettings.Groups:
+      case ViewModeSettings.Headerless:
+        _actions.selectAttachments(new SelectAttachmentsPayload(attachmentIds: attachments.map((a) => a.id).toList()));
+        break;
+      case ViewModeSettings.References:
+        _actions.selectAttachmentUsages(
+            new SelectAttachmentUsagesPayload(usageIds: usages.map((usage) => usage.id).toList()));
+        break;
+    }
     _refreshHighlights();
   }
 
   // when visible regions change update our highlights
-  void _onDidChangeVisibleRegions(Null _) {
+  void _onDidChangeVisibleRegions(_) {
     _logger.fine("Visible regions changed");
     _observedRegionApi.getVisibleRegions().forEach(_cacheRegion);
     _refreshHighlights();

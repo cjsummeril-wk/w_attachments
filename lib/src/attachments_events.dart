@@ -22,6 +22,6 @@ class AttachmentsEvents extends EventsCollection {
   final Event<DraggableEvent> attachmentDragEnd = new Event(attachmentsModuleDispatchKey);
 
   AttachmentsEvents() : super(attachmentsModuleDispatchKey) {
-    [attachmentRemoved, attachmentDragStart, attachmentDragEnd].forEach(manageEvent);
+    [attachmentRemoved, attachmentUploadCanceled, attachmentDragStart, attachmentDragEnd].forEach(manageEvent);
   }
 }

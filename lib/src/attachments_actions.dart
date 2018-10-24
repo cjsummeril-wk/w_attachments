@@ -14,6 +14,8 @@ class AttachmentsActions extends Disposable {
 
   final selectAttachments = new Action<SelectAttachmentsPayload>();
   final deselectAttachments = new Action<DeselectAttachmentsPayload>();
+  final selectAttachmentUsages = new Action<SelectAttachmentUsagesPayload>();
+  final deselectAttachmentUsages = new Action<DeselectAttachmentUsagesPayload>();
 
   final hoverAttachment = new Action<HoverAttachmentPayload>();
 

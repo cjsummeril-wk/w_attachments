@@ -396,6 +396,9 @@ void main() {
                 attachments: [],
                 groups: []));
         _api = _store.api;
+
+        _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
+        _store.attachments = [AttachmentTestConstants.mockAttachment];
       });
 
       tearDown(() async {
@@ -414,12 +417,20 @@ void main() {
           ..userName = testUsername;
         await _actions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
-        expect(_store.attachments, [attachment]);
+        expect(_store.attachments, [AttachmentTestConstants.mockAttachment, attachment]);
+      });
+
+      test('addAttachment should should not add an attachment already in the attachments list', () async {
+        Attachment attachment = new Attachment()
+          ..filename = 'very_good_file.docx'
+          ..id = 1
+          ..userName = testUsername;
+        await _actions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
         // adding the same attachment again should not modify the list
         await _actions.addAttachment(new AddAttachmentPayload(toAdd: attachment));
 
-        expect(_store.attachments, [attachment]);
+        expect(_store.attachments, [AttachmentTestConstants.mockAttachment, attachment]);
       });
 
 //      test('upsertAttachment should update if bundle exists, add if doesn\'t exist', () async {
@@ -444,27 +455,25 @@ void main() {
 //        expect(_store.attachments[0].userName, 'Harvey Birdman');
 //      });
 
+      test('default state of selected/hovered data - assert setup method', () {
+        expect(_store.currentlySelectedAnchors, isEmpty);
+        expect(_store.currentlySelectedAttachmentUsages, isEmpty);
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlyHoveredAttachmentId, isNull);
+      });
+
       test('selectAttachment should set the store\'s currentlySelectedAttachments/Anchors with the passed in arg',
           () async {
-        _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
-        _store.attachments = [AttachmentTestConstants.mockAttachment];
-
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
-        expect(_store.currentlySelectedAnchors, isEmpty);
-
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
 
         expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
-        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdOne));
+        expect(_store.currentlySelectedAnchors, allOf(hasLength(1), contains(AttachmentTestConstants.anchorIdOne)));
       });
 
       test('selectAttachment sets currentlySelectedAttachment, but not Anchor when usage is not present', () async {
         // simulates an attachment with no usages
-        _store.attachments = [AttachmentTestConstants.mockAttachment];
-
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
-        expect(_store.currentlySelectedAnchors, isEmpty);
+        _store.attachmentUsages = [];
 
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
@@ -473,14 +482,12 @@ void main() {
         expect(_store.currentlySelectedAnchors, isEmpty);
       });
 
-      test('should be able to select multiple attachments by selectionKeys in single call', () async {
+      test('should be able to select multiple attachments by IDs in single call', () async {
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
           AttachmentTestConstants.mockChangedAttachmentUsage
         ];
         _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
-
-        expect(_store.currentlySelectedAttachments, isEmpty);
 
         await _actions.selectAttachments(new SelectAttachmentsPayload(attachmentIds: [
           AttachmentTestConstants.mockAttachment.id,
@@ -503,15 +510,8 @@ void main() {
         ];
         _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
 
-        expect(_store.currentlySelectedAttachments, isEmpty);
-        expect(_store.currentlySelectedAnchors, isEmpty);
-
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
-
-        expect(_store.currentlySelectedAttachments, isNotEmpty);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
-        expect(_store.currentlySelectedAnchors, allOf(hasLength(1), contains(AttachmentTestConstants.anchorIdOne)));
 
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockChangedAttachment.id], maintainSelections: true));
@@ -532,15 +532,8 @@ void main() {
         ];
         _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
 
-        expect(_store.currentlySelectedAttachments, isEmpty);
-        expect(_store.currentlySelectedAnchors, isEmpty);
-
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
-
-        expect(_store.currentlySelectedAttachments, isNotEmpty);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
-        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdOne));
 
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockChangedAttachment.id], maintainSelections: false));
@@ -551,17 +544,9 @@ void main() {
         expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdTwo));
       });
 
-      test('should be able to deselect an attachment by id', () async {
-        _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
-        _store.attachments = [AttachmentTestConstants.mockAttachment];
-
-        expect(_store.currentlySelectedAttachments, isEmpty);
-        expect(_store.currentlySelectedAnchors, isEmpty);
-
+      test('deselectAttachments should be able to deselect an attachment by id', () async {
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
-        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdOne));
 
         await _actions.deselectAttachments(
             new DeselectAttachmentsPayload(attachmentIds: [AttachmentTestConstants.mockAttachment.id]));
@@ -571,39 +556,45 @@ void main() {
         expect(_store.currentlySelectedAnchors, isEmpty);
       });
 
-      test('should be able to deselect an attachment usage by id', () async {
-        _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
-
-        expect(_store.currentlySelectedAttachments, isEmpty);
-        expect(_store.currentlySelectedAnchors, isEmpty);
+      test('should be able to select multiple attachments by ID one at a time maintaining selections', () async {
+        _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
 
         await _actions.selectAttachments(new SelectAttachmentsPayload(
-            usageIds: [AttachmentTestConstants.mockAttachmentUsage.id], maintainSelections: false));
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
-        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdOne));
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
 
-        await _actions.deselectAttachments(
-            new DeselectAttachmentsPayload(usageIds: [AttachmentTestConstants.mockAttachmentUsage.id]));
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockChangedAttachment.id], maintainSelections: true));
 
-        expect(_store.currentlySelectedAttachments, isEmpty);
-        expect(_store.currentlySelectedAnchors, isEmpty);
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+        expect(_store.currentlySelectedAttachments.length, 2);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
+        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachment.id), isTrue);
       });
 
-      test('selectAttachment should set the store\'s currentlySelectedAttachmentUsages with the passed in arg',
+      test('selectAttachment should make no selections when no IDs are provided', () async {
+        await _actions.selectAttachments(new SelectAttachmentsPayload());
+
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAttachmentUsages, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+      });
+
+      test('deselectAttachmentUsage should remove no selections when no IDs are provided', () async {
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
+        await _actions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: []));
+
+        expect(_store.currentlySelectedAttachments, isNotEmpty);
+        expect(_store.currentlySelectedAnchors, isNotEmpty);
+      });
+
+      test('selectAttachmentUsages should set the store\'s currentlySelectedAttachmentUsages with the passed in arg',
           () async {
-        _store.attachments = [AttachmentTestConstants.mockAttachment];
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
           AttachmentTestConstants.mockChangedAttachmentUsage
         ];
 
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isFalse);
-        expect(_store.currentlySelectedAnchors, isEmpty);
-
-        await _actions.selectAttachments(new SelectAttachmentsPayload(usageIds: [
+        await _actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(usageIds: [
           AttachmentTestConstants.mockAttachmentUsage.id,
           AttachmentTestConstants.mockChangedAttachmentUsage.id
         ], maintainSelections: false));
@@ -615,19 +606,26 @@ void main() {
             allOf(contains(AttachmentTestConstants.anchorIdTwo), contains(AttachmentTestConstants.anchorIdOne)));
       });
 
-      test('selectAttachment should only set the store\'s currentlySelectedAttachmentUsages where specified', () async {
-        _store.attachments = [AttachmentTestConstants.mockAttachment];
+      test('deselectAttachmentUsages should be able to deselect an attachment usage by id', () async {
+        await _actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(
+            usageIds: [AttachmentTestConstants.mockAttachmentUsage.id], maintainSelections: false));
+
+        await _actions.deselectAttachmentUsages(
+            new DeselectAttachmentUsagesPayload(usageIds: [AttachmentTestConstants.mockAttachmentUsage.id]));
+
+        expect(_store.currentlySelectedAttachments, isEmpty);
+        expect(_store.currentlySelectedAnchors, isEmpty);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+      });
+
+      test('selectAttachmentUsages should only set the store\'s currentlySelectedAttachmentUsages where specified',
+          () async {
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
           AttachmentTestConstants.mockChangedAttachmentUsage
         ];
 
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isFalse);
-        expect(_store.currentlySelectedAnchors, isEmpty);
-
-        await _actions.selectAttachments(new SelectAttachmentsPayload(
+        await _actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(
             usageIds: [AttachmentTestConstants.mockChangedAttachmentUsage.id], maintainSelections: false));
 
         expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
@@ -636,79 +634,80 @@ void main() {
         expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdTwo));
       });
 
-      test(
-          'selectAttachment should set the store\'s currentlySelectedAttachments and currentlySelectedAttachmentUsages when specified',
-          () async {
-        _store.attachments = [AttachmentTestConstants.mockAttachment];
+      test('should be able to select multiple attachment usages by IDs in single call', () async {
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
           AttachmentTestConstants.mockChangedAttachmentUsage
         ];
 
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isFalse);
-        expect(_store.currentlySelectedAnchors, isEmpty);
+        await _actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(usageIds: [
+          AttachmentTestConstants.mockAttachmentUsage.id,
+          AttachmentTestConstants.mockChangedAttachmentUsage.id
+        ], maintainSelections: false));
 
-        await _actions.selectAttachments(new SelectAttachmentsPayload(
-            attachmentIds: [AttachmentTestConstants.mockAttachment.id],
-            usageIds: [AttachmentTestConstants.mockChangedAttachmentUsage.id],
-            maintainSelections: false));
-
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
-        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
+        expect(_store.currentlySelectedAttachmentUsages.length, 2);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
         expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isTrue);
-        // should contain the anchor(s) for mockAttachment (anchorIdOne), and the anchor for mockChangedAttachmentUsage (anchorIdTwo)
-        expect(_store.currentlySelectedAnchors,
-            allOf(contains(AttachmentTestConstants.anchorIdOne), contains(AttachmentTestConstants.anchorIdTwo)));
+        expect(
+            _store.currentlySelectedAnchors,
+            allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
+                contains(AttachmentTestConstants.anchorIdTwo)));
       });
 
-      test('should be able to select multiple attachments by ID one at a time maintaining selections', () async {
+      test('should be able to select multiple attachment usages by ID one at a time maintaining selections', () async {
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
           AttachmentTestConstants.mockChangedAttachmentUsage
         ];
 
-        expect(_store.currentlySelectedAttachments, isEmpty);
+        await _actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(
+            usageIds: [AttachmentTestConstants.mockAttachmentUsage.id], maintainSelections: false));
 
-        await _actions.selectAttachments(new SelectAttachmentsPayload(
-            attachmentIds: [AttachmentTestConstants.mockAttachmentUsage.id], maintainSelections: false));
+        await _actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(
+            usageIds: [AttachmentTestConstants.mockChangedAttachmentUsage.id], maintainSelections: true));
 
-        expect(_store.currentlySelectedAttachments, isNotEmpty);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isFalse);
-
-        await _actions.selectAttachments(new SelectAttachmentsPayload(
-            attachmentIds: [AttachmentTestConstants.mockChangedAttachmentUsage.id], maintainSelections: true));
-
-        expect(_store.currentlySelectedAttachments.length, 2);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isTrue);
+        expect(_store.currentlySelectedAttachmentUsages.length, 2);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isTrue);
+        expect(_store.usageIsSelected(AttachmentTestConstants.mockChangedAttachmentUsage.id), isTrue);
       });
 
-      test('selectAttachment should make no selections when no IDs are provided', () async {
-        expect(_store.currentlySelectedAttachments, isEmpty);
-        expect(_store.currentlySelectedAttachmentUsages, isEmpty);
-        expect(_store.currentlySelectedAnchors, isEmpty);
-        await _actions.selectAttachments(new SelectAttachmentsPayload());
+      test('selectAttachmentUsage should make no selections when no IDs are provided', () async {
+        await _actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(usageIds: []));
 
-        expect(_store.currentlySelectedAttachments, isEmpty);
         expect(_store.currentlySelectedAttachmentUsages, isEmpty);
         expect(_store.currentlySelectedAnchors, isEmpty);
       });
 
-      test('hoverAttachment changes currentlyHovered to provided next id or null', () async {
-        expect(_store.currentlyHoveredAttachmentId, isNull);
+      test('deselectAttachmentUsage should remove no selections when no IDs are provided', () async {
+        await _actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(
+            usageIds: [AttachmentTestConstants.mockAttachmentUsage.id], maintainSelections: false));
+        await _actions.deselectAttachmentUsages(new DeselectAttachmentUsagesPayload(usageIds: []));
+
+        expect(_store.currentlySelectedAttachmentUsages, isNotEmpty);
+        expect(_store.currentlySelectedAnchors, isNotEmpty);
+      });
+
+      test('hoverAttachment changes currentlyHovered to provided next id from null', () async {
         await _actions.hoverAttachment(new HoverAttachmentPayload(
             previousAttachmentId: null, nextAttachmentId: AttachmentTestConstants.attachmentIdOne));
 
         expect(_store.currentlyHoveredAttachmentId, AttachmentTestConstants.attachmentIdOne);
+      });
+
+      test('hoverAttachment changes currentlyHovered from previous id to next id', () async {
+        await _actions.hoverAttachment(new HoverAttachmentPayload(
+            previousAttachmentId: null, nextAttachmentId: AttachmentTestConstants.attachmentIdOne));
 
         await _actions.hoverAttachment(new HoverAttachmentPayload(
             previousAttachmentId: AttachmentTestConstants.attachmentIdOne,
             nextAttachmentId: AttachmentTestConstants.attachmentIdTwo));
 
         expect(_store.currentlyHoveredAttachmentId, AttachmentTestConstants.attachmentIdTwo);
+      });
+
+      test('hoverAttachment changes currentlyHovered from previous id to null', () async {
+        await _actions.hoverAttachment(new HoverAttachmentPayload(
+            previousAttachmentId: null, nextAttachmentId: AttachmentTestConstants.attachmentIdOne));
 
         await _actions.hoverAttachment(new HoverAttachmentPayload(
             previousAttachmentId: AttachmentTestConstants.attachmentIdOne, nextAttachmentId: null));

@@ -18,8 +18,10 @@ import 'package:w_attachments_client/src/attachments_store.dart';
 import './mocks/mocks_library.dart';
 
 void main() {
-  final obsRegion1 = new ObservedRegion(wuri: AttachmentTestConstants.testWurl);
-  final obsRegion2 = new ObservedRegion(wuri: AttachmentTestConstants.existingWurl);
+  final obsRegion1 =
+      new ObservedRegion(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope);
+  final obsRegion2 =
+      new ObservedRegion(wuri: AttachmentTestConstants.existingWurl, scope: AttachmentTestConstants.testScope);
 
   ExtensionContextMock mockCEF;
   AnnotationsApiMock annotationsApiMock;
@@ -28,7 +30,8 @@ void main() {
   AttachmentsActions actions;
   AttachmentsEvents events;
 
-  Selection testSelection({isEmpty: false}) => new Selection(wuri: AttachmentTestConstants.testWurl, isEmpty: isEmpty);
+  Selection testSelection({isEmpty: false}) =>
+      new Selection(wuri: AttachmentTestConstants.testWurl, scope: AttachmentTestConstants.testScope, isEmpty: isEmpty);
 
   group('extension context adapter -', () {
     setUp(() async {
@@ -70,6 +73,13 @@ void main() {
         mockCEF.selectionApi.didChangeSelectionsController.add(null);
         await new Future.delayed(Duration.ZERO);
         expect(store.isValidSelection, false);
+      });
+
+      test('didChangeSelection - isValidSelection recovers after null payload', () async {
+        // null selection should yield non valid selection
+        when(mockCEF.selectionApi.getCurrentSelections()).thenReturn(null);
+        mockCEF.selectionApi.didChangeSelectionsController.add(null);
+        await new Future.delayed(Duration.ZERO);
 
         when(mockCEF.selectionApi.getCurrentSelections()).thenReturn([testSelection()]);
         mockCEF.selectionApi.didChangeSelectionsController.add([testSelection()]);
@@ -84,6 +94,13 @@ void main() {
         mockCEF.selectionApi.didChangeSelectionsController.add([testSelection(isEmpty: true)]);
         await new Future.delayed(Duration.ZERO);
         expect(store.isValidSelection, false);
+      });
+
+      test('didChangeSelection - isValidSelection recovers after an isEmpty selection', () async {
+        // empty selection should yield non valid selection
+        when(mockCEF.selectionApi.getCurrentSelections()).thenReturn([testSelection(isEmpty: true)]);
+        mockCEF.selectionApi.didChangeSelectionsController.add([testSelection(isEmpty: true)]);
+        await new Future.delayed(Duration.ZERO);
 
         when(mockCEF.selectionApi.getCurrentSelections()).thenReturn([testSelection()]);
         mockCEF.selectionApi.didChangeSelectionsController.add([testSelection()]);
@@ -92,7 +109,7 @@ void main() {
         expect(store.currentSelection, new isInstanceOf<Selection>());
       });
 
-      test('didChangeVisibleRegions creates and removes highlights', () async {
+      test('didChangeVisibleRegions creates highlights', () async {
         when(mockCEF.highlightApi.createV3(key: any, wuri: any, styles: any)).thenReturn(new MockHighlight());
         when(mockCEF.observedRegionApi.getVisibleRegions())
             .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
@@ -110,6 +127,15 @@ void main() {
           styles: normalHighlightStyles,
           wuri: obsRegion2.wuri,
         ));
+      });
+
+      test('didChangeVisibleRegions recreates highlights that have been removed and need re-added', () async {
+        // create two highlights
+        when(mockCEF.highlightApi.createV3(key: any, wuri: any, styles: any)).thenReturn(new MockHighlight());
+        when(mockCEF.observedRegionApi.getVisibleRegions())
+            .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+        mockCEF.observedRegionApi.didChangeVisibleRegionsController.add(null);
+        await new Future.delayed(Duration.ZERO);
 
         // remove a highlight, note that existent highlights do not get recreated
         when(mockCEF.observedRegionApi.getVisibleRegions()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
@@ -126,59 +152,223 @@ void main() {
           key: AttachmentTestConstants.anchorIdThree.toString(),
           styles: normalHighlightStyles,
           wuri: obsRegion2.wuri,
-        ));
+        ))
+            .called(2);
       });
 
-      test('didChangeSelectedRegions sets selected state correctly', () async {
-        // create multiple initial highlights
-        when(mockCEF.observedRegionApi.getSelectedRegionsV2())
-            .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
-        mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
-        await new Future.delayed(Duration.ZERO);
-        expect(
-            store.currentlySelectedAnchors,
-            allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
-                contains(AttachmentTestConstants.anchorIdThree)));
-        expect(
-            store.currentlySelectedAttachments,
-            allOf(hasLength(2), contains(AttachmentTestConstants.attachmentIdOne),
-                contains(AttachmentTestConstants.attachmentIdThree)));
+      group('didChangeSelectedRegions sets selected state correctly, given ViewModeSetting.References ', () {
+        setUp(() {
+          actions.updateAttachmentsConfig(
+              new AttachmentsConfig(label: 'AttachmentPackage', viewModeSetting: ViewModeSettings.References));
+        });
 
-        // should set the selected region list
-        when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
-        mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
-        await new Future.delayed(Duration.ZERO);
-        expect(store.currentlySelectedAnchors, allOf(hasLength(1), contains(AttachmentTestConstants.anchorIdOne)));
-        expect(
-            store.currentlySelectedAttachments, allOf(hasLength(1), contains(AttachmentTestConstants.attachmentIdOne)));
+        test('add new selected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(
+              store.currentlySelectedAnchors,
+              allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
+                  contains(AttachmentTestConstants.anchorIdThree)));
+          expect(
+              store.currentlySelectedAttachmentUsages,
+              allOf(hasLength(2), contains(AttachmentTestConstants.attachmentUsageIdOne),
+                  contains(AttachmentTestConstants.attachmentUsageIdThree)));
+        });
 
-        // should clear the selected region list
-        when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>());
-        mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
-        await new Future.delayed(Duration.ZERO);
-        expect(store.currentlySelectedAnchors, isEmpty);
-        expect(store.currentlySelectedAttachments, isEmpty);
+        test('remove deselected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
 
-        // select an attachment
-        actions
-            .selectAttachments(new SelectAttachmentsPayload(attachmentIds: [AttachmentTestConstants.attachmentIdOne]));
+          // should set the selected region list
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(store.currentlySelectedAnchors, allOf(hasLength(1), contains(AttachmentTestConstants.anchorIdOne)));
+          expect(store.currentlySelectedAttachmentUsages,
+              allOf(hasLength(1), contains(AttachmentTestConstants.attachmentUsageIdOne)));
+        });
 
-        // select attachmentUsage's region
-        when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
-        mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
-        await new Future.delayed(Duration.ZERO);
-        expect(store.currentlySelectedAttachments, hasLength(1));
-        expect(store.currentlySelectedAnchors, hasLength(1));
+        test('remove all deselected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+
+          // should clear the selected region list
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>());
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(store.currentlySelectedAnchors, isEmpty);
+          expect(store.currentlySelectedAttachmentUsages, isEmpty);
+        });
+
+        test('selected regions override prior selection', () async {
+          // select an attachment
+          actions.selectAttachmentUsages(
+              new SelectAttachmentUsagesPayload(usageIds: [AttachmentTestConstants.attachmentUsageIdOne]));
+
+          // select attachmentUsage's region
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+
+          expect(store.currentlySelectedAttachmentUsages, hasLength(1));
+          expect(store.currentlySelectedAnchors, hasLength(1));
+        });
+      });
+
+      group('didChangeSelectedRegions sets selected state correctly, given ViewModeSetting.Groups ', () {
+        setUp(() {
+          actions.updateAttachmentsConfig(
+              new AttachmentsConfig(label: 'AttachmentPackage', viewModeSetting: ViewModeSettings.Groups));
+        });
+
+        test('add new selected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(
+              store.currentlySelectedAnchors,
+              allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
+                  contains(AttachmentTestConstants.anchorIdThree)));
+          expect(
+              store.currentlySelectedAttachments,
+              allOf(hasLength(2), contains(AttachmentTestConstants.attachmentIdOne),
+                  contains(AttachmentTestConstants.attachmentIdThree)));
+        });
+
+        test('remove deselected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+
+          // should set the selected region list
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(store.currentlySelectedAnchors, allOf(hasLength(1), contains(AttachmentTestConstants.anchorIdOne)));
+          expect(store.currentlySelectedAttachments,
+              allOf(hasLength(1), contains(AttachmentTestConstants.attachmentIdOne)));
+        });
+
+        test('remove all deselected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+
+          // should clear the selected region list
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>());
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(store.currentlySelectedAnchors, isEmpty);
+          expect(store.currentlySelectedAttachments, isEmpty);
+        });
+
+        test('selected regions override prior selection', () async {
+          // select an attachment
+          actions.selectAttachments(
+              new SelectAttachmentsPayload(attachmentIds: [AttachmentTestConstants.attachmentIdOne]));
+
+          // select attachmentUsage's region
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+
+          expect(store.currentlySelectedAttachments, hasLength(1));
+          expect(store.currentlySelectedAnchors, hasLength(1));
+        });
+      });
+
+      group('didChangeSelectedRegions sets selected state correctly, given ViewModeSetting.Headerless ', () {
+        setUp(() {
+          actions.updateAttachmentsConfig(
+              new AttachmentsConfig(label: 'AttachmentPackage', viewModeSetting: ViewModeSettings.Headerless));
+        });
+
+        test('add new selected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(
+              store.currentlySelectedAnchors,
+              allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
+                  contains(AttachmentTestConstants.anchorIdThree)));
+          expect(
+              store.currentlySelectedAttachments,
+              allOf(hasLength(2), contains(AttachmentTestConstants.attachmentIdOne),
+                  contains(AttachmentTestConstants.attachmentIdThree)));
+        });
+
+        test('remove deselected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+
+          // should set the selected region list
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(store.currentlySelectedAnchors, allOf(hasLength(1), contains(AttachmentTestConstants.anchorIdOne)));
+          expect(store.currentlySelectedAttachments,
+              allOf(hasLength(1), contains(AttachmentTestConstants.attachmentIdOne)));
+        });
+
+        test('remove all deselected regions', () async {
+          // create multiple initial highlights
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2())
+              .thenReturn(new Set<ObservedRegion>.from([obsRegion1, obsRegion2]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+
+          // should clear the selected region list
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>());
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+          expect(store.currentlySelectedAnchors, isEmpty);
+          expect(store.currentlySelectedAttachments, isEmpty);
+        });
+
+        test('selected regions override prior selection', () async {
+          // select an attachment
+          actions.selectAttachments(
+              new SelectAttachmentsPayload(attachmentIds: [AttachmentTestConstants.attachmentIdOne]));
+
+          // select attachmentUsage's region
+          when(mockCEF.observedRegionApi.getSelectedRegionsV2()).thenReturn(new Set<ObservedRegion>.from([obsRegion1]));
+          mockCEF.observedRegionApi.didChangeSelectedRegionsController.add(null);
+          await new Future.delayed(Duration.ZERO);
+
+          expect(store.currentlySelectedAttachments, hasLength(1));
+          expect(store.currentlySelectedAnchors, hasLength(1));
+        });
       });
 
       test('didChangeScopes calls getScopes and getAttachmentsByProducers', () async {
         when(annotationsApiMock.getAttachmentsByProducers(producerWurls: any))
             .thenReturn(new GetAttachmentsByProducersResponse(anchors: [], attachments: [], attachmentUsages: []));
         when(mockCEF.observedRegionApi.getScopes()).thenReturn(new Set.from([AttachmentTestConstants.testScope]));
+
         mockCEF.observedRegionApi.didChangeScopesController.add(null);
         await new Future.delayed(Duration.ZERO);
-        expect(store.isValidSelection, false);
 
+        expect(store.isValidSelection, false);
         verify(mockCEF.observedRegionApi.getScopes());
         verify(annotationsApiMock.getAttachmentsByProducers(producerWurls: any));
         expect(store.currentScopes, allOf(isNotEmpty, contains(AttachmentTestConstants.testScope)));
@@ -207,8 +397,8 @@ void main() {
         mockCEF.observedRegionApi.didChangeVisibleRegionsController.add(null);
         await new Future.delayed(Duration.ZERO);
 
-        await actions
-            .selectAttachments(new SelectAttachmentsPayload(usageIds: [AttachmentTestConstants.attachmentUsageIdOne]));
+        await actions.selectAttachmentUsages(
+            new SelectAttachmentUsagesPayload(usageIds: [AttachmentTestConstants.attachmentUsageIdOne]));
         await new Future.delayed(Duration.ZERO);
 
         verify(mockHighlight.updateV2(styles: selectedHighlightStyles));
@@ -222,8 +412,8 @@ void main() {
         mockCEF.observedRegionApi.didChangeVisibleRegionsController.add(null);
         await new Future.delayed(Duration.ZERO);
 
-        await actions
-            .selectAttachments(new SelectAttachmentsPayload(usageIds: [AttachmentTestConstants.attachmentUsageIdOne]));
+        await actions.selectAttachmentUsages(
+            new SelectAttachmentUsagesPayload(usageIds: [AttachmentTestConstants.attachmentUsageIdOne]));
         await new Future.delayed(Duration.ZERO);
         await actions.hoverAttachment(new HoverAttachmentPayload(
             previousAttachmentId: null, nextAttachmentId: AttachmentTestConstants.attachmentIdOne));

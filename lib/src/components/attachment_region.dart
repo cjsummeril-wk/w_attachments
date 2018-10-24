@@ -53,6 +53,7 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
             // for CEF implementation, we can select a card
             // we can change the selection color through ..selectedEdgeColor = CardEdgeColor.COLORNAME
             ..isSelectable = true
+            ..isSelected = (usage?.id != null && props.store.usageIsSelected(usage.id))
             ..onClick = (SyntheticMouseEvent event) => _handleReferenceOnClick(event, usage))(
           (CardBlock()
                 ..addTestId(test_id.ReferenceViewTestIds.referenceButtons)
@@ -142,9 +143,9 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
 
   _handleReferenceOnClick(SyntheticMouseEvent event, AttachmentUsage usage) {
     if (props.store.currentlySelectedAttachmentUsages.contains(usage.id)) {
-      props.actions.deselectAttachments(new DeselectAttachmentsPayload(usageIds: [usage.id]));
+      props.actions.deselectAttachmentUsages(new DeselectAttachmentUsagesPayload(usageIds: [usage.id]));
     } else {
-      props.actions.selectAttachments(new SelectAttachmentsPayload(usageIds: [usage.id]));
+      props.actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(usageIds: [usage.id]));
     }
   }
 
