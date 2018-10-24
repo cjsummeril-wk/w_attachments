@@ -55,7 +55,7 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
       ..add('is-drag-source', state.isDragging);
 
     return (Card()
-      ..addTestId('wh.AttachmentCardComponent.Card')
+      ..addTestId(test_id.AttachmentCardIds.attachmentCardId)
       ..className = classes.toClassName()
       ..header = _renderHeader()
       ..isSelected = _selected

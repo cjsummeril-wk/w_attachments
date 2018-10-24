@@ -39,6 +39,7 @@ void main() {
   FGetAttachmentsByIdsResponse getAttachmentsByIdsHappyPathResponse;
   FGetAttachmentUsagesByIdsResponse getAttachmentUsagesByIdsHappyPathResponse;
   FGetAttachmentsByProducersResponse getAttachmentsByProducersHappyPathResponse;
+  FUpdateAttachmentLabelResponse updateAttachmentLabelHappyPathResponse;
 
   group('Attachments Service Impl Tests', () {
     setUp(() {
@@ -69,6 +70,8 @@ void main() {
         ..anchors = AttachmentTestConstants.mockFAnchorList
         ..attachmentUsages = AttachmentTestConstants.mockFAttachmentUsageList
         ..attachments = AttachmentTestConstants.mockFAttachmentList;
+      updateAttachmentLabelHappyPathResponse = new FUpdateAttachmentLabelResponse()
+        ..attachment = AttachmentTestConstants.mockFAttachment;
     });
 
     group('getAttachmentsByProducersTests', () {
@@ -303,6 +306,48 @@ void main() {
 //          expect(logEntry.level, LoggingLevel.warning);
 //        }, count: 1));
 //      });
+    });
+
+    group('updateAttachmentLabelTests', () {
+      test('should convert FAttachment to Attachment in _updateAttachmentLabel', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.updateAttachmentLabel(any, any), updateAttachmentLabelHappyPathResponse);
+
+        // Act
+        Attachment result = await attachmentServiceImpl.updateAttachmentLabel(
+            attachmentId: AttachmentTestConstants.attachmentIdOne, newLabel: AttachmentTestConstants.label);
+
+        // Assert
+        expect(result, isNotNull);
+        expect(result.id, equals(AttachmentTestConstants.attachmentIdOne));
+      });
+
+      test('if service returns an error, no attachment should be returned', () async {
+        // Arrange
+        test_utils.mockServiceMethod(
+            () => annoServiceClientMock.mock.updateAttachmentLabel(any, any), new FAnnotationError());
+
+        // Act
+        Attachment result = await attachmentServiceImpl.updateAttachmentLabel(attachmentId: null, newLabel: null);
+
+        // TODO: RAM-732 App Intelligence
+        // add logger expectations and handlers when implemented.
+
+        // Assert
+        expect(result, isNull);
+      });
+
+      test('service handler rethrows other exceptions', () async {
+        // Arrange
+        test_utils.mockServiceMethod(() => annoServiceClientMock.mock.updateAttachmentLabel(any, any), new Exception());
+
+        // Act & Assert
+        expect(
+            attachmentServiceImpl.updateAttachmentLabel(
+                attachmentId: AttachmentTestConstants.attachmentUsageIdOne, newLabel: AttachmentTestConstants.label),
+            throwsA(new isInstanceOf<Exception>()));
+      });
     });
 
     group('getAttachmentUsagesByIdsTests', () {

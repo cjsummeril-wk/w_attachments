@@ -41,6 +41,8 @@ void main() {
     String veryGoodResourceId = 'very good resource id';
     String veryGoodSectionId = 'very good section id';
 
+    final String configLabel = 'AttachmentPackage';
+
     group('constructor', () {
       setUp(() {
         _attachmentsActions = new AttachmentsActions();
@@ -66,7 +68,7 @@ void main() {
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: [],
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+                moduleConfig: new AttachmentsConfig(label: configLabel)));
         _api = _store.api;
       });
 
@@ -88,7 +90,7 @@ void main() {
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
             groups: [],
-            moduleConfig: new AttachmentsConfig(enableDraggable: false, label: 'AttachmentPackage'));
+            moduleConfig: new AttachmentsConfig(enableDraggable: false, label: configLabel));
 
         expect(_store.enableDraggable, isFalse);
       });
@@ -96,7 +98,7 @@ void main() {
       test('should have enableUploadDropzones set to false when specified', () {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            moduleConfig: new AttachmentsConfig(enableUploadDropzones: false, label: 'AttachmentPackage'),
+            moduleConfig: new AttachmentsConfig(enableUploadDropzones: false, label: configLabel),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
             annotationsApi: _annotationsApiMock,
@@ -111,7 +113,7 @@ void main() {
       test('should have enableClickToSelect set to false when specified', () {
         _store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            moduleConfig: new AttachmentsConfig(enableClickToSelect: false, label: 'AttachmentPackage'),
+            moduleConfig: new AttachmentsConfig(enableClickToSelect: false, label: configLabel),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
             annotationsApi: _annotationsApiMock,
@@ -133,7 +135,7 @@ void main() {
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
             groups: [],
-            moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage', primarySelection: validWurl));
+            moduleConfig: new AttachmentsConfig(label: configLabel, primarySelection: validWurl));
         _api = _store.api;
 
         expect(_api.primarySelection, isNotNull);
@@ -143,7 +145,7 @@ void main() {
       test('should have a non-null StandardActionProvider when an actionProvider is not specified', () {
         _store = new AttachmentsStore(
             actionProviderFactory: null,
-            moduleConfig: new AttachmentsConfig(enableDraggable: false, label: 'AttachmentPackage'),
+            moduleConfig: new AttachmentsConfig(enableDraggable: false, label: configLabel),
             attachmentsActions: _attachmentsActions,
             attachmentsEvents: _attachmentsEvents,
             annotationsApi: _annotationsApiMock,
@@ -166,7 +168,7 @@ void main() {
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
+                moduleConfig: new AttachmentsConfig(label: configLabel),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
                 annotationsApi: _annotationsApiMock,
@@ -229,7 +231,7 @@ void main() {
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
+                moduleConfig: new AttachmentsConfig(label: configLabel),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
                 annotationsApi: _annotationsApiMock,
@@ -385,7 +387,7 @@ void main() {
             new AttachmentsStoreMock(),
             new AttachmentsStore(
                 actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'),
+                moduleConfig: new AttachmentsConfig(label: configLabel),
                 attachmentsActions: _attachmentsActions,
                 attachmentsEvents: _attachmentsEvents,
                 annotationsApi: _annotationsApiMock,
@@ -724,7 +726,7 @@ void main() {
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: [],
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+                moduleConfig: new AttachmentsConfig(label: configLabel)));
         _api = _store.api;
       });
 
@@ -766,7 +768,7 @@ void main() {
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: [],
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+                moduleConfig: new AttachmentsConfig(label: configLabel)));
         _api = _store.api;
       });
 
@@ -910,7 +912,7 @@ void main() {
       });
     });
 
-    group('getAttachmentUsageById -', () {
+    group('getAttachmentUsagesById -', () {
       setUp(() {
         _attachmentsActions = new AttachmentsActions();
         _attachmentsEvents = new AttachmentsEvents();
@@ -927,7 +929,7 @@ void main() {
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: [],
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+                moduleConfig: new AttachmentsConfig(label: configLabel)));
         _api = _store.api;
       });
 
@@ -939,8 +941,7 @@ void main() {
         _api = null;
       });
 
-      test(
-          '_getAttachmentUsagesById should convert FAttachmentUsage to AttachmentUsage, should add an AttachmentUsage to the list in the store',
+      test('should convert FAttachmentUsage to AttachmentUsage, should add an AttachmentUsage to the list in the store',
           () async {
         List<int> usageIds = [5678];
 
@@ -964,9 +965,7 @@ void main() {
                 predicate((AttachmentUsage u) => u.id == AttachmentTestConstants.mockChangedAttachmentUsage.id)));
       });
 
-      test(
-          '_getAttachmentsUsageByIds when IDs are null, no changes will be made to the attachmentUsages list in the store',
-          () async {
+      test('when IDs are null, no changes will be made to the attachmentUsages list in the store', () async {
         List<int> usageIds = [null];
         _store.attachmentUsages = [];
 
@@ -984,8 +983,7 @@ void main() {
         expect(_store.attachmentUsages, isEmpty);
       });
 
-      test('_getAttachmentsUsageByIds when IDs match a current ID in the list of usages, the usage should be updated.',
-          () async {
+      test('when IDs match a current ID in the list of usages, the usage should be updated.', () async {
         List<int> usageIds = [5678];
         _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
 
@@ -1017,7 +1015,7 @@ void main() {
       });
     });
 
-    group('getAttachmentsByProducers-', () {
+    group('getAttachmentsByProducers -', () {
       GetAttachmentsByProducersResponse getAttachmentsByProducersHappyResponse = new GetAttachmentsByProducersResponse(
           anchors: AttachmentTestConstants.mockAnchorList,
           attachmentUsages: AttachmentTestConstants.mockAttachmentUsageList,
@@ -1039,7 +1037,7 @@ void main() {
                 dispatchKey: attachmentsModuleDispatchKey,
                 attachments: [],
                 groups: [],
-                moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
+                moduleConfig: new AttachmentsConfig(label: configLabel)));
         _api = _store.api;
 
         _store.anchorsByWurls = {
@@ -1056,7 +1054,7 @@ void main() {
         _api = null;
       });
 
-      test('gracefull null return', () async {
+      test('graceful null return', () async {
         List<String> producerWurls = [AttachmentTestConstants.testWurl];
 
         when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls)).thenReturn(null);
@@ -1097,6 +1095,52 @@ void main() {
             everyElement(predicate((Anchor a) => a.id != AttachmentTestConstants.mockAnchor.id)));
         expect(_store.anchorsByWurls[AttachmentTestConstants.testWurl],
             anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
+      });
+    });
+
+    group('updateAttachmentLabel -', () {
+      setUp(() async {
+        _attachmentsActions = new AttachmentsActions();
+        _attachmentsEvents = new AttachmentsEvents();
+        _extensionContext = new ExtensionContextMock();
+        _annotationsApiMock = new AnnotationsApiMock();
+        _store = spy(
+            new AttachmentsStoreMock(),
+            new AttachmentsStore(
+                actionProviderFactory: StandardActionProvider.actionProviderFactory,
+                attachmentsActions: _attachmentsActions,
+                attachmentsEvents: _attachmentsEvents,
+                annotationsApi: _annotationsApiMock,
+                extensionContext: _extensionContext,
+                dispatchKey: attachmentsModuleDispatchKey,
+                attachments: [],
+                groups: [],
+                moduleConfig: new AttachmentsConfig(label: configLabel)));
+        _api = _store.api;
+      });
+
+      test('calls to the api to update attachment label', () async {
+        when(_annotationsApiMock.updateAttachmentLabel(attachmentId: any, attachmentLabel: any))
+            .thenReturn(AttachmentTestConstants.mockAttachment);
+
+        Completer updateAttachmentLabelCompleter =
+            test_utils.hookinActionVerifier(_store.attachmentsActions.updateAttachmentLabel);
+
+        UpdateAttachmentLabelPayload payload = new UpdateAttachmentLabelPayload(
+            idToUpdate: AttachmentTestConstants.attachmentIdOne, newLabel: AttachmentTestConstants.label);
+
+        await _attachmentsActions.updateAttachmentLabel(payload);
+
+        verify(_annotationsApiMock.updateAttachmentLabel(attachmentId: any, attachmentLabel: any)).called(1);
+        expect(updateAttachmentLabelCompleter.future, completes);
+      });
+
+      tearDown(() async {
+        await _attachmentsActions.dispose();
+        await _attachmentsEvents.dispose();
+        await _extensionContext.dispose();
+        await _store.dispose();
+        _api = null;
       });
     });
   });

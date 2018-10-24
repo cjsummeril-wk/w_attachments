@@ -22,4 +22,8 @@ class FAnnotationsClientMock extends ServiceMockProxy<_FAnnotationsClientMock> i
   Future<FGetAttachmentsByProducersResponse> getAttachmentsByProducers(
           FContext ctx, FGetAttachmentsByProducersRequest request) =>
       new Future.value(mock.getAttachmentsByProducers(ctx, request));
+
+  @override
+  Future<FUpdateAttachmentLabelResponse> updateAttachmentLabel(FContext ctx, FUpdateAttachmentLabelRequest request) =>
+      new Future.value(mock.updateAttachmentLabel(ctx, request));
 }

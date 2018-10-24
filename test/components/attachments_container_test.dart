@@ -3,16 +3,14 @@ library w_attachments_client.test.components.attachments_container_test;
 import 'package:over_react_test/over_react_test.dart';
 import 'package:test/test.dart';
 import 'package:web_skin_dart/ui_components.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/mirrors.dart';
 import 'package:w_session/mock.dart';
 import 'package:w_session/w_session.dart';
 
 import 'package:w_attachments_client/w_attachments_client.dart';
 import 'package:w_attachments_client/src/attachments_config.dart';
+import 'package:w_attachments_client/src/components/component_test_ids.dart';
 import 'package:w_attachments_client/src/components/components.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
-import 'package:w_attachments_client/src/test/component_test_ids.dart';
 import '../attachment_test_constants.dart';
 
 import '../mocks/mocks_library.dart';

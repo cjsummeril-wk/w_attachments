@@ -15,7 +15,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
   @override
   render() => (Block()
     ..className = 'w_attachments_client'
-    ..addTestId(ComponentTestIds.attachmentContainer))(_renderAttachmentsView());
+    ..addTestId(test_id.ComponentTestIds.attachmentContainer))(_renderAttachmentsView());
 
   ReactElement _renderAttachmentsView() {
     if (props.store.attachments.isNotEmpty) {
@@ -41,7 +41,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     List<ReactElement> attachmentsToRender = props.store.attachments.map((Attachment attachment) {
       int count = props.store.attachments.indexOf(attachment) + 1;
       return (AttachmentRegion()
-        ..addTestId('${ReferenceViewTestIds.rvAttachmentComponent}-${count}')
+        ..addTestId('${test_id.ReferenceViewTestIds.rvAttachmentComponent}-${count}')
         ..key = attachment.id
         ..attachment = attachment
         ..currentSelection = props.store.currentSelection
@@ -59,7 +59,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     return (RegionCollapse()
       ..revealHeaderActionsOnHover = true
       ..className = 'reference-view__region-container'
-      ..addTestId(ReferenceViewTestIds.referenceView)
+      ..addTestId(test_id.ReferenceViewTestIds.referenceView)
       ..defaultExpandedTargetKeys = [])(attachmentsToRender);
   }
 
@@ -69,6 +69,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     var regionContent = props.store.groups.map((Group group) {
       numAttachmentsDisplayed += group.attachments.length;
       return (GroupPanel()
+        ..addTestId(test_id.GroupPanelIds.groupPanelId)
         ..key = group.key
         ..actions = props.actions
         ..actionProvider = props.actionProvider
@@ -92,12 +93,12 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
     return regionContent.isEmpty || (props.store.showingHeaderlessGroup && numAttachmentsDisplayed == 0)
         ? _renderEmptyView()
         : (RegionCollapse()
-//        ..defaultExpandedTargetKeys = [props.group]
+          ..className = 'attachments-container__region-collapse'
           ..ref = ((RegionCollapseComponent ref) => _regionCollapse = ref))(regionContent);
   }
 
   ReactElement _renderEmptyView() => (EmptyView()
-    ..addTestId(ComponentTestIds.emptyView)
+    ..addTestId(test_id.ComponentTestIds.emptyView)
     ..glyph = props.store.moduleConfig.emptyViewIcon
     ..header = props.store.moduleConfig.emptyViewText
     ..type = EmptyViewType.VBLOCK)();

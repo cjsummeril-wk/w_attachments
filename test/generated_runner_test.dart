@@ -6,6 +6,7 @@ library test.generated_runner_test;
 import './action_provider_test.dart' as action_provider_test;
 import './attachments_module_test.dart' as attachments_module_test;
 import './attachments_store_test.dart' as attachments_store_test;
+import './components/attachment_file_label_test.dart' as components_attachment_file_label_test;
 import './components/attachment_region_test.dart' as components_attachment_region_test;
 import './components/attachments_container_test.dart' as components_attachments_container_test;
 import './components/attachments_panel_toolbar_test.dart' as components_attachments_panel_toolbar_test;
@@ -26,6 +27,7 @@ void main() {
   action_provider_test.main();
   attachments_module_test.main();
   attachments_store_test.main();
+  components_attachment_file_label_test.main();
   components_attachment_region_test.main();
   components_attachments_container_test.main();
   components_attachments_panel_toolbar_test.main();

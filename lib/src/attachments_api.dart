@@ -86,13 +86,13 @@ class AttachmentsApi {
   Future<Null> deselectAttachmentsByIds({@required List<int> attachmentIds}) async =>
       await _attachmentsActions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: attachmentIds));
 
-  /// Updates the label on the [Attachment] of the [Selection] key [keyToUpdate] with the [newLabel]
-  /// then calls Request.PUT on the [Attachment] to persist the data to the object
+  /// Updates the label on the [Attachment] with the [newLabel] via w-annotations-service
   ///
-  ///   [keyToUpdate] is the [Selection] key on which the label is being changed.
+  ///   [attachmentId] is the id of the attachment where the label is being changed.
   ///   [newLabel] is the new label the bundle should get
-  Future<Null> updateLabel({@required int idToUpdate, @required String newLabel}) async =>
-      await _attachmentsActions.updateLabel(new UpdateLabelPayload(idToUpdate: idToUpdate, newLabel: newLabel));
+  Future<Null> updateAttachmentLabel({@required int attachmentId, @required String newLabel}) async =>
+      await _attachmentsActions
+          .updateAttachmentLabel(new UpdateAttachmentLabelPayload(idToUpdate: attachmentId, newLabel: newLabel));
 
   // Module Actions
   Future<Null> createAttachmentUsage({cef.Selection selection}) async {

@@ -13,3 +13,4 @@ part 'payloads/get_attachment_usages_by_ids_payload.dart';
 part 'payloads/get_attachments_by_id_payload.dart';
 part 'payloads/get_attachments_by_producers_payload.dart';
 part 'payloads/get_attachments_by_producers_response.dart';
+part 'payloads/update_attachment_label_payload.dart';

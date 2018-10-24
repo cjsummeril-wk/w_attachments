@@ -4,9 +4,6 @@ import 'package:w_attachments_client/src/w_annotations_service/w_annotations_mod
 /// Class designated Attachments service and frugal based test constants.
 /// Any other constants not associated with the attachments service should be defined in their own TestConstants file.
 class AttachmentTestConstants {
-  int test;
-
-  // Test Constants for GetAttachmentUsageByIds Tests
   static int anchorIdOne = 1234;
   static int anchorIdTwo = 4567;
   static int attachmentUsageIdOne = 1234;
@@ -17,6 +14,8 @@ class AttachmentTestConstants {
   static String existingWurl = "wurl://scope/existing";
   static String testWurl = "wurl://scope/test";
   static String testScope = "wurl://scope";
+
+  static String label = "This is a test label";
 
   static Anchor mockAnchor = new Anchor()
     ..id = anchorIdOne
@@ -57,7 +56,6 @@ class AttachmentTestConstants {
     ..id = attachmentIdOne
     ..accountResourceId = "crispy-chicken-fingers"
     ..fsResourceId = "1234"
-    ..fsResourceType = "type"
     ..label = "crispy-salad-toppers"
     ..userName = "crispy-names"
     ..filename = 'crispy-fried-pickles'
@@ -66,7 +64,6 @@ class AttachmentTestConstants {
     ..id = attachmentIdTwo
     ..accountResourceId = "crispy-cereal-crunch"
     ..fsResourceId = "3456"
-    ..fsResourceType = "type"
     ..label = "crispy-crackle-pop"
     ..filename = 'crispy-parmesan-cheese'
     ..userName = "crispy-fighter-jets-like-freals-cool"

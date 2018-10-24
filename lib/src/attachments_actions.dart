@@ -9,7 +9,7 @@ import 'package:w_attachments_client/src/w_annotations_service/w_annotations_pay
 class AttachmentsActions extends Disposable {
   final addAttachment = new Action<AddAttachmentPayload>();
   final dropFiles = new Action<DropFilesPayload>();
-  final updateLabel = new Action<UpdateLabelPayload>();
+  final updateAttachmentLabel = new Action<UpdateAttachmentLabelPayload>();
   final upsertAttachment = new Action<UpsertAttachmentPayload>();
 
   final selectAttachments = new Action<SelectAttachmentsPayload>();
@@ -30,7 +30,7 @@ class AttachmentsActions extends Disposable {
     [
       addAttachment,
       dropFiles,
-      updateLabel,
+      updateAttachmentLabel,
       upsertAttachment,
       selectAttachments,
       deselectAttachments,

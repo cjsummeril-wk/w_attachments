@@ -28,5 +28,5 @@ class AttachmentsConfig {
       this.primarySelection,
       this.showFilenameAsLabel: false,
       this.zipSelection,
-      this.viewModeSetting: ViewModeSettings.References});
+      this.viewModeSetting: ViewModeSettings.Groups});
 }
