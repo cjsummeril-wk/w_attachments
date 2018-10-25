@@ -16,6 +16,7 @@ import 'package:w_attachments_client/src/action_provider.dart';
 import 'package:w_attachments_client/src/attachments_actions.dart';
 import 'package:w_attachments_client/src/attachments_config.dart';
 import 'package:w_attachments_client/src/attachments_events.dart';
+import 'package:w_attachments_client/src/extension_context_adapter.dart';
 import 'package:w_attachments_client/src/models/models.dart';
 import 'package:w_attachments_client/src/standard_action_provider.dart';
 import 'package:w_attachments_client/src/utils.dart';
@@ -39,6 +40,7 @@ class AttachmentsStore extends Store {
   AttachmentsApi _api;
   ActionProvider _actionProvider;
   DispatchKey dispatchKey;
+  ExtensionContextAdapter _extensionContextAdapter;
 
   List<Attachment> _attachments = [];
   @visibleForTesting
@@ -48,13 +50,9 @@ class AttachmentsStore extends Store {
   @visibleForTesting
   set attachmentUsages(List<AttachmentUsage> usages) => _attachmentUsages = usages;
 
-  Map<String, List<Anchor>> _anchorsByWurls = {};
+  List<Anchor> _anchors = [];
   @visibleForTesting
-  set anchorsByWurls(Map<String, List<Anchor>> anchorsByWurls) => _anchorsByWurls = anchorsByWurls;
-  Map<String, List<Anchor>> get anchorsByWurls => _anchorsByWurls;
-
-  // CEF-specific properties
-  cef.Selection _currentSelection;
+  set anchors(List<Anchor> anchors) => _anchors = anchors;
 
   // headerless properties
   ContextGroup currentlyDisplayedSingle;
@@ -65,9 +63,10 @@ class AttachmentsStore extends Store {
   Map<String, Filter> _filtersByName = {};
   List<Group> _groups = [];
 
-  // content extension framework properties
-  Iterable<String> _currentScopes = [];
-  Set<int> _currentlySelectedAttachments = new Set<int>();
+  // internal object selection properties
+  Set<int> _currentlySelectedAttachments = new Set();
+  Set<int> _currentlySelectedAttachmentUsages = new Set();
+  Set<int> _currentlySelectedAnchors = new Set();
 
   AttachmentsStore(
       {@required this.actionProviderFactory,
@@ -87,6 +86,8 @@ class AttachmentsStore extends Store {
         this._moduleConfig = moduleConfig ?? new AttachmentsConfig() {
     _rebuildAndRedrawGroups();
     _api = new AttachmentsApi(attachmentsActions, this);
+    _extensionContextAdapter = manageAndReturnDisposable(
+        new ExtensionContextAdapter(extensionContext: extensionContext, actions: attachmentsActions, store: this));
 
     _actionProvider = actionProviderFactory != null
         ? actionProviderFactory(_api)
@@ -107,12 +108,15 @@ class AttachmentsStore extends Store {
     triggerOnActionV2(attachmentsActions.dropFiles, _dropFiles);
     triggerOnActionV2(attachmentsActions.deselectAttachments, _deselectAttachments);
     triggerOnActionV2(attachmentsActions.selectAttachments, _selectAttachments);
+    triggerOnActionV2(attachmentsActions.deselectAttachmentUsages, _deselectAttachmentUsages);
+    triggerOnActionV2(attachmentsActions.selectAttachmentUsages, _selectAttachmentUsages);
 
     [
       attachmentsActions.createAttachmentUsage.listen(_handleCreateAttachmentUsage),
       attachmentsActions.getAttachmentsByIds.listen(_handleGetAttachmentsByIds),
       attachmentsActions.getAttachmentsByProducers.listen(_handleGetAttachmentsByProducers),
-      attachmentsActions.getAttachmentUsagesByIds.listen(_getAttachmentUsagesByIds),
+      attachmentsActions.getAttachmentUsagesByIds.listen(_handleGetAttachmentUsagesByIds),
+      attachmentsActions.hoverAttachment.listen(_handleHoverAttachment),
       attachmentsActions.upsertAttachment.listen(_upsertAttachment),
       attachmentsActions.updateAttachmentLabel.listen(_handleUpdateAttachmentLabel),
       attachmentsActions.refreshPanelToolbar.listen(_handleRefreshPanelToolbar)
@@ -123,10 +127,6 @@ class AttachmentsStore extends Store {
 
     // Event Listeners
     listenToStream(attachmentsEvents.attachmentRemoved, _handleAttachmentRemoved);
-
-    // CEF Listeners
-    listenToStream(_extensionContext.observedRegionApi.didChangeScopes, _onDidChangeScopes);
-    listenToStream(_extensionContext.selectionApi.didChangeSelections, _onDidChangeSelection);
   }
 
   AttachmentsConfig get moduleConfig => _moduleConfig;
@@ -139,7 +139,9 @@ class AttachmentsStore extends Store {
 
   String get primarySelection => _moduleConfig.primarySelection;
 
-  Set<int> get currentlySelectedAttachments => _currentlySelectedAttachments;
+  Set<int> get currentlySelectedAnchors => new Set.from(_currentlySelectedAnchors);
+
+  int get currentlyHoveredAttachmentId => _extensionContextAdapter.currentlyHoveredAttachmentId;
 
   bool get enableClickToSelect => _moduleConfig.enableClickToSelect;
 
@@ -150,28 +152,45 @@ class AttachmentsStore extends Store {
   bool get showingHeaderlessGroup => _showingHeaderlessGroup;
 
   /// isValidSelection returns true if there is a valid selection in the content
-  bool get isValidSelection => _currentSelection != null;
+  bool get isValidSelection => _extensionContextAdapter.isValidSelection;
 
-  cef.Selection get currentSelection => _currentSelection;
+  cef.Selection get currentSelection => _extensionContextAdapter.currentSelection;
 
-  /// currentScopes returns the list of scopes that we have loaded attachments for
-  Iterable<String> get currentScopes => _currentScopes;
+  List<String> get currentScopes => new List.unmodifiable(_extensionContextAdapter.currentScopes);
 
   // zip download properties
   String get label => _moduleConfig.label;
 //  Selection get zipSelection => _moduleConfig.zipSelection;
 
+  // object selection properties
+  bool attachmentIsSelected(int attachmentId) => _currentlySelectedAttachments.contains(attachmentId);
+
+  bool usageIsSelected(int usageId) => _currentlySelectedAttachmentUsages.contains(usageId);
+
+  @visibleForTesting
+  Set<int> get currentlySelectedAttachments => new Set.from(_currentlySelectedAttachments);
+
+  @visibleForTesting
+  Set<int> get currentlySelectedAttachmentUsages => new Set.from(_currentlySelectedAttachmentUsages);
+
   // attachment getters/setters
-  List<Attachment> get attachments => new List<Attachment>.unmodifiable(_attachments);
-  List<String> get attachmentKeys => new List<String>.unmodifiable(_attachments.map((attachment) => attachment?.id));
-  List<AttachmentUsage> get attachmentUsages => new List<AttachmentUsage>.unmodifiable(_attachmentUsages);
+  List<Attachment> get attachments => new List.unmodifiable(_attachments);
+
+  List<AttachmentUsage> get attachmentUsages => new List.unmodifiable(_attachmentUsages);
+
+  List<Anchor> get anchors => new List.unmodifiable(_anchors);
+
   List<Anchor> anchorsByWurl(String wurl) =>
-      _anchorsByWurls[wurl] == null ? [] : new List<Anchor>.unmodifiable(_anchorsByWurls[wurl]);
+      new List.unmodifiable(_anchors.where((anchor) => anchor?.producerWurl == wurl));
+
+  List<int> get anchorIds => new List.unmodifiable(_anchors.map((anchor) => anchor?.id));
+
   List<AttachmentUsage> attachmentUsagesByAnchorId(int anchorId) =>
-      new List<AttachmentUsage>.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
+      new List.unmodifiable(_attachmentUsages.where((usage) => usage.anchorId == anchorId));
+
   List<AttachmentUsage> attachmentUsagesByAnchors(List<Anchor> anchors) {
     List<AttachmentUsage> attachmentUsagesToReturn = [];
-    List<int> attachmentUsagesToGet = new List<int>.from(anchors.map((Anchor anchor) => anchor.id));
+    List<int> attachmentUsagesToGet = new List.from(anchors.map((Anchor anchor) => anchor.id));
     attachmentUsagesToReturn
         .addAll(_attachmentUsages.where((AttachmentUsage usage) => attachmentUsagesToGet.contains(usage.anchorId)));
     return attachmentUsagesToReturn;
@@ -179,27 +198,32 @@ class AttachmentsStore extends Store {
 
   List<Attachment> attachmentsOfUsages(List<AttachmentUsage> usages) {
     List<Attachment> attachmentsToReturn = [];
-    List<String> attachmentIdsToGet = new List<String>.from(usages.map((AttachmentUsage usage) => usage.attachmentId));
+    List<int> attachmentIdsToGet = new List.from(usages.map((AttachmentUsage usage) => usage.attachmentId));
     attachmentsToReturn
         .addAll(_attachments.where((Attachment attachment) => attachmentIdsToGet.contains(attachment.id)));
     return attachmentsToReturn;
   }
 
-  List<AttachmentUsage> usagesOfAttachment(Attachment attachment) {
-    return _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachment.id).toList();
-  }
+  List<AttachmentUsage> usagesByAttachmentId(int attachmentId) =>
+      _attachmentUsages.where((AttachmentUsage usage) => usage.attachmentId == attachmentId)?.toList() ?? [];
+
+  Set<int> anchorIdsByAttachmentId(int attachmentId) =>
+      usagesByAttachmentId(attachmentId)?.map((AttachmentUsage usage) => usage.anchorId)?.toSet() ?? new Set();
 
   List<Attachment> attachmentsForProducerWurl(String producerWurl) {
     List<AttachmentUsage> usages = attachmentUsagesByAnchors(anchorsByWurl(producerWurl));
     return attachmentsOfUsages(usages);
   }
 
+  Attachment _getAttachmentById(int id) =>
+      _attachments.firstWhere((attachment) => attachment.id == id, orElse: () => null);
+
   // group and filter getters/setters
-  List<Group> get groups => new List<Group>.from(_groups);
+  List<Group> get groups => new List.from(_groups);
 
   List<Filter> get _filters => _filtersVar;
-  List<Filter> get filters => new List<Filter>.from(_filters);
-  Map<String, Filter> get filtersByName => new Map<String, Filter>.from(_filtersByName);
+  List<Filter> get filters => new List.from(_filters);
+  Map<String, Filter> get filtersByName => new Map.from(_filtersByName);
   set _filters(List<Filter> newFilters) {
     _filtersVar = newFilters;
     _filtersByName = _filtersVar?.fold({}, (result, filter) {
@@ -219,6 +243,8 @@ class AttachmentsStore extends Store {
     _groups.clear();
     _filters.clear();
     _currentlySelectedAttachments = null;
+    _currentlySelectedAttachmentUsages = null;
+    _currentlySelectedAnchors = null;
     currentlyDisplayedSingle = null;
   }
 
@@ -275,8 +301,7 @@ class AttachmentsStore extends Store {
         return;
       }
 
-      _anchorsByWurls[response.anchor.producerWurl] ??= [];
-      _anchorsByWurls[response.anchor.producerWurl].add(response.anchor);
+      _anchors.add(response.anchor);
       _attachmentUsages.add(response.attachmentUsage);
       // need to check if the attachment associated with this usage already exists, and if not, add it.
       _attachments = removeAndAddType([response.attachment], _attachments, true);
@@ -297,7 +322,7 @@ class AttachmentsStore extends Store {
     }
 
     if (!payload.maintainAttachments) {
-      _anchorsByWurls.clear();
+      _anchors.clear();
       _attachmentUsages.clear();
       _attachments.clear();
     }
@@ -305,8 +330,7 @@ class AttachmentsStore extends Store {
     for (String wurl in payload.producerWurls) {
       List<Anchor> responseAnchors = response.anchors.where((Anchor a) => a.producerWurl.startsWith(wurl)).toList();
       if (responseAnchors?.isNotEmpty == true) {
-        _anchorsByWurls[wurl] ??= <Anchor>[];
-        _anchorsByWurls[wurl] = removeAndAddType(responseAnchors, _anchorsByWurls[wurl], payload.maintainAttachments);
+        _anchors = removeAndAddType(responseAnchors, _anchors, payload.maintainAttachments);
       } else {
         _logger.warning('Wurl $wurl was not associated with any anchors.');
       }
@@ -318,7 +342,7 @@ class AttachmentsStore extends Store {
     _rebuildAndRedrawGroups();
   }
 
-  _getAttachmentUsagesByIds(GetAttachmentUsagesByIdsPayload payload) async {
+  _handleGetAttachmentUsagesByIds(GetAttachmentUsagesByIdsPayload payload) async {
     if (payload.attachmentUsageIds != null && payload.attachmentUsageIds.isNotEmpty) {
       List<AttachmentUsage> response =
           await _annotationsApi.getAttachmentUsagesByIds(usageIdsToLoad: payload.attachmentUsageIds);
@@ -374,35 +398,74 @@ class AttachmentsStore extends Store {
     }
   }
 
-  _selectAttachments(SelectAttachmentsPayload request) {
-    if (!request.maintainSelections && currentlySelectedAttachments.isNotEmpty) {
-      _deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: currentlySelectedAttachments.toList()));
+  void _selectAttachments(SelectAttachmentsPayload request) {
+    Set<int> anchorIds = new Set();
+    if (!request.maintainSelections && (_currentlySelectedAttachments.isNotEmpty)) {
+      _deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: _currentlySelectedAttachments.toList()));
     }
-    List<int> attachmentIds = request?.attachmentIds;
-    if (attachmentIds != null) {
-      for (int id in attachmentIds) {
-        if (currentlySelectedAttachments.add(id)) {
-          attachmentsEvents.attachmentSelected(
-              new AttachmentSelectedEventPayload(selectedAttachmentId: id), dispatchKey);
-        }
+    if (request?.attachmentIds?.isNotEmpty == true) {
+      for (int id in request.attachmentIds) {
+        _currentlySelectedAttachments.add(id);
+        anchorIds.addAll(anchorIdsByAttachmentId(id));
       }
+    } else {
+      _logger.fine('no attachment IDs were provided for selecting');
     }
+    _currentlySelectedAnchors.addAll(anchorIds);
+    _extensionContextAdapter.selectedChanged(anchorIds);
   }
 
-  _deselectAttachments(DeselectAttachmentsPayload request) {
-    List<int> attachmentIds = request?.attachmentIds;
-    if (attachmentIds != null) {
-      for (int id in attachmentIds) {
-        if (currentlySelectedAttachments.remove(id)) {
-          attachmentsEvents.attachmentDeselected(
-              new AttachmentDeselectedEventPayload(deselectedAttachmentId: id), dispatchKey);
-        }
-      }
+  void _selectAttachmentUsages(SelectAttachmentUsagesPayload request) {
+    Set<int> anchorIds = new Set();
+    if (!request.maintainSelections && (_currentlySelectedAttachmentUsages.isNotEmpty)) {
+      _deselectAttachmentUsages(
+          new DeselectAttachmentUsagesPayload(usageIds: _currentlySelectedAttachmentUsages.toList()));
     }
+    if (request?.usageIds?.isNotEmpty == true) {
+      for (int id in request.usageIds) {
+        _currentlySelectedAttachmentUsages.add(id);
+        int anchorId = _attachmentUsages.firstWhere((usage) => usage.id == id, orElse: () => null)?.anchorId;
+        if (anchorId != null) anchorIds.add(anchorId);
+      }
+    } else {
+      _logger.fine('no attachment usage IDs were provided for selecting');
+    }
+    _currentlySelectedAnchors.addAll(anchorIds);
+    _extensionContextAdapter.selectedChanged(anchorIds);
   }
 
-  Attachment _getAttachmentById(int id) =>
-      _attachments.firstWhere((attachment) => attachment.id == id, orElse: () => null);
+  void _deselectAttachments(DeselectAttachmentsPayload request) {
+    Set<int> anchorIds = new Set();
+    if (request?.attachmentIds?.isNotEmpty == true) {
+      for (int id in request.attachmentIds) {
+        _currentlySelectedAttachments.remove(id);
+        anchorIds.addAll(anchorIdsByAttachmentId(id));
+      }
+    } else {
+      _logger.fine('no attachment IDs were provided for deselecting');
+    }
+    _currentlySelectedAnchors.removeAll(anchorIds);
+    _extensionContextAdapter.selectedChanged(anchorIds);
+  }
+
+  void _deselectAttachmentUsages(DeselectAttachmentUsagesPayload request) {
+    Set<int> anchorIds = new Set();
+    if (request?.usageIds?.isNotEmpty == true) {
+      for (int id in request.usageIds) {
+        _currentlySelectedAttachmentUsages.remove(id);
+        int anchorId = _attachmentUsages.firstWhere((usage) => usage.id == id, orElse: () => null).anchorId;
+        if (anchorId != null) anchorIds.add(anchorId);
+      }
+    } else {
+      _logger.fine('no attachment usage IDs were provided for deselecting');
+    }
+    _currentlySelectedAnchors.removeAll(anchorIds);
+    _extensionContextAdapter.selectedChanged(anchorIds);
+  }
+
+  void _handleHoverAttachment(HoverAttachmentPayload payload) {
+    _extensionContextAdapter.hoverChanged(payload);
+  }
 
   void _handleAttachmentRemoved(AttachmentRemovedEventPayload removeEvent) {
     if (removeEvent.responseStatus) {
@@ -443,38 +506,6 @@ class AttachmentsStore extends Store {
   void _handleRefreshPanelToolbar(_) {
     // when handleRefreshPanelToolbar is dispatched, trigger will occur.
     // Trigger will cause the Panel Toolbar to re-render, with new actionItems based on other changes.
-    trigger();
-  }
-
-  void _onDidChangeSelection(List<cef.Selection> currentSelections) {
-    // if any of them is NOT empty AND if the list of those that are not empty, it is VALID
-    final valid = (currentSelections != null &&
-        currentSelections.isNotEmpty &&
-        currentSelections.where((s) => !s.isEmpty).length == 1);
-    // only fire the action if the value of isValidSelection changed to avoid many many useless actions
-    if (valid != isValidSelection) {
-      trigger();
-    }
-    if (valid) {
-      _currentSelection = currentSelections.firstWhere((s) => !s.isEmpty);
-    } else {
-      _currentSelection = null;
-    }
-  }
-
-  void _onDidChangeScopes(Null _) {
-    var allScopes = _extensionContext.observedRegionApi.getScopes();
-    var currentScopes = _currentScopes.toSet();
-    // create a set of the scopes we need to subscribe to
-    final List<String> scopesToObtain = allScopes.difference(currentScopes).toList();
-    final GetAttachmentsByProducersPayload payload =
-        new GetAttachmentsByProducersPayload(producerWurls: scopesToObtain);
-    _handleGetAttachmentsByProducers(payload);
-    // create a set of the scopes we need to unsubscribe from
-    // TODO: remove old attachments we no longer need to show
-    // final Set<String> scopesToRemove = currentScopes.difference(allScopes);
-    // set _currentScopes to the new list of scopes
-    _currentScopes = allScopes;
     trigger();
   }
 }

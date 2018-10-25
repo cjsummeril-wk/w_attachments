@@ -44,8 +44,7 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
     _disposeAvatar();
   }
 
-  bool get _selected =>
-      (props.attachment?.id != null && props.store.currentlySelectedAttachments.contains(props.attachment.id));
+  bool get _selected => (props.attachment?.id != null && props.store.attachmentIsSelected(props.attachment.id));
 
   @override
   render() {
@@ -83,12 +82,15 @@ class AttachmentCardComponent extends FluxUiStatefulComponent<AttachmentCardProp
 
   _handleMouseOver(e) {
     if (!state.hoveredOn) {
+      props.actions.hoverAttachment(new HoverAttachmentPayload(
+          previousAttachmentId: props.store.currentlyHoveredAttachmentId, nextAttachmentId: props.attachment.id));
       setState(newState()..hoveredOn = true);
     }
   }
 
   _handleMouseLeave(e) {
     if (state.hoveredOn) {
+      props.actions.hoverAttachment(new HoverAttachmentPayload(previousAttachmentId: props.attachment.id));
       setState(newState()..hoveredOn = false);
     }
   }

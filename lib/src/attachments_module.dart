@@ -46,17 +46,15 @@ class AttachmentsModule extends Module {
       List<ContextGroup> initialGroups,
       List<Filter> initialFilters,
       AttachmentsConfig config,
-      StaticAssetLoader staticAssetLoader,
-      AnnotationsApi annotationsApi}) {
+      StaticAssetLoader staticAssetLoader}) {
     // Default the config if one wasn't provided
     config ??= new AttachmentsConfig();
 
     attachmentsActions = manageAndReturnDisposable(new AttachmentsActions());
     _staticAssetLoader = staticAssetLoader ?? manageAndReturnDisposable(new StaticAssetLoader());
 
-    _annotationsApi = annotationsApi ??
-        manageAndReturnDisposable(
-            new AnnotationsApi(messagingClient: messagingClient, appIntelligence: appIntelligence));
+    _annotationsApi = manageAndReturnDisposable(
+        new AnnotationsApi(messagingClient: messagingClient, appIntelligence: appIntelligence));
 
     _events = manageAndReturnDisposable(new AttachmentsEvents());
     _store = manageAndReturnDisposable(new AttachmentsStore(

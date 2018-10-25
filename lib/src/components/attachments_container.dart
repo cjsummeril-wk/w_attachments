@@ -45,7 +45,7 @@ class AttachmentsContainerComponent extends FluxUiComponent<AttachmentsContainer
         ..key = attachment.id
         ..attachment = attachment
         ..currentSelection = props.store.currentSelection
-        ..references = props.store.usagesOfAttachment(attachment)
+        ..references = props.store.usagesByAttachmentId(attachment.id)
         ..actions = props.actions
         ..store = props.store
         ..attachmentCounter = count

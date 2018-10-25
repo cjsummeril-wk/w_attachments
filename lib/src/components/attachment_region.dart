@@ -52,7 +52,9 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
             ..aria.expanded = state.isExpanded
             // for CEF implementation, we can select a card
             // we can change the selection color through ..selectedEdgeColor = CardEdgeColor.COLORNAME
-            ..isSelectable = true)(
+            ..isSelectable = true
+            ..isSelected = (usage?.id != null && props.store.usageIsSelected(usage.id))
+            ..onClick = (SyntheticMouseEvent event) => _handleReferenceOnClick(event, usage))(
           (CardBlock()
                 ..addTestId(test_id.ReferenceViewTestIds.referenceButtons)
                 ..className = 'reference-view__reference-card__text-container')(
@@ -111,6 +113,8 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
       props.onMouseOver(event);
     }
     if (!state.isHovered) {
+      props.actions.hoverAttachment(new HoverAttachmentPayload(
+          previousAttachmentId: props.store.currentlyHoveredAttachmentId, nextAttachmentId: props.attachment.id));
       setState(newState()..isHovered = true);
     }
   }
@@ -120,6 +124,7 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
       props.onMouseLeave(event);
     }
     if (state.isHovered) {
+      props.actions.hoverAttachment(new HoverAttachmentPayload(previousAttachmentId: props.attachment.id));
       setState(newState()..isHovered = false);
     }
   }
@@ -134,6 +139,14 @@ class AttachmentRegionComponent extends UiStatefulComponent<AttachmentRegionProp
   _handleDropdownClick(SyntheticMouseEvent event) {
     event.stopPropagation();
     event.preventDefault();
+  }
+
+  _handleReferenceOnClick(SyntheticMouseEvent event, AttachmentUsage usage) {
+    if (props.store.currentlySelectedAttachmentUsages.contains(usage.id)) {
+      props.actions.deselectAttachmentUsages(new DeselectAttachmentUsagesPayload(usageIds: [usage.id]));
+    } else {
+      props.actions.selectAttachmentUsages(new SelectAttachmentUsagesPayload(usageIds: [usage.id]));
+    }
   }
 
   _handleAddReference(SyntheticMouseEvent event) {
