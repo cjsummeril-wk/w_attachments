@@ -22,6 +22,52 @@ import './mocks/mocks_library.dart';
 import 'attachment_test_constants.dart';
 import 'test_utils.dart' as test_utils;
 
+Matcher attachmentsAreSelected(AttachmentsStore store, Iterable expected) =>
+    new _AttachmentsAreSelected(store, expected);
+
+class _AttachmentsAreSelected extends Matcher {
+  // Given a store and an expected list of ID's, match whether the store ONLY has the given
+  // ID's currently selected.
+  final List _expectedValues;
+  final AttachmentsStore _store;
+  _AttachmentsAreSelected(AttachmentsStore store, Iterable expected)
+      : _expectedValues = expected.toList(),
+        _store = store;
+  @override
+  Description describe(Description description) => description
+      .add('The store "')
+      .addDescriptionOf(_store)
+      .add('" has the correct selected items IDs as given by "')
+      .addDescriptionOf(_expectedValues)
+      .add('"');
+  @override
+  bool matches(item, Map matchState) {
+    for (int id in _expectedValues) {
+      if (!_store.attachmentIsSelected(id)) {
+        return false;
+      }
+    }
+    if (_store.currentlySelectedAttachments.length == _expectedValues.length) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  Description describeMismatch(item, Description failDescription, Map matchState, bool verbose) => failDescription
+      .add('Store does not have the correct elements selected. Expected:"')
+      .addDescriptionOf(_expectedValues)
+      .add('" But got:"')
+      .addDescriptionOf(_store.currentlySelectedAttachments)
+      .add('"');
+}
+
+List<Attachment> defaultAttachments = [
+  AttachmentTestConstants.mockAttachment,
+  AttachmentTestConstants.mockChangedAttachment
+];
+
 void main() {
   group('AttachmentsStore', () {
     // Mocks
@@ -483,88 +529,123 @@ void main() {
       });
 
       test('should be able to select multiple attachments by IDs in single call', () async {
+        // Arrange
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
           AttachmentTestConstants.mockChangedAttachmentUsage
         ];
-        _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
-
-        await _actions.selectAttachments(new SelectAttachmentsPayload(attachmentIds: [
+        _store.attachments = defaultAttachments;
+        List<int> expectedAttachmentIds = [
           AttachmentTestConstants.mockAttachment.id,
           AttachmentTestConstants.mockChangedAttachment.id
-        ], maintainSelections: false));
+        ];
+        List<int> expectedAnchorIds = [AttachmentTestConstants.anchorIdOne, AttachmentTestConstants.anchorIdTwo];
 
-        expect(_store.currentlySelectedAttachments.length, 2);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachment.id), isTrue);
-        expect(
-            _store.currentlySelectedAnchors,
-            allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
-                contains(AttachmentTestConstants.anchorIdTwo)));
+        // Act
+        await _actions.selectAttachments(
+            new SelectAttachmentsPayload(attachmentIds: expectedAttachmentIds, maintainSelections: false));
+
+        // Assert
+        expect(_store.currentlySelectedAttachments, attachmentsAreSelected(_store, expectedAttachmentIds));
+        expect(_store.currentlySelectedAnchors, unorderedEquals(expectedAnchorIds));
       });
 
       test('should be able to select multiple attachments by ID one at a time maintaining selections', () async {
+        // Arrange
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
           AttachmentTestConstants.mockChangedAttachmentUsage
         ];
-        _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
+        _store.attachments = defaultAttachments;
+        List<int> expectedAttachmentIds = [
+          AttachmentTestConstants.mockAttachment.id,
+          AttachmentTestConstants.mockChangedAttachment.id
+        ];
+        List<int> expectedAnchorIds = [AttachmentTestConstants.anchorIdOne, AttachmentTestConstants.anchorIdTwo];
 
-        await _actions.selectAttachments(new SelectAttachmentsPayload(
-            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
+        // Act
+        await _actions.selectAttachments(
+            new SelectAttachmentsPayload(attachmentIds: [expectedAttachmentIds[0]], maintainSelections: false));
+        await _actions.selectAttachments(
+            new SelectAttachmentsPayload(attachmentIds: [expectedAttachmentIds[1]], maintainSelections: true));
 
-        await _actions.selectAttachments(new SelectAttachmentsPayload(
-            attachmentIds: [AttachmentTestConstants.mockChangedAttachment.id], maintainSelections: true));
-
-        expect(_store.currentlySelectedAttachments.length, 2);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachment.id), isTrue);
-        expect(
-            _store.currentlySelectedAnchors,
-            allOf(hasLength(2), contains(AttachmentTestConstants.anchorIdOne),
-                contains(AttachmentTestConstants.anchorIdTwo)));
+        // Assert
+        expect(_store.currentlySelectedAttachments, attachmentsAreSelected(_store, expectedAttachmentIds));
+        expect(_store.currentlySelectedAnchors, unorderedEquals(expectedAnchorIds));
       });
 
       test('should be able to select an attachment by ID and clear the list', () async {
+        // Arrange
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
           AttachmentTestConstants.mockChangedAttachmentUsage
         ];
-        _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
+        _store.attachments = defaultAttachments;
+        // A single item list is needed here for the matchers.
+        List<int> expectedAttachmentId = [AttachmentTestConstants.mockChangedAttachment.id];
+        List<int> expectedAnchorId = [AttachmentTestConstants.anchorIdTwo];
 
+        // Act
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
-
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockChangedAttachment.id], maintainSelections: false));
 
-        expect(_store.currentlySelectedAttachments.length, 1);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachment.id), isTrue);
-        expect(_store.currentlySelectedAnchors.length, 1);
-        expect(_store.currentlySelectedAnchors, contains(AttachmentTestConstants.anchorIdTwo));
+        // Assert
+        expect(_store.currentlySelectedAttachments, attachmentsAreSelected(_store, expectedAttachmentId));
+        expect(_store.currentlySelectedAnchors, unorderedEquals(expectedAnchorId));
+      });
+
+      test('The attachment store can add a single attached item.', () async {
+        // Arrange
+        List<int> expectedSelection = [AttachmentTestConstants.mockAttachment.id];
+
+        // Act
+        await _actions.selectAttachments(
+            new SelectAttachmentsPayload(attachmentIds: expectedSelection, maintainSelections: true));
+
+        // Assert
+        expect(_store.currentlySelectedAttachments, attachmentsAreSelected(_store, expectedSelection));
       });
 
       test('deselectAttachments should be able to deselect an attachment by id', () async {
-        await _actions.selectAttachments(new SelectAttachmentsPayload(
-            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
+        // Arrange
+        List<String> expectedSelection = [];
 
+        // Act
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: true));
         await _actions.deselectAttachments(
             new DeselectAttachmentsPayload(attachmentIds: [AttachmentTestConstants.mockAttachment.id]));
 
-        expect(_store.currentlySelectedAttachments, isEmpty);
-        expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isFalse);
+        // Assert
+        expect(_store.currentlySelectedAttachments, attachmentsAreSelected(_store, expectedSelection));
         expect(_store.currentlySelectedAnchors, isEmpty);
       });
 
+      test('deselectAttachments should be able to deselect an attachment by id', () async {
+        // Arrange
+        List<String> expectedSelection = [];
+
+        // Act
+        await _actions.selectAttachments(new SelectAttachmentsPayload(
+            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: true));
+        await _actions.deselectAttachments(
+            new DeselectAttachmentsPayload(attachmentIds: [AttachmentTestConstants.mockAttachment.id]));
+
+        // Assert
+        expect(_store.currentlySelectedAttachments, attachmentsAreSelected(_store, expectedSelection));
+        expect(_store.currentlySelectedAnchors, isEmpty);
+      });
+      // This test is duplicated!!!!!!!
       test('should be able to select multiple attachments by ID one at a time maintaining selections', () async {
-        _store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockChangedAttachment];
+        _store.attachments = defaultAttachments;
 
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
 
         await _actions.selectAttachments(new SelectAttachmentsPayload(
             attachmentIds: [AttachmentTestConstants.mockChangedAttachment.id], maintainSelections: true));
-
         expect(_store.currentlySelectedAttachments.length, 2);
         expect(_store.attachmentIsSelected(AttachmentTestConstants.mockAttachment.id), isTrue);
         expect(_store.attachmentIsSelected(AttachmentTestConstants.mockChangedAttachment.id), isTrue);
@@ -578,9 +659,10 @@ void main() {
         expect(_store.currentlySelectedAnchors, isEmpty);
       });
 
+      // The maintainSelections parameter does not seem to change any internal state.
       test('deselectAttachmentUsage should remove no selections when no IDs are provided', () async {
-        await _actions.selectAttachments(new SelectAttachmentsPayload(
-            attachmentIds: [AttachmentTestConstants.mockAttachment.id], maintainSelections: false));
+        await _actions.selectAttachments(
+            new SelectAttachmentsPayload(attachmentIds: [AttachmentTestConstants.mockAttachment.id]));
         await _actions.deselectAttachments(new DeselectAttachmentsPayload(attachmentIds: []));
 
         expect(_store.currentlySelectedAttachments, isNotEmpty);
@@ -618,7 +700,7 @@ void main() {
         expect(_store.usageIsSelected(AttachmentTestConstants.mockAttachmentUsage.id), isFalse);
       });
 
-      test('selectAttachmentUsages should only set the store\'s currentlySelectedAttachmentUsages where specified',
+      test("selectAttachmentUsages should only set the store's currentlySelectedAttachmentUsages where specified",
           () async {
         _store.attachmentUsages = [
           AttachmentTestConstants.mockAttachmentUsage,
