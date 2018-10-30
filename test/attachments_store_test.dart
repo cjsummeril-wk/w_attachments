@@ -1,6 +1,7 @@
 library w_attachments_client.test.attachments_store_test;
 
 import 'dart:async';
+import 'dart:mirrors';
 
 import 'package:mockito/mirrors.dart';
 import 'package:test/test.dart';
@@ -63,24 +64,44 @@ class _AttachmentsAreSelected extends Matcher {
       .add('"');
 }
 
+AttachmentsStore generateDefaultStore({bool spyMode: false}) {
+  // Generate an Attachments Store with basic values.
+  AttachmentsActions _actions = new AttachmentsActions();
+  AttachmentsEvents _events = new AttachmentsEvents();
+  AnnotationsApiMock _annotationsApiMock = new AnnotationsApiMock();
+  ExtensionContextMock _extensionContext = new ExtensionContextMock();
+  String configLabel = 'AttachmentPackage';
+  AttachmentsStore default_store = new AttachmentsStore(
+    actionProviderFactory: StandardActionProvider.actionProviderFactory,
+    attachmentsActions: _actions,
+    attachmentsEvents: _events,
+    annotationsApi: _annotationsApiMock,
+    extensionContext: _extensionContext,
+    dispatchKey: attachmentsModuleDispatchKey,
+    attachments: [],
+    groups: [],
+  );
+  if (spyMode) {
+    return spy(new AttachmentsStoreMock(),
+      default_store);
+  } else {
+    return default_store;
+}
+
 List<Attachment> defaultAttachments = [
   AttachmentTestConstants.mockAttachment,
   AttachmentTestConstants.mockChangedAttachment
 ];
 
+List<DeclarationMirror> getStoreConstructorMirror() {
+  ClassMirror mirror = reflectClass(AttachmentsStore);
+  return new List.from(mirror.declarations.values.where((member) {
+    return member is MethodMirror && member.isConstructor;
+  }));
+}
+
 void main() {
-  group('AttachmentsStore', () {
-    // Mocks
-    AnnotationsApiMock _annotationsApiMock;
-
-    // Subject
-    AttachmentsStore _store;
-
-    // Other
-    AttachmentsActions _actions;
-    AttachmentsEvents _events;
-    AttachmentsApi _api;
-    ExtensionContextMock _extensionContext;
+  group('<<Constructor Group>>', () {
 
     String validWurl = 'wurl://docs.v1/doc:962DD25A85142FBBD7AC5AC84BAE9BD6';
     String testUsername = 'Ron Swanson';
@@ -89,45 +110,73 @@ void main() {
 
     final String configLabel = 'AttachmentPackage';
 
-    group('constructor', () {
-      setUp(() {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
-        _annotationsApiMock = new AnnotationsApiMock();
+    group('Ensure only one constructor of attachments store.', () {
+      test('AttachmentsStore should have 1 constructor', () {
+        List<DeclarationMirror> constructors = getStoreConstructorMirror();
+        expect(constructors, hasLength(1));
       });
 
-      tearDown(() {
-        _extensionContext.dispose();
-        _store.dispose();
+      test('Constructor should contain correct parameter names.', () {
+        // This test does not test the order of the parameter names.
+        // It only tests that all of the paramters are present.
+        // Arrange
+        List<String> expectedParameterNames = [
+          'actionProviderFactory',
+          'attachmentsActions',
+          'annotationsApi',
+          'attachmentsEvents',
+          'dispatchKey',
+          'extensionContext',
+          'moduleConfig',
+          'attachments',
+          'groups',
+          'initialFilters'
+        ];
+        List<String> actualParameterNames = [];
+        MethodMirror constructor = getStoreConstructorMirror()[0];
+        List<ParameterMirror> parameters = constructor.parameters;
+
+        // Act
+        for (ParameterMirror parameter in parameters) {
+          Symbol symbolName = parameter.simpleName;
+          String actualName = MirrorSystem.getName(symbolName);
+          actualParameterNames.add(actualName);
+        }
+
+        // Assert
+        expect(expectedParameterNames, unorderedEquals(actualParameterNames));
       });
 
-      test('should have proper default values', () {
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: [],
-                moduleConfig: new AttachmentsConfig(label: configLabel)));
-        _api = _store.api;
+      test('Test the default values of the constructor.', () {
+        // Arrange and Act
+        AttachmentsStore test_store = generateDefaultStore();
+
+        // Assert.
+        expect(test_store.enableDraggable, isTrue);
+        expect(test_store.enableUploadDropzones, isTrue);
+        expect(test_store.enableClickToSelect, isTrue);
+        expect(test_store.api.primarySelection, isNull);
+        expect(test_store.actionProvider.runtimeType, equals(StandardActionProvider));
+        expect(test_store.enableDraggable, isTrue);
+        expect(test_store.enableUploadDropzones, isTrue);
+        expect(test_store.enableClickToSelect, isTrue);
       });
 
-      test('should have default true enableDraggable, and can be set to false', () {
-        expect(_store.enableDraggable, isTrue);
-        expect(_store.enableUploadDropzones, isTrue);
-        expect(_store.enableClickToSelect, isTrue);
-        expect(_api.primarySelection, isNull);
-        expect(_store.actionProvider, isNotNull);
-      });
+      test('Test that parameters set by the constructor actually get set.', () {
+        // Arrange
+        AttachmentsConfig nonDefaultConfig = new AttachmentsConfig(
+            enableDraggable: false,
+            enableUploadDropzones: false,
+            enableClickToSelect: false,
+            primarySelection: validWurl,
+            label: configLabel);
+        ExtensionContextMock _extensionContext = new ExtensionContextMock();
+        AttachmentsActions _actions = new AttachmentsActions();
+        AttachmentsEvents _events = new AttachmentsEvents();
+        AnnotationsApiMock _annotationsApiMock = new AnnotationsApiMock();
 
-      test('should have enableDraggableset to false when specified', () {
-        _store = new AttachmentsStore(
+        // Act
+        AttachmentsStore test_store = new AttachmentsStore(
             actionProviderFactory: StandardActionProvider.actionProviderFactory,
             attachmentsActions: _actions,
             attachmentsEvents: _events,
@@ -136,93 +185,25 @@ void main() {
             dispatchKey: attachmentsModuleDispatchKey,
             attachments: [],
             groups: [],
-            moduleConfig: new AttachmentsConfig(enableDraggable: false, label: configLabel));
+            moduleConfig: nonDefaultConfig);
 
-        expect(_store.enableDraggable, isFalse);
-      });
-
-      test('should have enableUploadDropzones set to false when specified', () {
-        _store = new AttachmentsStore(
-            actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            moduleConfig: new AttachmentsConfig(enableUploadDropzones: false, label: configLabel),
-            attachmentsActions: _actions,
-            attachmentsEvents: _events,
-            annotationsApi: _annotationsApiMock,
-            extensionContext: _extensionContext,
-            dispatchKey: attachmentsModuleDispatchKey,
-            attachments: [],
-            groups: []);
-
-        expect(_store.enableUploadDropzones, isFalse);
-      });
-
-      test('should have enableClickToSelect set to false when specified', () {
-        _store = new AttachmentsStore(
-            actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            moduleConfig: new AttachmentsConfig(enableClickToSelect: false, label: configLabel),
-            attachmentsActions: _actions,
-            attachmentsEvents: _events,
-            annotationsApi: _annotationsApiMock,
-            extensionContext: _extensionContext,
-            dispatchKey: attachmentsModuleDispatchKey,
-            attachments: [],
-            groups: []);
-
-        expect(_store.enableClickToSelect, isFalse);
-      });
-
-      test('should set a primarySelection when it is provided', () {
-        _store = new AttachmentsStore(
-            actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            attachmentsActions: _actions,
-            attachmentsEvents: _events,
-            annotationsApi: _annotationsApiMock,
-            extensionContext: _extensionContext,
-            dispatchKey: attachmentsModuleDispatchKey,
-            attachments: [],
-            groups: [],
-            moduleConfig: new AttachmentsConfig(label: configLabel, primarySelection: validWurl));
-        _api = _store.api;
-
-        expect(_api.primarySelection, isNotNull);
-        expect(_api.primarySelection, validWurl);
-      });
-
-      test('should have a non-null StandardActionProvider when an actionProvider is not specified', () {
-        _store = new AttachmentsStore(
-            actionProviderFactory: null,
-            moduleConfig: new AttachmentsConfig(enableDraggable: false, label: configLabel),
-            attachmentsActions: _actions,
-            attachmentsEvents: _events,
-            annotationsApi: _annotationsApiMock,
-            extensionContext: _extensionContext,
-            dispatchKey: attachmentsModuleDispatchKey,
-            attachments: [],
-            groups: []);
-
-        expect(_store.actionProvider, isNotNull);
+        // Assert
+        expect(test_store.enableDraggable, isFalse);
+        expect(test_store.enableUploadDropzones, isFalse);
+        expect(test_store.enableClickToSelect, isFalse);
+        expect(test_store.api.primarySelection, isNotNull);
+        expect(test_store.api.primarySelection, equals(validWurl));
       });
     });
 
     group('setGroups', () {
+      AttachmentsStore _store;
+      AttachmentsApi _api;
+      AttachmentsActions _actions;
       setUp(() {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
-        _annotationsApiMock = new AnnotationsApiMock();
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                moduleConfig: new AttachmentsConfig(label: configLabel),
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: []));
+        _store = generateDefaultStore();
         _api = _store.api;
+        _actions = new AttachmentsActions();
       });
 
       test('should not require a group in the groups list', () async {
@@ -264,27 +245,7 @@ void main() {
       List<Anchor> happyPathAnchors;
 
       setUp(() {
-        // Mocks
-        _annotationsApiMock = new AnnotationsApiMock();
-
-        // Client
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
-
         // Subject
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                moduleConfig: new AttachmentsConfig(label: configLabel),
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: []));
 
         // Responses
         happyPathAttachments = [
@@ -329,6 +290,7 @@ void main() {
       });
 
       group('Attachment store handles getAttachmentsByIds', () {
+          AttachmentsStore _store = generateDefaultStore(spyMode: true);
         // Attachments that have no correlating usage (in happy path)
         List<Attachment> noMatchAttachments;
 
@@ -417,32 +379,20 @@ void main() {
         });
 
         // TODO RAM-732 App Intelligence
-//        test('store logs when it receives attachments out of scope', () async {
-//
-//        });
+        // test('store logs when it receives attachments out of scope', () async {
+
       });
     });
 
     group('AttachmentsStore attachment actions', () {
+
+        AttachmentsStore _store;
       setUp(() {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
+        _store = generateDefaultStore(spyMode: true);
+        _actions = _store.attachmentsActions;
+        _events = _store.attachmentsEvents;
         _extensionContext = new ExtensionContextMock();
         _annotationsApiMock = new AnnotationsApiMock();
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                moduleConfig: new AttachmentsConfig(label: configLabel),
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: []));
-        _api = _store.api;
-
         _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
         _store.attachments = [AttachmentTestConstants.mockAttachment];
       });
@@ -453,7 +403,6 @@ void main() {
         _events.dispose();
         _extensionContext.dispose();
         _store.dispose();
-        _api = null;
       });
 
       test('addAttachment should add an attachment to the stored list of attachments', () async {
@@ -799,13 +748,17 @@ void main() {
     });
 
     group('config', () {
+      AttachmentsStore _store;
       setUp(() {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
-        _annotationsApiMock = new AnnotationsApiMock();
+        _store = generateDefaultStore();
       });
 
+      tearDown(() {
+        _store.dispose();
+      });
+      // This test does not take into account the default configuration values.
+      // If the default values match the expected values, then there is no proof
+      // that setting those values was done by the default or by the test.
       test('properties from config are exposed properly', () {
         AttachmentsConfig config = new AttachmentsConfig(
             enableClickToSelect: true,
@@ -888,24 +841,10 @@ void main() {
     });
 
     group('handles onDidChangeSelection -', () {
+      AttachmentsStore _store;
+
       setUp(() {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
-        _annotationsApiMock = new AnnotationsApiMock();
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: [],
-                moduleConfig: new AttachmentsConfig(label: configLabel)));
-        _api = _store.api;
+        _store = generateDefaultStore(spyMode: true);
       });
 
       tearDown(() async {
@@ -930,24 +869,9 @@ void main() {
     });
 
     group('createAttachmentUsage -', () {
+      AttachmentsStore _store;
       setUp(() {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
-        _annotationsApiMock = new AnnotationsApiMock();
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: [],
-                moduleConfig: new AttachmentsConfig(label: configLabel)));
-        _api = _store.api;
+        _store = generateDefaultStore(spyMode: true);
       });
 
       tearDown(() async {
@@ -955,7 +879,6 @@ void main() {
         await _events.dispose();
         await _extensionContext.dispose();
         await _store.dispose();
-        _api = null;
       });
 
       test('does nothing if isValidSelection is false', () async {
@@ -1091,24 +1014,9 @@ void main() {
     });
 
     group('getAttachmentUsagesById -', () {
+      AttachmentsStore _store;
       setUp(() {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
-        _annotationsApiMock = new AnnotationsApiMock();
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: [],
-                moduleConfig: new AttachmentsConfig(label: configLabel)));
-        _api = _store.api;
+        _store = generateDefaultStore(spyMode: true);
       });
 
       tearDown(() async {
@@ -1116,7 +1024,6 @@ void main() {
         await _events.dispose();
         await _extensionContext.dispose();
         await _store.dispose();
-        _api = null;
       });
 
       test('should convert FAttachmentUsage to AttachmentUsage, should add an AttachmentUsage to the list in the store',
@@ -1198,25 +1105,10 @@ void main() {
           anchors: AttachmentTestConstants.mockAnchorList,
           attachmentUsages: AttachmentTestConstants.mockAttachmentUsageList,
           attachments: AttachmentTestConstants.mockAttachmentList);
-
+      AttachmentsStore _store;
       setUp(() {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
-        _annotationsApiMock = new AnnotationsApiMock();
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: [],
-                moduleConfig: new AttachmentsConfig(label: configLabel)));
-        _api = _store.api;
+        _store = generateDefaultStore(spyMode: true);
+      });
 
         _store.anchors = [AttachmentTestConstants.mockExistingAnchor, AttachmentTestConstants.mockAnchor];
       });
