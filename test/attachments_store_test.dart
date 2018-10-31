@@ -64,7 +64,7 @@ class _AttachmentsAreSelected extends Matcher {
       .add('"');
 }
 
-AttachmentsStore generateDefaultStore({bool spyMode: false, AnnotationsApiMock annotationsApiMock: null, ExtensionContextMock extensionContextMock: null}) {
+AttachmentsStore generateDefaultStore({bool spyMode: false, AnnotationsApiMock annotationsApiMock: null, ExtensionContextMock extensionContextMock: null, AttachmentsConfig config: null}) {
   // Generate an Attachments Store with basic values.
   AttachmentsActions actions = new AttachmentsActions();
   AttachmentsEvents events = new AttachmentsEvents();
@@ -79,6 +79,7 @@ AttachmentsStore generateDefaultStore({bool spyMode: false, AnnotationsApiMock a
     dispatchKey: attachmentsModuleDispatchKey,
     attachments: [],
     groups: [],
+    moduleConfig: config
   );
   if (spyMode) {
     return spy(new AttachmentsStoreMock(),
@@ -203,7 +204,7 @@ void main() {
       setUp(() {
         _store = generateDefaultStore();
         _api = _store.api;
-        _actions = new AttachmentsActions();
+        _actions = _store.attachmentsActions;
       });
 
       test('should not require a group in the groups list', () async {
@@ -773,7 +774,7 @@ void main() {
             primarySelection: validWurl,
             showFilenameAsLabel: true);
 
-        _store = generateDefaultStore();
+        _store = generateDefaultStore(config: config);
 
         expect(_store.enableDraggable, config.enableDraggable);
         expect(_store.enableLabelEdit, config.enableLabelEdit);
@@ -795,7 +796,7 @@ void main() {
             showFilenameAsLabel: true,
             zipSelection: validWurl);
 
-        _store = generateDefaultStore();
+        _store = generateDefaultStore(config: config);
 
         expect(_store.enableDraggable, config.enableDraggable);
         expect(_store.enableLabelEdit, config.enableLabelEdit);
@@ -1106,8 +1107,8 @@ void main() {
 
       setUp(() {
         _annotationsApiMock = new AnnotationsApiMock();
-        _store.anchors = [AttachmentTestConstants.mockExistingAnchor, AttachmentTestConstants.mockAnchor];
         _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
+        _store.anchors = [AttachmentTestConstants.mockExistingAnchor, AttachmentTestConstants.mockAnchor];
         _actions = _store.attachmentsActions;
       });
 
@@ -1166,6 +1167,7 @@ void main() {
       setUp(() {
         _annotationsApiMock = new AnnotationsApiMock();
         _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
+        _actions = _store.attachmentsActions;
       });
 
       test('calls to the api to update attachment label', () async {
