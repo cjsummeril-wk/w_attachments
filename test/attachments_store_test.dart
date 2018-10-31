@@ -64,19 +64,18 @@ class _AttachmentsAreSelected extends Matcher {
       .add('"');
 }
 
-AttachmentsStore generateDefaultStore({bool spyMode: false}) {
+AttachmentsStore generateDefaultStore({bool spyMode: false, AnnotationsApiMock annotationsApiMock: null, ExtensionContextMock extensionContextMock: null}) {
   // Generate an Attachments Store with basic values.
-  AttachmentsActions _actions = new AttachmentsActions();
-  AttachmentsEvents _events = new AttachmentsEvents();
-  AnnotationsApiMock _annotationsApiMock = new AnnotationsApiMock();
-  ExtensionContextMock _extensionContext = new ExtensionContextMock();
-  String configLabel = 'AttachmentPackage';
+  AttachmentsActions actions = new AttachmentsActions();
+  AttachmentsEvents events = new AttachmentsEvents();
+  annotationsApiMock ??= new AnnotationsApiMock();
+  extensionContextMock ??= new ExtensionContextMock();
   AttachmentsStore default_store = new AttachmentsStore(
     actionProviderFactory: StandardActionProvider.actionProviderFactory,
-    attachmentsActions: _actions,
-    attachmentsEvents: _events,
-    annotationsApi: _annotationsApiMock,
-    extensionContext: _extensionContext,
+    attachmentsActions: actions,
+    attachmentsEvents: events,
+    annotationsApi: annotationsApiMock,
+    extensionContext: extensionContextMock,
     dispatchKey: attachmentsModuleDispatchKey,
     attachments: [],
     groups: [],
@@ -86,6 +85,7 @@ AttachmentsStore generateDefaultStore({bool spyMode: false}) {
       default_store);
   } else {
     return default_store;
+  }
 }
 
 List<Attachment> defaultAttachments = [
@@ -290,14 +290,18 @@ void main() {
       });
 
       group('Attachment store handles getAttachmentsByIds', () {
-          AttachmentsStore _store = generateDefaultStore(spyMode: true);
+        AttachmentsStore _store;
+        AnnotationsApiMock _annotationsApiMock;
+        AttachmentsActions _actions;
         // Attachments that have no correlating usage (in happy path)
         List<Attachment> noMatchAttachments;
-
         // Attachments that have some correlating usage (in happy path)
         List<Attachment> twoMatchAttachments;
 
         setUp(() {
+          _annotationsApiMock = new AnnotationsApiMock();
+          _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
+          _actions = _store.attachmentsActions;
           noMatchAttachments = [
             new Attachment()
               ..id = 99
@@ -321,6 +325,11 @@ void main() {
               ..id = 97
               ..filename = 'dogs_out.png'
           ];
+        });
+
+        tearDown(() {
+          _store.dispose();
+          _annotationsApiMock.dispose();
         });
 
         test('(happy path)', () async {
@@ -385,24 +394,19 @@ void main() {
     });
 
     group('AttachmentsStore attachment actions', () {
-
         AttachmentsStore _store;
+        AttachmentsActions _actions;
       setUp(() {
         _store = generateDefaultStore(spyMode: true);
         _actions = _store.attachmentsActions;
-        _events = _store.attachmentsEvents;
-        _extensionContext = new ExtensionContextMock();
-        _annotationsApiMock = new AnnotationsApiMock();
         _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
         _store.attachments = [AttachmentTestConstants.mockAttachment];
       });
 
       tearDown(() async {
         // eliminate all attachments in the store cache, cancelUpload handles all cases that loadAttachments doesn't
-        _actions.dispose();
-        _events.dispose();
-        _extensionContext.dispose();
         _store.dispose();
+        _actions.dispose();
       });
 
       test('addAttachment should add an attachment to the stored list of attachments', () async {
@@ -769,16 +773,7 @@ void main() {
             primarySelection: validWurl,
             showFilenameAsLabel: true);
 
-        _store = new AttachmentsStore(
-            actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            moduleConfig: config,
-            attachmentsActions: _actions,
-            attachmentsEvents: _events,
-            annotationsApi: _annotationsApiMock,
-            extensionContext: _extensionContext,
-            dispatchKey: attachmentsModuleDispatchKey,
-            attachments: [],
-            groups: []);
+        _store = generateDefaultStore();
 
         expect(_store.enableDraggable, config.enableDraggable);
         expect(_store.enableLabelEdit, config.enableLabelEdit);
@@ -800,16 +795,7 @@ void main() {
             showFilenameAsLabel: true,
             zipSelection: validWurl);
 
-        _store = new AttachmentsStore(
-            actionProviderFactory: StandardActionProvider.actionProviderFactory,
-            moduleConfig: config,
-            attachmentsActions: _actions,
-            attachmentsEvents: _events,
-            annotationsApi: _annotationsApiMock,
-            extensionContext: _extensionContext,
-            dispatchKey: attachmentsModuleDispatchKey,
-            attachments: [],
-            groups: []);
+        _store = generateDefaultStore();
 
         expect(_store.enableDraggable, config.enableDraggable);
         expect(_store.enableLabelEdit, config.enableLabelEdit);
@@ -842,13 +828,15 @@ void main() {
 
     group('handles onDidChangeSelection -', () {
       AttachmentsStore _store;
-
+      ExtensionContextMock _extensionContext;
       setUp(() {
-        _store = generateDefaultStore(spyMode: true);
+        _extensionContext = new ExtensionContextMock();
+        _store = generateDefaultStore(spyMode: true, extensionContextMock: _extensionContext);
       });
 
-      tearDown(() async {
-        await _extensionContext.dispose();
+      tearDown(() {
+        _extensionContext.dispose();
+        _store.dispose();
       });
 
       test('updates isValidSelection and triggers correctly', () async {
@@ -870,13 +858,18 @@ void main() {
 
     group('createAttachmentUsage -', () {
       AttachmentsStore _store;
+      AnnotationsApiMock _annotationsApiMock;
+      AttachmentsActions _actions;
+      ExtensionContextMock _extensionContext;
       setUp(() {
-        _store = generateDefaultStore(spyMode: true);
+        _annotationsApiMock = new AnnotationsApiMock();
+        _extensionContext = new ExtensionContextMock();
+        _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock, extensionContextMock: _extensionContext);
+        _actions = _store.attachmentsActions;
       });
 
       tearDown(() async {
         await _actions.dispose();
-        await _events.dispose();
         await _extensionContext.dispose();
         await _store.dispose();
       });
@@ -1015,14 +1008,16 @@ void main() {
 
     group('getAttachmentUsagesById -', () {
       AttachmentsStore _store;
+      AnnotationsApiMock _annotationsApiMock;
+      AttachmentsActions _actions;
       setUp(() {
-        _store = generateDefaultStore(spyMode: true);
+        _annotationsApiMock = new AnnotationsApiMock();
+        _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
+        _actions = _store.attachmentsActions;
       });
 
       tearDown(() async {
         await _actions.dispose();
-        await _events.dispose();
-        await _extensionContext.dispose();
         await _store.dispose();
       });
 
@@ -1098,27 +1093,27 @@ void main() {
                 u.label == AttachmentTestConstants.mockChangedAttachmentUsage.label &&
                 u.accountResourceId == AttachmentTestConstants.mockChangedAttachmentUsage.accountResourceId)));
       });
-    });
 
     group('getAttachmentsByProducers -', () {
+
       GetAttachmentsByProducersResponse getAttachmentsByProducersHappyResponse = new GetAttachmentsByProducersResponse(
           anchors: AttachmentTestConstants.mockAnchorList,
           attachmentUsages: AttachmentTestConstants.mockAttachmentUsageList,
           attachments: AttachmentTestConstants.mockAttachmentList);
       AttachmentsStore _store;
-      setUp(() {
-        _store = generateDefaultStore(spyMode: true);
-      });
+      AnnotationsApiMock _annotationsApiMock;
+      AttachmentsActions _actions;
 
+      setUp(() {
+        _annotationsApiMock = new AnnotationsApiMock();
         _store.anchors = [AttachmentTestConstants.mockExistingAnchor, AttachmentTestConstants.mockAnchor];
+        _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
+        _actions = _store.attachmentsActions;
       });
 
       tearDown(() async {
         await _actions.dispose();
-        await _events.dispose();
-        await _extensionContext.dispose();
         await _store.dispose();
-        _api = null;
       });
 
       test('graceful null return', () async {
@@ -1165,24 +1160,12 @@ void main() {
     });
 
     group('updateAttachmentLabel -', () {
-      setUp(() async {
-        _actions = new AttachmentsActions();
-        _events = new AttachmentsEvents();
-        _extensionContext = new ExtensionContextMock();
+      AttachmentsStore _store;
+      AnnotationsApiMock _annotationsApiMock;
+      AttachmentsActions _actions;
+      setUp(() {
         _annotationsApiMock = new AnnotationsApiMock();
-        _store = spy(
-            new AttachmentsStoreMock(),
-            new AttachmentsStore(
-                actionProviderFactory: StandardActionProvider.actionProviderFactory,
-                attachmentsActions: _actions,
-                attachmentsEvents: _events,
-                annotationsApi: _annotationsApiMock,
-                extensionContext: _extensionContext,
-                dispatchKey: attachmentsModuleDispatchKey,
-                attachments: [],
-                groups: [],
-                moduleConfig: new AttachmentsConfig(label: configLabel)));
-        _api = _store.api;
+        _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
       });
 
       test('calls to the api to update attachment label', () async {
@@ -1200,14 +1183,11 @@ void main() {
         verify(_annotationsApiMock.updateAttachmentLabel(attachmentId: any, attachmentLabel: any)).called(1);
         expect(updateAttachmentLabelCompleter.future, completes);
       });
-
       tearDown(() async {
         await _actions.dispose();
-        await _events.dispose();
-        await _extensionContext.dispose();
         await _store.dispose();
-        _api = null;
       });
     });
   });
+});
 }
