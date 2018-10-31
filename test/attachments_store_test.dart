@@ -64,26 +64,28 @@ class _AttachmentsAreSelected extends Matcher {
       .add('"');
 }
 
-AttachmentsStore generateDefaultStore({bool spyMode: false, AnnotationsApiMock annotationsApiMock: null, ExtensionContextMock extensionContextMock: null, AttachmentsConfig config: null}) {
+AttachmentsStore generateDefaultStore(
+    {bool spyMode: false,
+    AnnotationsApiMock annotationsApiMock: null,
+    ExtensionContextMock extensionContextMock: null,
+    AttachmentsConfig config: null}) {
   // Generate an Attachments Store with basic values.
   AttachmentsActions actions = new AttachmentsActions();
   AttachmentsEvents events = new AttachmentsEvents();
   annotationsApiMock ??= new AnnotationsApiMock();
   extensionContextMock ??= new ExtensionContextMock();
   AttachmentsStore default_store = new AttachmentsStore(
-    actionProviderFactory: StandardActionProvider.actionProviderFactory,
-    attachmentsActions: actions,
-    attachmentsEvents: events,
-    annotationsApi: annotationsApiMock,
-    extensionContext: extensionContextMock,
-    dispatchKey: attachmentsModuleDispatchKey,
-    attachments: [],
-    groups: [],
-    moduleConfig: config
-  );
+      actionProviderFactory: StandardActionProvider.actionProviderFactory,
+      attachmentsActions: actions,
+      attachmentsEvents: events,
+      annotationsApi: annotationsApiMock,
+      extensionContext: extensionContextMock,
+      dispatchKey: attachmentsModuleDispatchKey,
+      attachments: [],
+      groups: [],
+      moduleConfig: config);
   if (spyMode) {
-    return spy(new AttachmentsStoreMock(),
-      default_store);
+    return spy(new AttachmentsStoreMock(), default_store);
   } else {
     return default_store;
   }
@@ -103,7 +105,6 @@ List<DeclarationMirror> getStoreConstructorMirror() {
 
 void main() {
   group('<<Constructor Group>>', () {
-
     String validWurl = 'wurl://docs.v1/doc:962DD25A85142FBBD7AC5AC84BAE9BD6';
     String testUsername = 'Ron Swanson';
     String veryGoodResourceId = 'very good resource id';
@@ -289,43 +290,30 @@ void main() {
                 'wurl://sheets.v0/0:sheets_26858afc0f1541d88598db63c757f66c/1:sheets_26858af6858afc0f1541d88598db63c757f66c_3a92c44fb39b46ce9d138fd88dcc8af7_6-3-1-1-2'
         ];
       });
-
+      /// This is an internal group. This only serves to increase the complexity of the test.
       group('Attachment store handles getAttachmentsByIds', () {
         AttachmentsStore _store;
         AnnotationsApiMock _annotationsApiMock;
         AttachmentsActions _actions;
-        // Attachments that have no correlating usage (in happy path)
-        List<Attachment> noMatchAttachments;
-        // Attachments that have some correlating usage (in happy path)
-        List<Attachment> twoMatchAttachments;
+        List<String> fileNames = ['wut.jpg', 'idgaf.docx', 'ihop.xlsx', 'who.pdf', 'let_the.gif', 'dogs_out.png'];
+
+        List<Attachment> genAttachmentList(int size) {
+          // Generate a default attachments list.
+          List<Attachment> attachments = [];
+          // A zero ID attachment does not get generated so skip ID 0.
+          for (int i = 1; i <= size; i++) {
+            String currentFileName = fileNames[(i - 1) % fileNames.length];
+            attachments.add(new Attachment()
+              ..id = i
+              ..filename = currentFileName);
+          }
+          return attachments;
+        }
 
         setUp(() {
           _annotationsApiMock = new AnnotationsApiMock();
           _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
           _actions = _store.attachmentsActions;
-          noMatchAttachments = [
-            new Attachment()
-              ..id = 99
-              ..filename = 'wut.jpg',
-            new Attachment()
-              ..id = 98
-              ..filename = 'idgaf.docx',
-            new Attachment()
-              ..id = 97
-              ..filename = 'ihop.xlsx'
-          ];
-
-          twoMatchAttachments = [
-            new Attachment()
-              ..id = 1
-              ..filename = 'who.pdf',
-            new Attachment()
-              ..id = 2
-              ..filename = 'let_the.gif',
-            new Attachment()
-              ..id = 97
-              ..filename = 'dogs_out.png'
-          ];
         });
 
         tearDown(() {
@@ -333,70 +321,99 @@ void main() {
           _annotationsApiMock.dispose();
         });
 
-        test('(happy path)', () async {
-          // Arrange
-          List<int> getIds = [1, 2, 3];
-          _store.attachmentUsages = happyPathUsages;
-          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(happyPathAttachments);
+        test('Test genAttachmentList helper method.', () {
+          // Arrange, listSize is SAFE TO MODIFY
+          int listSize = 7;
+          // Dynamically generate expected data in case larger attachment lists are desired.
+          List<int> expectedIds = new List<int>.generate(listSize, (i) => i + 1);
+          List<String> expectedFileNames = new List<String>.generate(listSize, (i) => fileNames[i % fileNames.length]);
 
           // Act
-          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+          List<Attachment> actualAttachments = genAttachmentList(listSize);
+          List<int> actualIds = actualAttachments.map((attachment) => attachment.id).toList();
+          List<String> actualFileNames = actualAttachments.map((attachment) => attachment.filename).toList();
 
           // Assert
-          expect(_store.attachments.length, equals(3));
+          expect(expectedIds, equals(actualIds));
+          expect(actualFileNames, equals(expectedFileNames));
         });
 
-        test('overwrites the results that match correlating usage referencing attachment id', () async {
+        test('Attachments usages that get added to the store are stored.', () async {
           // Arrange
-          List<int> getIds = [1, 2, 97];
+          List<int> testIds = [1, 2, 3];
+          List<Attachment> expectedAttachments = genAttachmentList(3);
           _store.attachmentUsages = happyPathUsages;
-          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(twoMatchAttachments);
+          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: testIds)).thenReturn(expectedAttachments);
 
           // Act
-          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: testIds));
 
           // Assert
-          expect(_store.attachments.length, equals(2));
+          expect(_store.attachments, unorderedEquals(expectedAttachments));
         });
 
-        test('does not insert attachments without correlating usage referencing attachment id', () async {
+        // This name does not effectively describe what is happening.
+        test('Ids that have no attachment return no attachment.', () async {
           // Arrange
-          List<int> getIds = [97, 98, 99];
+          List<int> testIds = [1, 2, 97];
+          List<Attachment> expectedAttachments = genAttachmentList(2);
           _store.attachmentUsages = happyPathUsages;
-          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: getIds)).thenReturn(noMatchAttachments);
+          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: testIds)).thenReturn(expectedAttachments);
 
           // Act
-          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: getIds));
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: testIds));
 
           // Assert
-          expect(_store.attachments.length, equals(0));
+          expect(_store.attachments, unorderedEquals(expectedAttachments));
         });
 
-        test('does not perform any action if the payload is empty or null', () async {
+        test('Store not insert attachments unless a corresponding usage exists.', () async {
+          // This test asserts that when there are some attachments, but non are correctly referenced
+          // nothing is found.
+          // Arrange
+          List<int> testIds = [1, 2, 3];
+          List<Attachment> expectedAttachments = [];
+          // Note the absence of adding attachment usages to the store.
+          when(_annotationsApiMock.getAttachmentsByIds(idsToLoad: testIds)).thenReturn(genAttachmentList(3));
+
+          // Act
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: testIds));
+
+          // Assert
+          expect(_store.attachments, equals(expectedAttachments));
+        });
+
+        test('does not perform any action if the payload is empty an empty list.', () async {
           // Arrange
           _store.attachmentUsages = happyPathUsages;
           when(_annotationsApiMock.getAttachmentsByIds).thenReturn(happyPathAttachments);
 
-          // Act (1/2)
-          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: null));
-          // Assert (1/2)
-          verifyNever(_annotationsApiMock.getAttachmentsByIds);
-
-          // Act (2/2)
+          // Act
           await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: []));
-          // Assert (2/2)
+
+          // Assert
           verifyNever(_annotationsApiMock.getAttachmentsByIds);
         });
 
+        test('No action is performed if the payload is null', () async {
+          // Arrange
+          _store.attachmentUsages = happyPathUsages;
+          when(_annotationsApiMock.getAttachmentsByIds).thenReturn(happyPathAttachments);
+
+          // Act
+          await _actions.getAttachmentsByIds(new GetAttachmentsByIdsPayload(attachmentIds: null));
+
+          // Assert
+          verifyNever(_annotationsApiMock.getAttachmentsByIds);
+        });
         // TODO RAM-732 App Intelligence
         // test('store logs when it receives attachments out of scope', () async {
-
       });
     });
 
     group('AttachmentsStore attachment actions', () {
-        AttachmentsStore _store;
-        AttachmentsActions _actions;
+      AttachmentsStore _store;
+      AttachmentsActions _actions;
       setUp(() {
         _store = generateDefaultStore(spyMode: true);
         _actions = _store.attachmentsActions;
@@ -865,7 +882,8 @@ void main() {
       setUp(() {
         _annotationsApiMock = new AnnotationsApiMock();
         _extensionContext = new ExtensionContextMock();
-        _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock, extensionContextMock: _extensionContext);
+        _store = generateDefaultStore(
+            spyMode: true, annotationsApiMock: _annotationsApiMock, extensionContextMock: _extensionContext);
         _actions = _store.attachmentsActions;
       });
 
@@ -1095,101 +1113,101 @@ void main() {
                 u.accountResourceId == AttachmentTestConstants.mockChangedAttachmentUsage.accountResourceId)));
       });
 
-    group('getAttachmentsByProducers -', () {
+      group('getAttachmentsByProducers -', () {
+        GetAttachmentsByProducersResponse getAttachmentsByProducersHappyResponse =
+            new GetAttachmentsByProducersResponse(
+                anchors: AttachmentTestConstants.mockAnchorList,
+                attachmentUsages: AttachmentTestConstants.mockAttachmentUsageList,
+                attachments: AttachmentTestConstants.mockAttachmentList);
+        AttachmentsStore _store;
+        AnnotationsApiMock _annotationsApiMock;
+        AttachmentsActions _actions;
 
-      GetAttachmentsByProducersResponse getAttachmentsByProducersHappyResponse = new GetAttachmentsByProducersResponse(
-          anchors: AttachmentTestConstants.mockAnchorList,
-          attachmentUsages: AttachmentTestConstants.mockAttachmentUsageList,
-          attachments: AttachmentTestConstants.mockAttachmentList);
-      AttachmentsStore _store;
-      AnnotationsApiMock _annotationsApiMock;
-      AttachmentsActions _actions;
+        setUp(() {
+          _annotationsApiMock = new AnnotationsApiMock();
+          _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
+          _store.anchors = [AttachmentTestConstants.mockExistingAnchor, AttachmentTestConstants.mockAnchor];
+          _actions = _store.attachmentsActions;
+        });
 
-      setUp(() {
-        _annotationsApiMock = new AnnotationsApiMock();
-        _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
-        _store.anchors = [AttachmentTestConstants.mockExistingAnchor, AttachmentTestConstants.mockAnchor];
-        _actions = _store.attachmentsActions;
+        tearDown(() async {
+          await _actions.dispose();
+          await _store.dispose();
+        });
+
+        test('graceful null return', () async {
+          List<String> producerWurls = [AttachmentTestConstants.testWurl];
+
+          when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls)).thenReturn(null);
+
+          List<Anchor> _previous = new List<Anchor>.from(_store.anchors);
+
+          await _actions.getAttachmentsByProducers(
+              new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
+          expect(_previous, equals(_store.anchors));
+        });
+
+        test('calls getAttachmentsByProducers preserving', () async {
+          List<String> producerWurls = [AttachmentTestConstants.testWurl];
+
+          when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls))
+              .thenReturn(getAttachmentsByProducersHappyResponse);
+
+          await _actions.getAttachmentsByProducers(
+              new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
+          expect(_store.anchorsByWurl(AttachmentTestConstants.existingWurl),
+              anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockExistingAnchor.id)));
+          expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
+              anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
+          expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
+              anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
+        });
+
+        test('calls getAttachmentsByProducers overriding', () async {
+          List<String> producerWurls = [AttachmentTestConstants.testWurl];
+
+          when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls))
+              .thenReturn(getAttachmentsByProducersHappyResponse);
+
+          await _actions.getAttachmentsByProducers(new GetAttachmentsByProducersPayload(producerWurls: producerWurls));
+          expect(_store.anchorsByWurl(AttachmentTestConstants.existingWurl), isEmpty);
+          expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
+              everyElement(predicate((Anchor a) => a.id != AttachmentTestConstants.mockAnchor.id)));
+          expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
+              anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
+        });
       });
 
-      tearDown(() async {
-        await _actions.dispose();
-        await _store.dispose();
-      });
+      group('updateAttachmentLabel -', () {
+        AttachmentsStore _store;
+        AnnotationsApiMock _annotationsApiMock;
+        AttachmentsActions _actions;
+        setUp(() {
+          _annotationsApiMock = new AnnotationsApiMock();
+          _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
+          _actions = _store.attachmentsActions;
+        });
 
-      test('graceful null return', () async {
-        List<String> producerWurls = [AttachmentTestConstants.testWurl];
+        test('calls to the api to update attachment label', () async {
+          when(_annotationsApiMock.updateAttachmentLabel(attachmentId: any, attachmentLabel: any))
+              .thenReturn(AttachmentTestConstants.mockAttachment);
 
-        when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls)).thenReturn(null);
+          Completer updateAttachmentLabelCompleter =
+              test_utils.hookinActionVerifier(_store.attachmentsActions.updateAttachmentLabel);
 
-        List<Anchor> _previous = new List<Anchor>.from(_store.anchors);
+          UpdateAttachmentLabelPayload payload = new UpdateAttachmentLabelPayload(
+              idToUpdate: AttachmentTestConstants.attachmentIdOne, newLabel: AttachmentTestConstants.label);
 
-        await _actions.getAttachmentsByProducers(
-            new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
-        expect(_previous, equals(_store.anchors));
-      });
+          await _actions.updateAttachmentLabel(payload);
 
-      test('calls getAttachmentsByProducers preserving', () async {
-        List<String> producerWurls = [AttachmentTestConstants.testWurl];
-
-        when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls))
-            .thenReturn(getAttachmentsByProducersHappyResponse);
-
-        await _actions.getAttachmentsByProducers(
-            new GetAttachmentsByProducersPayload(producerWurls: producerWurls, maintainAttachments: true));
-        expect(_store.anchorsByWurl(AttachmentTestConstants.existingWurl),
-            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockExistingAnchor.id)));
-        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
-            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockAnchor.id)));
-        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
-            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
-      });
-
-      test('calls getAttachmentsByProducers overriding', () async {
-        List<String> producerWurls = [AttachmentTestConstants.testWurl];
-
-        when(_annotationsApiMock.getAttachmentsByProducers(producerWurls: producerWurls))
-            .thenReturn(getAttachmentsByProducersHappyResponse);
-
-        await _actions.getAttachmentsByProducers(new GetAttachmentsByProducersPayload(producerWurls: producerWurls));
-        expect(_store.anchorsByWurl(AttachmentTestConstants.existingWurl), isEmpty);
-        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
-            everyElement(predicate((Anchor a) => a.id != AttachmentTestConstants.mockAnchor.id)));
-        expect(_store.anchorsByWurl(AttachmentTestConstants.testWurl),
-            anyElement(predicate((Anchor a) => a.id == AttachmentTestConstants.mockChangedAnchor.id)));
-      });
-    });
-
-    group('updateAttachmentLabel -', () {
-      AttachmentsStore _store;
-      AnnotationsApiMock _annotationsApiMock;
-      AttachmentsActions _actions;
-      setUp(() {
-        _annotationsApiMock = new AnnotationsApiMock();
-        _store = generateDefaultStore(spyMode: true, annotationsApiMock: _annotationsApiMock);
-        _actions = _store.attachmentsActions;
-      });
-
-      test('calls to the api to update attachment label', () async {
-        when(_annotationsApiMock.updateAttachmentLabel(attachmentId: any, attachmentLabel: any))
-            .thenReturn(AttachmentTestConstants.mockAttachment);
-
-        Completer updateAttachmentLabelCompleter =
-            test_utils.hookinActionVerifier(_store.attachmentsActions.updateAttachmentLabel);
-
-        UpdateAttachmentLabelPayload payload = new UpdateAttachmentLabelPayload(
-            idToUpdate: AttachmentTestConstants.attachmentIdOne, newLabel: AttachmentTestConstants.label);
-
-        await _actions.updateAttachmentLabel(payload);
-
-        verify(_annotationsApiMock.updateAttachmentLabel(attachmentId: any, attachmentLabel: any)).called(1);
-        expect(updateAttachmentLabelCompleter.future, completes);
-      });
-      tearDown(() async {
-        await _actions.dispose();
-        await _store.dispose();
+          verify(_annotationsApiMock.updateAttachmentLabel(attachmentId: any, attachmentLabel: any)).called(1);
+          expect(updateAttachmentLabelCompleter.future, completes);
+        });
+        tearDown(() async {
+          await _actions.dispose();
+          await _store.dispose();
+        });
       });
     });
   });
-});
 }
