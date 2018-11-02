@@ -26,6 +26,7 @@ pub get
 #### Running tests
 
 - run `pub run dart_dev test` in the root or app directory to run all the tests at those levels
+- run `pub run dart_dev test path\to\test.dart` from the repository's root to run a single test file.
 - run `pub run dart_dev test -n REGEX` to tests matching a specific REGEX. It's recommended to wrap all tests in a file with a
 corresponding top level group so that all tests in file can be run easily.
     - Ex. All tests in `attachments_module_test.dart` should be wrapped in a `AttachmentsModule` group so they can be run

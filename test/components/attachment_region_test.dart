@@ -48,21 +48,21 @@ void main() {
               annotationsApi: _annotationsApiMock,
               extensionContext: _extensionContext,
               dispatchKey: attachmentsModuleDispatchKey,
-              attachments: [AttachmentTestConstants.mockAttachment],
+              attachments: [AttachmentTestConstants.defaultAttachment],
               groups: [],
               moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage')));
 
-      _store.attachments = [AttachmentTestConstants.mockAttachment];
-      _store.attachmentUsages = [AttachmentTestConstants.mockAttachmentUsage];
+      _store.attachments = [AttachmentTestConstants.defaultAttachment];
+      _store.attachmentUsages = [AttachmentTestConstants.defaultUsage];
 
       rendered = render((AttachmentRegion()
         ..actions = _attachmentsActions
         ..store = _store
-        ..attachment = AttachmentTestConstants.mockAttachment
+        ..attachment = AttachmentTestConstants.defaultAttachment
         ..currentSelection = _store.currentSelection
-        ..references = _store.usagesByAttachmentId(AttachmentTestConstants.mockAttachment.id)
+        ..references = _store.usagesByAttachmentId(AttachmentTestConstants.defaultAttachment.id)
         ..attachmentCounter = 1
-        ..targetKey = AttachmentTestConstants.mockAttachment.id));
+        ..targetKey = AttachmentTestConstants.defaultAttachment.id));
     });
 
     test('Attachment Region holds a reference and has basic structure', () {
@@ -90,25 +90,22 @@ void main() {
       when(_annotationsApiMock.createAttachmentUsage(producerWurl: any, attachmentId: 1234)).thenAnswer((_) =>
           new Future.value(new CreateAttachmentUsageResponse(
               anchor: AttachmentTestConstants.mockAnchor,
-              attachmentUsage: AttachmentTestConstants.mockAddedAttachmentUsage,
-              attachment: AttachmentTestConstants.mockAttachment)));
+              attachmentUsage: AttachmentTestConstants.addedUsage,
+              attachment: AttachmentTestConstants.defaultAttachment)));
 
-      _store.attachmentUsages = [
-        AttachmentTestConstants.mockAttachmentUsage,
-        AttachmentTestConstants.mockAddedAttachmentUsage
-      ];
+      _store.attachmentUsages = [AttachmentTestConstants.defaultUsage, AttachmentTestConstants.addedUsage];
 
       rendered = render((AttachmentRegion()
         ..actions = _attachmentsActions
         ..store = _store
-        ..attachment = AttachmentTestConstants.mockAttachment
+        ..attachment = AttachmentTestConstants.defaultAttachment
         ..currentSelection = _store.currentSelection
-        ..references = _store.usagesByAttachmentId(AttachmentTestConstants.mockAttachment.id)
+        ..references = _store.usagesByAttachmentId(AttachmentTestConstants.defaultAttachment.id)
         ..attachmentCounter = 0
-        ..targetKey = AttachmentTestConstants.mockAttachment.id));
+        ..targetKey = AttachmentTestConstants.defaultAttachment.id));
 
       expect(_store.attachmentUsages.length, 2);
-      expect(_store.usagesByAttachmentId(AttachmentTestConstants.mockAttachment.id).length, 2);
+      expect(_store.usagesByAttachmentId(AttachmentTestConstants.defaultAttachment.id).length, 2);
     });
   });
 }

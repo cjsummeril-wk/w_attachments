@@ -109,8 +109,8 @@ void main() {
 
       test('should render the panel and the Reference View ', () {
         _module.store.attachments = [
-          AttachmentTestConstants.mockAttachment,
-          AttachmentTestConstants.mockChangedAttachment
+          AttachmentTestConstants.defaultAttachment,
+          AttachmentTestConstants.changedAttachment
         ];
         attachmentsView = render(_module.components.content());
 
@@ -120,8 +120,8 @@ void main() {
 
       test('should render a list of Attachments within the ReferenceView', () {
         _module.store.attachments = [
-          AttachmentTestConstants.mockAttachment,
-          AttachmentTestConstants.mockChangedAttachment
+          AttachmentTestConstants.defaultAttachment,
+          AttachmentTestConstants.changedAttachment
         ];
         attachmentsView = render(_module.components.content());
 
@@ -132,8 +132,8 @@ void main() {
 
       test('ReferenceViews AttachmentRegions have state.', () {
         _module.store.attachments = [
-          AttachmentTestConstants.mockAttachment,
-          AttachmentTestConstants.mockChangedAttachment
+          AttachmentTestConstants.defaultAttachment,
+          AttachmentTestConstants.changedAttachment
         ];
 
         attachmentsView = render(_module.components.content());

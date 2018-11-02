@@ -50,11 +50,8 @@ void main() {
           groups: [],
           moduleConfig: new AttachmentsConfig(label: 'AttachmentPackage'));
 
-      store.attachments = [AttachmentTestConstants.mockAttachment, AttachmentTestConstants.mockExistingAttachment];
-      store.attachmentUsages = [
-        AttachmentTestConstants.mockAttachmentUsage,
-        AttachmentTestConstants.mockExistingAttachmentUsage
-      ];
+      store.attachments = [AttachmentTestConstants.defaultAttachment, AttachmentTestConstants.existingAttachment];
+      store.attachmentUsages = [AttachmentTestConstants.defaultUsage, AttachmentTestConstants.existingUsage];
       store.anchors = [AttachmentTestConstants.mockAnchor, AttachmentTestConstants.mockExistingAnchor];
 
       when(mockCEF.selectionApi.getCurrentSelections()).thenReturn(testSelection());

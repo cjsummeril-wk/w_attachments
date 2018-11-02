@@ -94,20 +94,19 @@ void main() {
 
         expect(
             results.attachmentUsages.any((AttachmentUsage a) =>
-                a.id == AttachmentTestConstants.mockAttachmentUsage.id &&
+                a.id == AttachmentTestConstants.defaultUsage.id &&
                 a.anchorId == AttachmentTestConstants.mockAnchor.id &&
-                a.attachmentId == AttachmentTestConstants.mockAttachment.id),
+                a.attachmentId == AttachmentTestConstants.defaultAttachment.id),
             isTrue);
         expect(
             results.attachmentUsages.any((AttachmentUsage a) =>
-                a.id == AttachmentTestConstants.mockChangedAttachmentUsage.id &&
+                a.id == AttachmentTestConstants.changedUsage.id &&
                 a.anchorId == AttachmentTestConstants.mockChangedAnchor.id &&
-                a.attachmentId == AttachmentTestConstants.mockChangedAttachment.id),
+                a.attachmentId == AttachmentTestConstants.changedAttachment.id),
             isTrue);
 
-        expect(results.attachments.any((Attachment a) => a.id == AttachmentTestConstants.mockAttachment.id), isTrue);
-        expect(results.attachments.any((Attachment a) => a.id == AttachmentTestConstants.mockChangedAttachment.id),
-            isTrue);
+        expect(results.attachments.any((Attachment a) => a.id == AttachmentTestConstants.defaultAttachment.id), isTrue);
+        expect(results.attachments.any((Attachment a) => a.id == AttachmentTestConstants.changedAttachment.id), isTrue);
       });
 
       test('service handler handles empty payloads', () async {

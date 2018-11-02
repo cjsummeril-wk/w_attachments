@@ -36,7 +36,7 @@ class AttachmentTestConstants {
     ..disconnected = false
     ..producerWurl = existingWurl;
 
-  static AttachmentUsage mockAttachmentUsage = new AttachmentUsage()
+  static AttachmentUsage defaultUsage = new AttachmentUsage()
     ..id = attachmentUsageIdOne
     ..anchorId = anchorIdOne
     ..attachmentId = attachmentIdOne
@@ -44,7 +44,7 @@ class AttachmentTestConstants {
     ..label = "crispy-bacon-and-sun-dried-tomato-salad"
     ..parentId = 7890;
 
-  static AttachmentUsage mockAddedAttachmentUsage = new AttachmentUsage()
+  static AttachmentUsage addedUsage = new AttachmentUsage()
     ..id = attachmentUsageIdOne
     ..anchorId = 4343
     ..attachmentId = attachmentIdOne
@@ -52,14 +52,15 @@ class AttachmentTestConstants {
     ..label = "crispy-chicken-crispers"
     ..parentId = 4343;
 
-  static AttachmentUsage mockChangedAttachmentUsage = new AttachmentUsage()
+  static AttachmentUsage changedUsage = new AttachmentUsage()
     ..id = attachmentUsageIdTwo
     ..anchorId = anchorIdTwo
     ..attachmentId = attachmentIdTwo
     ..accountResourceId = "crispy-bacon-pancakes"
     ..label = "crispy-bacon-and-crispy-chicken-waffles"
     ..parentId = 999;
-  static AttachmentUsage mockExistingAttachmentUsage = new AttachmentUsage()
+
+  static AttachmentUsage existingUsage = new AttachmentUsage()
     ..id = attachmentUsageIdThree
     ..anchorId = anchorIdThree
     ..attachmentId = attachmentIdThree
@@ -67,7 +68,7 @@ class AttachmentTestConstants {
     ..label = 'crispy-lasagna'
     ..parentId = 123;
 
-  static Attachment mockAttachment = new Attachment()
+  static Attachment defaultAttachment = new Attachment()
     ..id = attachmentIdOne
     ..accountResourceId = "crispy-chicken-fingers"
     ..fsResourceId = "1234"
@@ -75,7 +76,8 @@ class AttachmentTestConstants {
     ..userName = "crispy-names"
     ..filename = 'crispy-fried-pickles'
     ..uploadStatus = Status.Pending;
-  static Attachment mockChangedAttachment = new Attachment()
+
+  static Attachment changedAttachment = new Attachment()
     ..id = attachmentIdTwo
     ..accountResourceId = "crispy-cereal-crunch"
     ..fsResourceId = "3456"
@@ -83,7 +85,8 @@ class AttachmentTestConstants {
     ..filename = 'crispy-parmesan-cheese'
     ..userName = "crispy-fighter-jets-like-freals-cool"
     ..uploadStatus = Status.Complete;
-  static Attachment mockExistingAttachment = new Attachment()
+
+  static Attachment existingAttachment = new Attachment()
     ..id = attachmentIdThree
     ..accountResourceId = "crispy-jello"
     ..fsResourceId = "3456"
@@ -95,15 +98,15 @@ class AttachmentTestConstants {
   static FAnchor mockFAnchor = mockAnchor.toFAnchor();
   static FAnchor mockChangedFAnchor = mockChangedAnchor.toFAnchor();
 
-  static FAttachmentUsage mockFAttachmentUsage = mockAttachmentUsage.toFAttachmentUsage();
-  static FAttachmentUsage mockChangedFAttachmentUsage = mockChangedAttachmentUsage.toFAttachmentUsage();
+  static FAttachmentUsage mockFAttachmentUsage = defaultUsage.toFAttachmentUsage();
+  static FAttachmentUsage mockChangedFAttachmentUsage = changedUsage.toFAttachmentUsage();
 
-  static FAttachment mockFAttachment = mockAttachment.toFAttachment();
-  static FAttachment mockChangedFAttachment = mockChangedAttachment.toFAttachment();
+  static FAttachment mockFAttachment = defaultAttachment.toFAttachment();
+  static FAttachment mockChangedFAttachment = changedAttachment.toFAttachment();
 
   static List<Anchor> mockAnchorList = [mockChangedAnchor];
-  static List<AttachmentUsage> mockAttachmentUsageList = [mockChangedAttachmentUsage];
-  static List<Attachment> mockAttachmentList = [mockChangedAttachment];
+  static List<AttachmentUsage> mockAttachmentUsageList = [changedUsage];
+  static List<Attachment> mockAttachmentList = [changedAttachment];
 
   static List<FAnchor> mockFAnchorList = [mockFAnchor, mockChangedFAnchor];
   static List<FAttachmentUsage> mockFAttachmentUsageList = [mockFAttachmentUsage, mockChangedFAttachmentUsage];

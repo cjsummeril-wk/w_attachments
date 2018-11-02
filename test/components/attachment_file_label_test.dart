@@ -45,7 +45,7 @@ void main() {
               annotationsApi: _annotationsApiMock,
               extensionContext: _extensionContext,
               dispatchKey: attachmentsModuleDispatchKey,
-              attachments: [AttachmentTestConstants.mockAttachment],
+              attachments: [AttachmentTestConstants.defaultAttachment],
               groups: []));
     });
 
@@ -58,7 +58,7 @@ void main() {
       test('should render an attachment label when rendering an AttachmentCard', () {
         // Mount the attachment card, which contains the card header + label
         renderedCard = render(AttachmentCard()
-          ..attachment = AttachmentTestConstants.mockAttachment
+          ..attachment = AttachmentTestConstants.defaultAttachment
           ..store = _attachmentsStore
           ..actionProvider = _attachmentsStore.actionProvider);
         expect(renderedCard, isNotNull);
